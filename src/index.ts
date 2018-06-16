@@ -1,17 +1,21 @@
-// content of index.js
-const http = require('http');
-const port = 3003;
+// =====================================================================================================================
+// Core exports
+// =====================================================================================================================
 
-const requestHandler = (request: any, response: any) => {
-  response.end('Hello yos Server!!! We are in '+ process.env.NODE_ENV);
-};
+export { YosServer } from './core/yos-server.core';
+export { YosServerDefaultConfig} from './core/yos-server-default-config.core';
 
-const server = http.createServer(requestHandler);
 
-server.listen(port, (err: any) => {
-  if (err) {
-    return console.error('something bad happened', err);
-  }
+// =====================================================================================================================
+// Helper exports
+// =====================================================================================================================
 
-  console.info(`server is listening on ${port}`);
-});
+export { FileHelper } from './helper/file-helper.helper';
+export { HelpFunctions } from './helper/help-functions.helper';
+
+
+// =====================================================================================================================
+// Interfaces exports
+// =====================================================================================================================
+
+export {YosServerConfig} from './interfaces/yos-server-config.interface';
