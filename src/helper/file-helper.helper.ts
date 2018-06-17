@@ -1,7 +1,6 @@
 import * as globby from 'globby';
 import * as path from 'path';
-import { HelpFunctions } from './help-functions.helper';
-
+import { HelpFunctions } from '..';
 
 /**
  * FileHelper is a collection of helper functions to process files

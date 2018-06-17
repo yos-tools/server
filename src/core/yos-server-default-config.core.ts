@@ -1,4 +1,4 @@
-import { YosServerConfig } from '../interfaces/yos-server-config.interface';
+import { YosServerConfig, YosServerCoreConfig, YosServerModuleConfig } from '..';
 
 /**
  * Default yos-server configuration
@@ -7,8 +7,28 @@ import { YosServerConfig } from '../interfaces/yos-server-config.interface';
  */
 export class YosServerDefaultConfig implements YosServerConfig {
 
-  // Configuration of core
-  public core: any = {
+  // Core
+  public core: YosServerCoreConfig = {
+
+    // Configuration of automatic configuration handling
+    configurations: {
+
+      // If a configuration object is transferred, another path is transferred for auto handling
+      path: null
+    },
+
+    // Configuration of modules
+    modules: {
+
+      // Full path of directory of additional modules in project
+      directory: null,
+
+      // Extension of file name
+      fileNameExtension: 'module',
+
+      // Extension of module name
+      moduleNameExtension: 'Module'
+    },
 
     // Configuration of yos-server
     yosServer: {
@@ -20,13 +40,19 @@ export class YosServerDefaultConfig implements YosServerConfig {
 
       // Port on which the server is running
       port: 3000
-    },
-
-    // Configuration of automatic configuration handling
-    configuration: {
-
-      // If a configuration object is transferred, another path is transferred for auto handling
-      path: null
     }
-  }
+  };
+
+  // Modules
+  public modules: { [module: string]: YosServerModuleConfig } = {
+
+    // GraphQL Module
+    graphQL: {
+      module: {
+        active: true,
+        fileName: 'graphql',
+        className: 'GraphQL'
+      }
+    }
+  };
 }

@@ -1,8 +1,5 @@
 import * as _ from 'lodash';
-import { FileHelper } from '../helper/file-helper.helper';
-import { HelpFunctions } from '../helper/help-functions.helper';
-import { YosServerConfig } from '../interfaces/yos-server-config.interface';
-import { YosServerDefaultConfig } from './yos-server-default-config.core';
+import { FileHelper, HelpFunctions, YosServerConfig, YosServerDefaultConfig } from '..';
 
 /**
  * The core of yos-server
@@ -31,20 +28,21 @@ export class YosServer {
   /**
    * Start a new yos-server instance
    *
-   * @param {YosServerConfig | string | string[]} configOrPath Could be a configuration Object or a string with the
-   *   path to configuration file or directory
+   * @param {YosServerConfig | string | string[]} configOrPaths Could be a configuration Object, a string or
+   *  string array with the path(s) to configuration file or directory
    * @param {YosServer} yosServer Use optional an existing server instance
    * @returns {Promise<YosServer>} New Instance of yos-server
    */
   public static async start(
-    configOrPath?: YosServerConfig | string | string[],
+    configOrPaths?: YosServerConfig | string | string[],
     yosServer: YosServer = new YosServer()
   ): Promise<YosServer> {
 
     // Combine configurations
-    yosServer.combineConfigurations(configOrPath);
+    yosServer.combineConfigurations(configOrPaths);
 
     // Init Modules
+    yosServer.initModules();
 
     // Start Server
 
@@ -54,27 +52,36 @@ export class YosServer {
 
   /**
    * Combination of the current configuration with the transferred configuration
-   * @param { YosServerConfig | string | string[]} configOrPath
+   * @param { YosServerConfig | string | string[]} configOrPaths Could be a configuration Object, a string or
+   *  string array with the path(s) to configuration file or directory
    * @returns {Promise<void>}
    */
-  public async combineConfigurations(configOrPath?: YosServerConfig | string | string[]) {
+  public async combineConfigurations(configOrPaths?: YosServerConfig | string | string[]) {
 
     // Handling for string or string array
-    if (_.isString(configOrPath) || Array.isArray(configOrPath)) {
-      HelpFunctions.specialMerge(this._config, await FileHelper.loadConfigs(configOrPath));
+    if (_.isString(configOrPaths) || Array.isArray(configOrPaths)) {
+      HelpFunctions.specialMerge(this._config, await FileHelper.loadConfigs(configOrPaths));
     }
 
     // Handling for YosServerConfig object
     else {
 
       // Process configuration path if set
-      const path = _.get(configOrPath, 'core.configuration.path');
+      const path = _.get(configOrPaths, 'core.configurations.path');
       if (path) {
         HelpFunctions.specialMerge(this._config, await FileHelper.loadConfigs(path));
       }
 
-      HelpFunctions.specialMerge(this._config, configOrPath);
+      HelpFunctions.specialMerge(this._config, configOrPaths);
     }
+  }
+
+  /**
+   * Initialization of modules
+   * @returns {Promise<void>}
+   */
+  public async initModules() {
+
   }
 
 
@@ -82,10 +89,18 @@ export class YosServer {
   // Getter & Setter
   // ===================================================================================================================
 
+  /**
+   * Getter for config
+   * @returns {YosServerConfig}
+   */
   public get config(): YosServerConfig {
-    return this.config;
+    return this._config;
   }
 
+  /**
+   * Setter for config
+   * @param {YosServerConfig} config
+   */
   public set config(config: YosServerConfig) {
     this._config = config;
   }
