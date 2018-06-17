@@ -1,11 +1,12 @@
 import * as globby from 'globby';
+import * as _ from 'lodash';
 import * as path from 'path';
-import { HelpFunctions } from '..';
+import { HelpFunctions, YosServer, YosServerModule, YosServerModuleConfig, YosServerModuleLoadConfig } from '..';
 
 /**
- * FileHelper is a collection of helper functions to process files
+ * Loader is a collection of helper functions to load configs, modules, ...
  */
-export class FileHelper {
+export class Loader {
 
   /**
    * Load configurations from files
@@ -33,7 +34,7 @@ export class FileHelper {
     // Process array
     if (Array.isArray(fileOrDirPaths)) {
       for (const path of fileOrDirPaths) {
-        const loadedConfigs = FileHelper.loadConfigs(path, config);
+        const loadedConfigs = Loader.loadConfigs(path, config);
         HelpFunctions.specialMerge(loadedConfig, loadedConfigs);
       }
       return loadedConfig;
@@ -78,5 +79,60 @@ export class FileHelper {
 
     // Return loaded config
     return loadedConfig;
+  }
+
+  /**
+   * Load modules
+   * @param {YosServerModuleConfig | YosServerModuleConfig[]} modules Information about the modules to be loaded
+   * @param {YosServerModuleLoadConfig} config Load configuration
+   * @returns {{[module: string]: YosServerModule}}
+   */
+  public static loadModules(
+    yosServer: YosServer,
+    modules: YosServerModuleConfig | YosServerModuleConfig[],
+    config: YosServerModuleLoadConfig
+  ): { [module: string]: YosServerModule } {
+
+    // Init loaded modules
+    const loadedModules: { [module: string]: YosServerModule } = {};
+
+    // Check config
+    if (!config.directory) {
+      return loadedModules;
+    }
+
+    // Converting to array, if necessary
+    if (!Array.isArray(modules)) {
+      modules = [modules];
+    }
+
+    // Process modules
+    for (const moduleConfig of modules) {
+
+      // Init
+      const module = moduleConfig.module;
+      const extPoint = config.moduleNameExtension && config.moduleNameExtension.length ? '.' : '';
+
+      // Check active status
+      if (!module.active) {
+        continue;
+      }
+
+      try {
+
+        // Load module
+        const Module = require(
+          config.directory + '/' + module.fileName + extPoint + config.fileNameExtension
+        )[module.className + config.moduleNameExtension];
+
+        // Create new instance
+        loadedModules[_.lowerFirst(module.className + config.moduleNameExtension)] = new Module(yosServer);
+
+      } catch (err) {
+        console.error(module.className + 'Module could not be loaded: ', err);
+      }
+    }
+
+    return loadedModules;
   }
 }

@@ -11,11 +11,18 @@ export abstract class YosServerModule {
   protected _yosServer: YosServer;
 
   /**
-   * Every Module gets the current yos-server instance
-   * @param {YosServer} yosServer
+   * Module configuration
    */
-  constructor(yosServer: YosServer){
+  protected _config: any;
+
+  /**
+   * Default constructor
+   * @param {YosServer} yosServer Current yos-server instance
+   * @param {any} config Configuration of the Module
+   */
+  constructor(yosServer: YosServer, config?: any) {
     this._yosServer = yosServer;
+    this._config = config;
     this.init();
   }
 
@@ -28,7 +35,7 @@ export abstract class YosServerModule {
    * Getter for yosServer
    * @returns {YosServer}
    */
-  public get yosServer(){
+  public get yosServer() {
     return this._yosServer;
   }
 
@@ -36,7 +43,23 @@ export abstract class YosServerModule {
    * Setter for yosServer
    * @param {YosServer} yosServer
    */
-  public set yosServer(yosServer: YosServer){
+  public set yosServer(yosServer: YosServer) {
     this._yosServer = yosServer;
+  }
+
+  /**
+   * Getter for config
+   * @returns {any}
+   */
+  public get config() {
+    return this._config;
+  }
+
+  /**
+   * Setter for config
+   * @param {any} config
+   */
+  public set config(config: any) {
+    this._config = config;
   }
 }

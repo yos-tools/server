@@ -15,7 +15,7 @@ export { YosServerDefaultConfig } from './core/yos-server-default-config.core';
 // =====================================================================================================================
 // Helper exports
 // =====================================================================================================================
-export { FileHelper } from './helper/file-helper.helper';
+export { Loader } from './helper/loader.helper';
 export { HelpFunctions } from './helper/help-functions.helper';
 
 // =====================================================================================================================
@@ -24,6 +24,7 @@ export { HelpFunctions } from './helper/help-functions.helper';
 export { YosServerConfig } from './interfaces/yos-server-config.interface';
 export { YosServerCoreConfig } from './interfaces/yos-server-core-config.interface';
 export { YosServerModuleConfig } from './interfaces/yos-server-module-config.interface';
+export { YosServerModuleLoadConfig } from './interfaces/yos-server-module-load-config.interface';
 
 // =====================================================================================================================
 // Modules exports

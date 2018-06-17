@@ -1,6 +1,8 @@
 /**
  * Interface for yos-server core configuration
  */
+import { YosServerModuleLoadConfig } from './yos-server-module-load-config.interface';
+
 export interface YosServerCoreConfig {
 
   // Configuration of automatic configuration handling
@@ -8,20 +10,13 @@ export interface YosServerCoreConfig {
 
     // If a configuration object is transferred, another path is transferred for auto handling
     path?: string | string[]
-  }
+  },
+
+  // Configuration of project modules
+  coreModules: YosServerModuleLoadConfig,
 
   // Configuration of modules
-  modules: {
-
-    // Full path of directory of additional modules in project
-    directory: string,
-
-    // Extension of file name
-    fileNameExtension: string,
-
-    // Extension of module name
-    moduleNameExtension: 'Module'
-  },
+  modules: YosServerModuleLoadConfig,
 
   // Configuration of yos-server
   yosServer?: {

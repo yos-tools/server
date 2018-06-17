@@ -10,9 +10,9 @@ export interface YosServerConfig {
   // Core configuration
   core?: YosServerCoreConfig,
 
-  modules?: {
+  // Core modules configuration
+  coreModules?: YosServerModuleConfig[],
 
-    // Modules configuration
-    [module: string]: YosServerModuleConfig
-  }
+  // Modules configuration
+  modules?: YosServerModuleConfig[]
 }

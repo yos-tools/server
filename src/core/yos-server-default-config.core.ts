@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { YosServerConfig, YosServerCoreConfig, YosServerModuleConfig } from '..';
 
 /**
@@ -17,7 +18,20 @@ export class YosServerDefaultConfig implements YosServerConfig {
       path: null
     },
 
-    // Configuration of modules
+    // Configuration of core modules
+    coreModules: {
+
+      // Full path of directory of additional modules in project
+      directory: path.join(__dirname, '../modules'),
+
+      // Extension of file name
+      fileNameExtension: 'module',
+
+      // Extension of module name
+      moduleNameExtension: 'Module'
+    },
+
+    // Configuration of project modules
     modules: {
 
       // Full path of directory of additional modules in project
@@ -43,16 +57,17 @@ export class YosServerDefaultConfig implements YosServerConfig {
     }
   };
 
-  // Modules
-  public modules: { [module: string]: YosServerModuleConfig } = {
-
-    // GraphQL Module
-    graphQL: {
+  // Core modules
+  public coreModules: YosServerModuleConfig[] = [
+    {
       module: {
         active: true,
         fileName: 'graphql',
         className: 'GraphQL'
       }
     }
-  };
+  ];
+
+  // Project modules
+  public modules:  YosServerModuleConfig[] = []
 }
