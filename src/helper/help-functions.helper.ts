@@ -25,4 +25,22 @@ export class HelpFunctions {
     });
   }
 
+  /**
+   * Prepare URL
+   *
+   * @param {any} url URL
+   * @param {string} defaultUrl If the URL is not a string or its length is less than 1, default is used
+   * @param {boolean} leadingSlash Specifies whether a leading slash is to be used
+   * @returns {string}
+   */
+  public static prepareUrl(url: any, defaultUrl: string, leadingSlash: boolean): string {
+    url = _.isString(url) && url.length > 0 ? url : defaultUrl;
+    if (leadingSlash && url.charAt(0) !== '/') {
+      url = '/'+url;
+    } else if (!leadingSlash && url.charAt(0) === '/') {
+      url = url.substr(1);
+    }
+    return url
+  }
+
 }

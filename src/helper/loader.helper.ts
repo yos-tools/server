@@ -126,7 +126,7 @@ export class Loader {
         )[module.className + config.moduleNameExtension];
 
         // Create new instance
-        loadedModules[_.lowerFirst(module.className + config.moduleNameExtension)] = new Module(yosServer);
+        loadedModules[_.lowerFirst(module.className + config.moduleNameExtension)] = new Module(yosServer, moduleConfig);
 
       } catch (err) {
         console.error(module.className + 'Module could not be loaded: ', err);

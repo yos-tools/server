@@ -66,11 +66,27 @@ export class YosServerDefaultConfig implements YosServerConfig {
   // Core modules
   public coreModules: YosServerModuleConfig[] = [
     {
+      // Module config
       module: {
         active: true,
         fileName: 'graphql',
         className: 'GraphQL'
-      }
+      },
+
+      // Enable playground
+      // string => enable playground on this url endpoint
+      // true => enable playground on '/playground'
+      // false => disable playground
+      playground: 'playground',
+
+      // Enable subscriptions
+      // string => enable subscriptions on this url endpoint
+      // true => enable subscriptions on '/subscriptions'
+      // false => disable subscriptions
+      subscriptions: 'subscriptions',
+
+      // URL endpoint
+      url: 'graphql'
     }
   ];
 
