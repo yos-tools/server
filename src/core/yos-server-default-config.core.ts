@@ -74,10 +74,9 @@ export class YosServerDefaultConfig implements YosServerConfig {
       },
 
       // Enable playground
-      // string => enable playground on this url endpoint
-      // true => enable playground on '/playground'
+      // true => enable playground on graphql url
       // false => disable playground
-      playground: 'playground',
+      playground: true,
 
       // Enable subscriptions
       // string => enable subscriptions on this url endpoint
