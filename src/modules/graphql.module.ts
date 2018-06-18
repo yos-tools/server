@@ -34,7 +34,6 @@ export class GraphQLModule extends YosServerModule {
     };
 
     const server = new ApolloServer({
-      // These will be defined for both new or existing servers
       typeDefs,
       resolvers
     });

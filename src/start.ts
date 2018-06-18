@@ -10,20 +10,19 @@ process.on('unhandledRejection', (reason, promise) => {
   // Advice
   console.log('Unhandled Rejection at:', promise, 'reason:', reason);
 
-  // Throw error
+  // Error handling
   if (reason instanceof Error) {
     throw reason;
   }
 });
 
 // Start yos-server
-const start = async function() {
+(async function() {
   await YosServer.start();
 
   // Further processing
   // const yosServer = await YosServer.start();
   // ...
-};
-start();
+})();
 
 

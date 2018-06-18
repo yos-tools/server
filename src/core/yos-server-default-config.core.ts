@@ -15,7 +15,10 @@ export class YosServerDefaultConfig implements YosServerConfig {
     configurations: {
 
       // If a configuration object is transferred, another path is transferred for auto handling
-      path: null
+      paths: null,
+
+      // Specifies whether the configurations from the paths overwrite the configuration contained in this object
+      pathsOverwriteCurrent: false
     },
 
     // Configuration of core modules
@@ -51,6 +54,9 @@ export class YosServerDefaultConfig implements YosServerConfig {
       // '0.0.0.0' => accessible from outside
       // '127.0.0.1' / 'localhost' => local-only interface
       hostname: '0.0.0.0',
+
+      // Name of the server
+      name: 'YosServer',
 
       // Port on which the server is running
       port: 3000

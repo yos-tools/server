@@ -21,6 +21,7 @@ export { HelpFunctions } from './helper/help-functions.helper';
 // =====================================================================================================================
 // Interfaces exports
 // =====================================================================================================================
+export { ActionHooks, HookAction, HookFilter, FilterHooks } from './interfaces/hooks.interface';
 export { YosServerConfig } from './interfaces/yos-server-config.interface';
 export { YosServerCoreConfig } from './interfaces/yos-server-core-config.interface';
 export { YosServerModuleConfig } from './interfaces/yos-server-module-config.interface';
@@ -30,3 +31,8 @@ export { YosServerModuleLoadConfig } from './interfaces/yos-server-module-load-c
 // Modules exports
 // =====================================================================================================================
 export { GraphQLModule } from './modules/graphql.module';
+
+// =====================================================================================================================
+// Services exports
+// =====================================================================================================================
+export { HooksService } from './services/hooks.service';

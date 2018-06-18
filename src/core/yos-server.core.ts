@@ -1,7 +1,7 @@
 import * as http from 'http';
 import * as _ from 'lodash';
 import * as express from 'express';
-import { Loader, HelpFunctions, YosServerConfig, YosServerDefaultConfig, YosServerModule } from '..';
+import { Loader, HelpFunctions, YosServerConfig, YosServerDefaultConfig, YosServerModule, HooksService } from '..';
 import getPort = require('get-port');
 
 /**
@@ -10,7 +10,7 @@ import getPort = require('get-port');
 export class YosServer {
 
   // ===================================================================================================================
-  // Variables
+  // Properties
   // ===================================================================================================================
 
   // Current configuration
@@ -18,6 +18,9 @@ export class YosServer {
 
   // Express app (as basis for all modules)
   protected _expressApp: express.Application;
+
+  // Service for hook handling
+  protected _hooksService: HooksService;
 
   // Loaded modules
   protected _modules: { [module: string]: YosServerModule } = {};
@@ -52,16 +55,16 @@ export class YosServer {
   ): Promise<YosServer> {
 
     // Combine configurations
-    yosServer.combineConfigurations(configOrPaths);
+    await yosServer.initConfiguration(configOrPaths);
 
-    // Init Express (as basis for all modules)
-    yosServer.initExpress();
+    // Init services (as basis for all modules)
+    yosServer.initServices();
 
     // Init Modules
     yosServer.initModules();
 
     // Start Server
-    yosServer.serve();
+    await yosServer.serve();
 
     // Return Server
     return yosServer;
@@ -73,30 +76,60 @@ export class YosServer {
    *  string array with the path(s) to configuration file or directory
    * @returns {Promise<void>}
    */
-  public async combineConfigurations(configOrPaths?: YosServerConfig | string | string[]) {
+  public async initConfiguration(configOrPaths?: YosServerConfig | string | string[]) {
 
-    // Handling for string or string array
+    // Init loaded configuration
+    let loadedConfiguration: YosServerConfig = <YosServerConfig> configOrPaths;
+
+    // Set configuration via string or string array
     if (_.isString(configOrPaths) || Array.isArray(configOrPaths)) {
-      HelpFunctions.specialMerge(this._config, await Loader.loadConfigs(configOrPaths));
+      loadedConfiguration = await Loader.loadConfigs(configOrPaths);
     }
 
-    // Handling for YosServerConfig object
-    else {
+    // Process configurations in paths
+    const paths = _.get(configOrPaths, 'core.configurations.paths');
+    if (paths) {
+      const configsFromPaths = await Loader.loadConfigs(paths);
 
-      // Process configuration path if set
-      const path = _.get(configOrPaths, 'core.configurations.path');
-      if (path) {
-        HelpFunctions.specialMerge(this._config, await Loader.loadConfigs(path));
+      // configurations from the paths overwrite the loaded configuration
+      if (_.get(configOrPaths, 'core.configurations.pathsOverwriteCurrent')) {
+        HelpFunctions.specialMerge(loadedConfiguration, configsFromPaths);
       }
 
-      HelpFunctions.specialMerge(this._config, configOrPaths);
+      // configurations from the loaded configuration overwrite the configs from path
+      else {
+        loadedConfiguration = HelpFunctions.specialMerge(configsFromPaths, loadedConfiguration);
+      }
     }
+
+    // Merge loaded configuration into default configuration
+    HelpFunctions.specialMerge(this._config, loadedConfiguration);
+
+    // Set hostname if not set
+    _.set(this._config,'core.yosServer.hostname', _.get(this._config, 'core.yosServer.hostname', '0.0.0.0'));
+
+    // Set name if not set
+    _.set(this._config,'core.yosServer.name', _.get(this._config, 'core.yosServer.name', 'YosServer'));
+
+    // Set free port
+    const getPortConf: any = {host: this._config.core.yosServer.hostname};
+    const port = _.get(this._config, 'core.yosServer.port');
+    if (port) {
+      getPortConf.port = port;
+    }
+    _.set(this._config,'core.yosServer.port', await getPort(getPortConf));
   }
 
   /**
-   * Initialize express application
+   * Initialize services (as basis for all modules)
    */
-  public initExpress() {
+  public initServices() {
+
+    // Init hooks
+    this._hooksService = new HooksService();
+
+
+    // Init express app
     this._expressApp = express();
   }
 
@@ -118,28 +151,17 @@ export class YosServer {
    */
   public async serve() {
 
+    // Configuration
+    const hostname = _.get(this._config, 'core.yosServer.hostname');
+    const name = _.get(this._config, 'core.yosServer.name');
+    const port = _.get(this._config, 'core.yosServer.port');
+
     // Generate promise to handle callbacks
     return new Promise<express.Application>( async (resolve, reject) => {
 
-      // Set hostname
-      let hostname = _.get(this._config, 'core.yosServer.hostname')
-      if (hostname) {
-        hostname = '0.0.0.0';
-        _.set(this._config,'core.yosServer.hostname', hostname);
-      }
-
-      // Set port
-      const getPortConf: any = {host: this._config.core.yosServer.hostname};
-      let port = _.get(this._config, 'core.yosServer.port');
-      if (port) {
-        getPortConf.port = port;
-      }
-      port = await getPort(getPortConf);
-      _.set(this._config,'core.yosServer.port', port);
-
       // Start server
       this._server = this.expressApp.listen(port, hostname, () => {
-        console.log('YosServer started: '+hostname+':'+port);
+        console.log(name + ' started: '+hostname+':'+port);
         resolve(this.expressApp);
       });
 
@@ -172,22 +194,6 @@ export class YosServer {
   }
 
   /**
-   * Getter for modules
-   * @returns {{ [module: string]: YosServerModule }}
-   */
-  public get modules(): { [module: string]: YosServerModule } {
-    return this._modules;
-  }
-
-  /**
-   * Setter for modules
-   * @param {{ [module: string]: YosServerModule }} modules
-   */
-  public set modules(modules: { [module: string]: YosServerModule }) {
-    this._modules = modules;
-  }
-
-  /**
    * Getter for expressApp
    * @returns {express.Application}
    */
@@ -201,6 +207,38 @@ export class YosServer {
    */
   public set expressApp(expressApp: express.Application) {
     this._expressApp = expressApp;
+  }
+
+  /**
+   * Getter for hooksService
+   * @returns {HooksService}
+   */
+  public get hooksService(): HooksService {
+    return this._hooksService;
+  }
+
+  /**
+   * Setter for hooksService
+   * @param {HooksService} hooksService
+   */
+  public set hooksService(hooksService: HooksService) {
+    this._hooksService = hooksService;
+  }
+
+  /**
+   * Getter for modules
+   * @returns {{ [module: string]: YosServerModule }}
+   */
+  public get modules(): { [module: string]: YosServerModule } {
+    return this._modules;
+  }
+
+  /**
+   * Setter for modules
+   * @param {{ [module: string]: YosServerModule }} modules
+   */
+  public set modules(modules: { [module: string]: YosServerModule }) {
+    this._modules = modules;
   }
 
   /**

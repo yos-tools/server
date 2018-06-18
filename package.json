@@ -17,13 +17,13 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "lint": "tslint -p tsconfig.json -c tslint.json 'src/**/*ts'",
-    "log": "pm2 log",
-    "pack": "rm-rf ./*.tgz && npm run build && npm pack",
+    "log": "pm2 log yos-server",
     "postinstall": "node_modules/.bin/pm2 install typescript",
     "start": "pm2 restart pm2-dev.config.js && pm2 log yos-server --lines 0",
     "start:prod": "npm run build && pm2 restart pm2-prod.config.js --env production && pm2 log yos-server --lines 0",
     "status": "pm2 status",
-    "stop": "pm2 delete yos-server"
+    "stop": "pm2 delete yos-server",
+    "zip": "rm-rf ./*.tgz && npm run build && npm pack"
   },
   "repository": {
     "type": "git",
