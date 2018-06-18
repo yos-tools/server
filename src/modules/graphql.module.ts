@@ -38,7 +38,17 @@ export class GraphQLModule extends YosServerModule {
       resolvers
     });
 
+    // Add apollo server
     server.applyMiddleware({app: this.yosServer.expressApp, path:'graphql'});
+
+    // Add action hook
+    this.yosServer.hooksService.addAction('afterServerStart', {
+      id: 'graphQLModule',
+      priority: 10,
+      func: () => {
+        console.log('GraphQL started: ' + this.yosServer.url + '/graphql');
+      }
+    })
   }
 
 }

@@ -6,14 +6,14 @@ import { YosServer } from '..';
 export abstract class YosServerModule {
 
   /**
-   * Current yos-server instance
-   */
-  protected _yosServer: YosServer;
-
-  /**
    * Module configuration
    */
   protected _config: any;
+
+  /**
+   * Current yos-server instance
+   */
+  protected _yosServer: YosServer;
 
   /**
    * Default constructor

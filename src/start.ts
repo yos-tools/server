@@ -17,7 +17,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 // Start yos-server
-(async function() {
+(async function () {
   await YosServer.start();
 
   // Further processing

@@ -28,7 +28,8 @@ export class HooksService {
    * @returns {Promise<void>}
    */
   async performActions(hook: string, ...args: any[]): Promise<void> {
-    for (const action of this._actions[hook]) {
+    const actions = this._actions[hook] || [];
+    for (const action of actions) {
       await action.func(...args);
     }
   }
@@ -40,7 +41,8 @@ export class HooksService {
    * @returns {Promise<void>}
    */
   async performFilters(hook: string, ...args: any[]): Promise<void> {
-    for (const filter of this._filters[hook]) {
+    const filters = this._filters[hook] || [];
+    for (const filter of filters) {
       await filter.func(...args);
     }
   }
@@ -51,8 +53,10 @@ export class HooksService {
    * @param {HookAction} action
    */
   addAction(hook: string, action: HookAction): void {
+    this.removeAction(hook, action.id);
+    this._actions[hook] = this._actions[hook] || [];
     this._actions[hook].push(action);
-    _.sortBy(this._actions[hook], 'priority')
+    _.orderBy(this._actions[hook], ['priority'], ['desc'])
   }
 
   /**
@@ -61,8 +65,10 @@ export class HooksService {
    * @param {HookFilter} filter
    */
   addFilter(hook: string, filter: HookFilter): void {
+    this.removeAction(hook, filter.id);
+    this._filters[hook] = this._filters[hook] || [];
     this._filters[hook].push(filter);
-    _.sortBy(this._filters[hook], 'priority')
+    _.orderBy(this._filters[hook], ['priority'], ['desc'])
   }
 
   /**
@@ -72,7 +78,7 @@ export class HooksService {
    */
   removeAction(hook: string, action: string): void {
     _.remove(this._actions[hook], (element) => {
-      return element.name === action;
+      return element.id === action;
     })
   }
 
@@ -83,7 +89,7 @@ export class HooksService {
    */
   removeFilter(hook: string, filter: string): void {
     _.remove(this._filters[hook], (element) => {
-      return element.name === filter;
+      return element.id === filter;
     })
   }
 
@@ -94,7 +100,7 @@ export class HooksService {
   removeActionFromAllHooks(action: string): void {
     for (const prop of Object.getOwnPropertyNames(this._actions)) {
       _.remove(this._actions[prop], (element) => {
-        return element.name === action;
+        return element.id === action;
       })
     }
   }
@@ -106,7 +112,7 @@ export class HooksService {
   removeFilterFromAllHooks(filter: string): void {
     for (const prop of Object.getOwnPropertyNames(this._filters)) {
       _.remove(this._filters[prop], (element) => {
-        return element.name === filter;
+        return element.id === filter;
       })
     }
   }

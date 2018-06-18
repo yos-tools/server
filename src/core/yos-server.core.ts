@@ -1,7 +1,7 @@
+import * as express from 'express';
 import * as http from 'http';
 import * as _ from 'lodash';
-import * as express from 'express';
-import { Loader, HelpFunctions, YosServerConfig, YosServerDefaultConfig, YosServerModule, HooksService } from '..';
+import { HelpFunctions, HooksService, Loader, YosServerConfig, YosServerDefaultConfig, YosServerModule } from '..';
 import getPort = require('get-port');
 
 /**
@@ -106,10 +106,10 @@ export class YosServer {
     HelpFunctions.specialMerge(this._config, loadedConfiguration);
 
     // Set hostname if not set
-    _.set(this._config,'core.yosServer.hostname', _.get(this._config, 'core.yosServer.hostname', '0.0.0.0'));
+    _.set(this._config, 'core.yosServer.hostname', _.get(this._config, 'core.yosServer.hostname', '0.0.0.0'));
 
     // Set name if not set
-    _.set(this._config,'core.yosServer.name', _.get(this._config, 'core.yosServer.name', 'YosServer'));
+    _.set(this._config, 'core.yosServer.name', _.get(this._config, 'core.yosServer.name', 'YosServer'));
 
     // Set free port
     const getPortConf: any = {host: this._config.core.yosServer.hostname};
@@ -117,7 +117,7 @@ export class YosServer {
     if (port) {
       getPortConf.port = port;
     }
-    _.set(this._config,'core.yosServer.port', await getPort(getPortConf));
+    _.set(this._config, 'core.yosServer.port', await getPort(getPortConf));
   }
 
   /**
@@ -157,11 +157,18 @@ export class YosServer {
     const port = _.get(this._config, 'core.yosServer.port');
 
     // Generate promise to handle callbacks
-    return new Promise<express.Application>( async (resolve, reject) => {
+    return new Promise<express.Application>(async (resolve, reject) => {
+
+      // Action hook: before server start
+      await this._hooksService.performActions('beforeServerStart');
 
       // Start server
-      this._server = this.expressApp.listen(port, hostname, () => {
-        console.log(name + ' started: '+hostname+':'+port);
+      this._server = this.expressApp.listen(port, hostname, async () => {
+        console.log(name + ' started: ' + this.url);
+
+        // Action hook: after server start
+        await this._hooksService.performActions('afterServerStart');
+
         resolve(this.expressApp);
       });
 
@@ -169,6 +176,11 @@ export class YosServer {
       if (!this._server) {
         reject();
       }
+
+      // On close
+      this._server.on('close', () => {
+        console.log(name + 'closed');
+      })
     });
   }
 
@@ -255,5 +267,34 @@ export class YosServer {
    */
   public set server(server: http.Server) {
     this._server = server;
+  }
+
+
+  // ===================================================================================================================
+  // Artificial Getter & Setter
+  // ===================================================================================================================
+
+  /**
+   * Getter for hostname
+   * @returns {string}
+   */
+  public get hostname(): string {
+    return _.get(this._config, 'core.yosServer.hostname');
+  }
+
+  /**
+   * Getter for port
+   * @returns {string}
+   */
+  public get port(): string {
+    return _.get(this._config, 'core.yosServer.port');
+  }
+
+  /**
+   * Getter for url
+   * @returns {string}
+   */
+  public get url(): string {
+    return 'http://' + this.hostname + ':' + this.port;
   }
 }

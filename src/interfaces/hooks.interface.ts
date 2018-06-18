@@ -13,8 +13,8 @@ export interface HookAction {
   // Action
   func: (...args: any[]) => void;
 
-  // Name of the hook action
-  name: string;
+  // ID of the hook action
+  id: string;
 
   // Priority of the hook action
   priority: number
@@ -28,8 +28,8 @@ export interface HookFilter {
   // Filter
   func: (...args: any[]) => any;
 
-  // Name of the hook filter
-  name: string;
+  // ID of the hook filter
+  id: string;
 
   // Priority of the hook filter
   priority: number
