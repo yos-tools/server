@@ -1,10 +1,18 @@
 import { ApolloServer, gql } from 'apollo-server-express';
 import { ServerRegistration } from 'apollo-server-express/dist/ApolloServer';
 import { HelpFunctions, YosServerModule } from '..';
+import { GraphqlModuleConfig } from '../interfaces/graphql-module-config.interface';
 
 const packageJson = require('../../package.json');
 
 export class GraphQLModule extends YosServerModule {
+
+  // ===================================================================================================================
+  // Properties
+  // ===================================================================================================================
+
+  // Module configuration is set automatically
+  protected _config: GraphqlModuleConfig;
 
   // ===================================================================================================================
   // Methods
@@ -38,12 +46,26 @@ export class GraphQLModule extends YosServerModule {
             env: env,
             name: name,
             version: version
-          }
-        },
-      },
+          };
+        }
+      }
     };
 
-    const server = new ApolloServer({typeDefs, resolvers});
+    // ApolloServer
+    let server = this.config.apolloServer;
+    if (!server) {
+      server = new ApolloServer(HelpFunctions.specialMerge({
+        typeDefs,
+        resolvers,
+        context: () => {
+          return {
+            yosServer: this.yosServer,
+            yosModule: this
+          };
+        }
+      }, this._config.apolloConfig));
+    }
+
 
     // Configuration for apollo
     const apolloConfig: ServerRegistration = {

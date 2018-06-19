@@ -1,5 +1,6 @@
 import * as path from 'path';
 import { YosServerConfig, YosServerCoreConfig, YosServerModuleConfig } from '..';
+import { GraphqlModuleConfig } from '../interfaces/graphql-module-config.interface';
 
 /**
  * Default yos-server configuration
@@ -65,12 +66,31 @@ export class YosServerDefaultConfig implements YosServerConfig {
 
   // Core modules
   public coreModules: YosServerModuleConfig[] = [
-    {
-      // Module config
+
+    // GraphQL module
+    <GraphqlModuleConfig> {
+
+    // Module config
       module: {
         active: true,
         fileName: 'graphql',
         className: 'GraphQL'
+      },
+
+      // Set own apollo server
+      // (https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html)
+      apolloSever: undefined,
+
+      // Configuration for new apollo server
+      // (see https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt)
+      apolloConfig: {
+
+        // Enable mocks
+        // (see: https://www.apollographql.com/docs/apollo-server/v2/features/mocking.html)
+        // object => enable mocks via customize mocks
+        // true => enable auto mocks
+        // false => disable mocks
+        mocks: false,
       },
 
       // Enable playground
