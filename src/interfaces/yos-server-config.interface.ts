@@ -1,4 +1,4 @@
-import { YosServerCoreConfig, YosServerModuleConfig } from '..';
+import { YosModuleConfig, YosModulesConfig, YosServerCoreConfig, YosServicesConfig } from '..';
 
 /**
  * Interface for yos-server configuration
@@ -11,8 +11,14 @@ export interface YosServerConfig {
   core?: YosServerCoreConfig,
 
   // Core modules configuration
-  coreModules?: YosServerModuleConfig[],
+  coreModules?: YosModuleConfig[],
+
+  // Environment
+  environment?: string,
 
   // Modules configuration
-  modules?: YosServerModuleConfig[]
+  modules?: YosModulesConfig,
+
+  // YosServicesConfig configuration
+  services?: YosServicesConfig
 }

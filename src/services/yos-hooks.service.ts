@@ -1,25 +1,33 @@
 import * as _ from 'lodash';
-import { ActionHooks, FilterHooks, HookAction, HookFilter } from '..';
+import { YosActionHooks, YosFilterHooks, YosHookAction, YosHookFilter, YosServer, YosService } from '..';
 
 /**
  * Service for hooks
  */
-export class HooksService {
+export class YosHooksService extends YosService {
 
   // ===================================================================================================================
   // Properties
   // ===================================================================================================================
 
   // Action hooks perform an action at the called point
-  protected _actions: ActionHooks = {};
+  protected _actions: YosActionHooks = {};
 
   // Filter hooks can change a value at the called location and must therefore necessarily return a value
-  protected _filters: FilterHooks = {};
+  protected _filters: YosFilterHooks = {};
 
 
   // ===================================================================================================================
   // Methods
   // ===================================================================================================================
+
+  /**
+   * Initialization of new hooks service instance
+   * @returns {YosHooksService}
+   */
+  public static init(yosServer: YosServer): YosHooksService {
+    return new YosHooksService(yosServer);
+  }
 
   /**
    * Perform action
@@ -50,25 +58,25 @@ export class HooksService {
   /**
    * Add action
    * @param {string} hook Name of the hook
-   * @param {HookAction} action
+   * @param {YosHookAction} action
    */
-  addAction(hook: string, action: HookAction): void {
+  addAction(hook: string, action: YosHookAction): void {
     this.removeAction(hook, action.id);
     this._actions[hook] = this._actions[hook] || [];
     this._actions[hook].push(action);
-    _.orderBy(this._actions[hook], ['priority'], ['desc'])
+    _.orderBy(this._actions[hook], ['priority'], ['desc']);
   }
 
   /**
    * Add filter
    * @param {string} hook
-   * @param {HookFilter} filter
+   * @param {YosHookFilter} filter
    */
-  addFilter(hook: string, filter: HookFilter): void {
+  addFilter(hook: string, filter: YosHookFilter): void {
     this.removeAction(hook, filter.id);
     this._filters[hook] = this._filters[hook] || [];
     this._filters[hook].push(filter);
-    _.orderBy(this._filters[hook], ['priority'], ['desc'])
+    _.orderBy(this._filters[hook], ['priority'], ['desc']);
   }
 
   /**
@@ -79,7 +87,7 @@ export class HooksService {
   removeAction(hook: string, action: string): void {
     _.remove(this._actions[hook], (element) => {
       return element.id === action;
-    })
+    });
   }
 
   /**
@@ -90,7 +98,7 @@ export class HooksService {
   removeFilter(hook: string, filter: string): void {
     _.remove(this._filters[hook], (element) => {
       return element.id === filter;
-    })
+    });
   }
 
   /**
@@ -101,7 +109,7 @@ export class HooksService {
     for (const prop of Object.getOwnPropertyNames(this._actions)) {
       _.remove(this._actions[prop], (element) => {
         return element.id === action;
-      })
+      });
     }
   }
 
@@ -113,7 +121,7 @@ export class HooksService {
     for (const prop of Object.getOwnPropertyNames(this._filters)) {
       _.remove(this._filters[prop], (element) => {
         return element.id === filter;
-      })
+      });
     }
   }
 

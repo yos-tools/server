@@ -1,6 +1,12 @@
-import * as path from 'path';
-import { YosServerConfig, YosServerCoreConfig, YosServerModuleConfig } from '..';
-import { GraphqlModuleConfig } from '../interfaces/graphql-module-config.interface';
+import {
+  YosGraphQLModule,
+  YosHooksService,
+  YosModulesConfig,
+  YosProcessModule,
+  YosServerConfig,
+  YosServerCoreConfig,
+  YosServicesConfig
+} from '..';
 
 /**
  * Default yos-server configuration
@@ -22,67 +28,39 @@ export class YosServerDefaultConfig implements YosServerConfig {
       pathsOverwriteCurrent: false
     },
 
-    // Configuration of core modules
-    coreModules: {
-
-      // Full path of directory of additional modules in project
-      directory: path.join(__dirname, '../modules'),
-
-      // Extension of file name
-      fileNameExtension: 'module',
-
-      // Extension of module name
-      moduleNameExtension: 'Module'
-    },
-
-    // Configuration of project modules
-    modules: {
-
-      // Full path of directory of additional modules in project
-      directory: null,
-
-      // Extension of file name
-      fileNameExtension: 'module',
-
-      // Extension of module name
-      moduleNameExtension: 'Module'
-    },
-
     // Configuration of yos-server
     yosServer: {
 
       // Hostname under which the server runs
       // '0.0.0.0' => accessible from outside
       // '127.0.0.1' / 'localhost' => local-only interface
+      // will be overwritten by process.env.HOSTNAME
       hostname: '0.0.0.0',
 
       // Name of the server
       name: 'YosServer',
 
       // Port on which the server is running
-      port: 3000
+      // will be overwritten by process.env.PORT
+      port: 8080
     }
   };
 
   // Core modules
-  public coreModules: YosServerModuleConfig[] = [
+  public modules: YosModulesConfig = {
 
     // GraphQL module
-    <GraphqlModuleConfig> {
+    yosGraphQL: {
 
-    // Module config
-      module: {
-        active: true,
-        fileName: 'graphql',
-        className: 'GraphQL'
-      },
+      // Module config
+      module: YosGraphQLModule,
 
       // Set own apollo server
       // (https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html)
       apolloSever: undefined,
 
       // Configuration for new apollo server
-      // (see https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt)
+      // (see https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html)
       apolloConfig: {
 
         // Enable mocks
@@ -90,7 +68,7 @@ export class YosServerDefaultConfig implements YosServerConfig {
         // object => enable mocks via customize mocks
         // true => enable auto mocks
         // false => disable mocks
-        mocks: false,
+        mocks: false
       },
 
       // Enable playground
@@ -106,9 +84,13 @@ export class YosServerDefaultConfig implements YosServerConfig {
 
       // URL endpoint
       url: 'graphql'
-    }
-  ];
+    },
 
-  // Project modules
-  public modules:  YosServerModuleConfig[] = []
+    yosProcessModule: YosProcessModule
+  };
+
+  // YosServicesConfig
+  public services: YosServicesConfig = {
+    hooksService: YosHooksService
+  };
 }

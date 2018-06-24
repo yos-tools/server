@@ -1,14 +1,17 @@
-import { YosServer } from '..';
+import { YosHelper, YosModuleConfig, YosServer } from '..';
 
 /**
  * Absract class for yos-server modules
  */
-export abstract class YosServerModule {
+export abstract class YosModule {
+
+  // Individual properties of the module
+  [prop: string]: any;
 
   /**
    * Module configuration
    */
-  protected _config: any;
+  protected _config: YosModuleConfig;
 
   /**
    * Current yos-server instance
@@ -18,18 +21,19 @@ export abstract class YosServerModule {
   /**
    * Default constructor
    * @param {YosServer} yosServer Current yos-server instance
-   * @param {any} config Configuration of the Module
+   * @param {YosModuleConfig} config Configuration of the module
    */
-  constructor(yosServer: YosServer, config?: any) {
+  protected constructor(yosServer: YosServer, config?: YosModuleConfig) {
     this._yosServer = yosServer;
     this._config = config;
-    this.init();
   }
 
   /**
    * Initialize method
    */
-  protected abstract init(): any;
+  public static init(yosServer: YosServer, config?: YosModuleConfig): YosModule | Promise<YosModule> {
+    throw new Error('The static init method of "' + YosHelper.getClassName(this) + '" must be set. Check whether the method is in the class and whether it is static.');
+  };
 
   /**
    * Getter for yosServer
@@ -49,17 +53,17 @@ export abstract class YosServerModule {
 
   /**
    * Getter for config
-   * @returns {any}
+   * @returns {YosModuleConfig}
    */
-  public get config() {
+  public get config(): YosModuleConfig {
     return this._config;
   }
 
   /**
    * Setter for config
-   * @param {any} config
+   * @param {YosModuleConfig} config
    */
-  public set config(config: any) {
+  public set config(config: YosModuleConfig) {
     this._config = config;
   }
 }

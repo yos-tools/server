@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 
-export class HelpFunctions {
-
+export class YosHelper {
 
   /**
    * Special merge function (e.g. for configurations)
@@ -36,11 +35,20 @@ export class HelpFunctions {
   public static prepareUrl(url: any, defaultUrl: string, leadingSlash: boolean): string {
     url = _.isString(url) && url.length > 0 ? url : defaultUrl;
     if (leadingSlash && url.charAt(0) !== '/') {
-      url = '/'+url;
+      url = '/' + url;
     } else if (!leadingSlash && url.charAt(0) === '/') {
       url = url.substr(1);
     }
-    return url
+    return url;
   }
 
+  /**
+   * Get class name of class
+   * @param item
+   * @returns {string}
+   */
+  public static getClassName(item: any) {
+    let classNameRegEx = /(?:\S+\s+){1}([a-zA-Z_$][0-9a-zA-Z_$]*)/;
+    return classNameRegEx.exec(item.toString())[1];
+  }
 }

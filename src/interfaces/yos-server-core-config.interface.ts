@@ -1,8 +1,6 @@
 /**
  * Interface for yos-server core configuration
  */
-import { YosServerModuleLoadConfig } from './yos-server-module-load-config.interface';
-
 export interface YosServerCoreConfig {
 
   // Configuration of automatic configuration handling
@@ -14,12 +12,6 @@ export interface YosServerCoreConfig {
     // Specifies whether the configurations from the paths overwrite the configuration contained in this object.
     pathsOverwriteCurrent?: boolean
   },
-
-  // Configuration of project modules
-  coreModules?: YosServerModuleLoadConfig,
-
-  // Configuration of modules
-  modules?: YosServerModuleLoadConfig,
 
   // Configuration of yos-server
   yosServer?: {

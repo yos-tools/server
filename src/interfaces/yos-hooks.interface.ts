@@ -1,14 +1,14 @@
 /**
  * Interface for action hooks
  */
-export interface ActionHooks {
-  [hook: string]: HookAction[];
+export interface YosActionHooks {
+  [hook: string]: YosHookAction[];
 }
 
 /**
  * Interface for hook action
  */
-export interface HookAction {
+export interface YosHookAction {
 
   // Action
   func: (...args: any[]) => void;
@@ -23,7 +23,7 @@ export interface HookAction {
 /**
  * Interface for hook filter
  */
-export interface HookFilter {
+export interface YosHookFilter {
 
   // Filter
   func: (...args: any[]) => any;
@@ -38,7 +38,7 @@ export interface HookFilter {
 /**
  * Interface for filter hooks
  */
-export interface FilterHooks {
-  [hook: string]: HookFilter[];
+export interface YosFilterHooks {
+  [hook: string]: YosHookFilter[];
 }
 

@@ -1,15 +1,15 @@
 import { Config } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server-express';
-import { YosServerModuleConfig } from './yos-server-module-config.interface';
+import { YosModuleConfig } from '..';
 
-export interface GraphqlModuleConfig extends YosServerModuleConfig {
+export interface YosGraphqlModuleConfig extends YosModuleConfig {
 
   // Set own apollo server
   // (see https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html)
   apolloSever: ApolloServer,
 
   // Configuration for new apollo server
-  // (see https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt)
+  // (https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt)
   apolloConfig: Config,
 
   // Enable playground
