@@ -41,9 +41,14 @@ export { YosServicesConfig } from './interfaces/yos-services-config.interface';
 // Modules exports
 // =====================================================================================================================
 export { YosGraphQLModule } from './modules/yos-graphql.module';
+export { YosProcessModule } from './modules/yos-process.module';
 
 // =====================================================================================================================
-// YosServicesConfig exports
+// Services exports
 // =====================================================================================================================
 export { YosHooksService } from './services/yos-hooks.service';
-export { YosProcessModule } from './modules/yos-process.module';
+
+// =====================================================================================================================
+// Types exports
+// =====================================================================================================================
+export { YosGraphQLSchemasConfigType } from './types/yos-graphql-schemas-config.type';

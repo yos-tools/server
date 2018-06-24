@@ -1,9 +1,9 @@
 import { Config } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server-express';
-import { YosGraphQLModule, YosModuleConfig, YosSchemaDefinition } from '..';
+import { YosGraphQLModule, YosGraphQLSchemasConfigType, YosModuleConfig } from '..';
 
 /**
- * Interface for gro
+ * Interface for GraphQL module config
  */
 export interface YosGraphQLModuleConfig extends YosModuleConfig {
 
@@ -16,7 +16,7 @@ export interface YosGraphQLModuleConfig extends YosModuleConfig {
   apolloConfig?: Config,
 
   // Dir path, file path or object (array) for core schemas
-  coreSchemas?: string | string[] | YosSchemaDefinition | YosSchemaDefinition[],
+  coreSchemas?: YosGraphQLSchemasConfigType,
 
   // Module config
   module: typeof YosGraphQLModule,
@@ -27,7 +27,7 @@ export interface YosGraphQLModuleConfig extends YosModuleConfig {
   playground?: boolean,
 
   // Dir path, file path or object (array) for project schemas
-  schemas?: string | string[] | YosSchemaDefinition | YosSchemaDefinition[],
+  schemas?: YosGraphQLSchemasConfigType,
 
   // Enable subscriptions
   // string => enable subscriptions on this url endpoint

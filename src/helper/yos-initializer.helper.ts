@@ -9,6 +9,80 @@ import { YosHelper, YosModule, YosModulesConfig, YosServer, YosService, YosServi
 export class YosInitializer {
 
   /**
+   * Load files via require
+   * @param {string | string[]} fileOrDirPaths String or string array with file or directory path(s)
+   * @param {{environment?: string, environmentDir?: string, patterns?: string[]}} config Config for file patterns and environment handling
+   * @returns {Promise<any[]>}
+   */
+  public static async requireFiles(fileOrDirPaths: string | string[], config?: {
+    environment?: string, environmentDir?: string, patterns?: string[]
+  }): Promise<any[]> {
+
+    // Process configuration
+    config = Object.assign({
+      patterns: ['**/*.js', '**/*.ts', '!**/*.d.ts', '**/*.json']
+    }, config);
+
+    // Init element array
+    const loadedElements: any = [];
+
+    // Check file or dir paths
+    if (!fileOrDirPaths) {
+      return loadedElements;
+    }
+
+    // Process array
+    if (Array.isArray(fileOrDirPaths)) {
+      for (const path of fileOrDirPaths) {
+        loadedElements.concat(await YosInitializer.requireFiles(path, config));
+      }
+      return loadedElements;
+    }
+
+    // Get full path
+    fileOrDirPaths = path.resolve(<string>fileOrDirPaths);
+
+    // Single file handling
+    try {
+      loadedElements.push(require(fileOrDirPaths));
+      return loadedElements;
+    } catch (err) {}
+
+    // Get paths of all files in directory
+    const filePaths = (await globby(config.patterns, {cwd: fileOrDirPaths})).map((fileName) => {
+      return path.join(<string>fileOrDirPaths, fileName);
+    });
+
+    // Process file paths
+    for (const filePath of filePaths) {
+
+      // Get element from file
+      const singleElement = require(filePath);
+
+      // Check the conditions of the environment
+      if (config.environmentDir) {
+
+        // Get names
+        const dirName = path.dirname(filePath);
+        const baseNameWithoutExtension = path.basename(filePath, path.extname(filePath));
+
+        // If the directory is an environment directory and the file name does not match the current environment,
+        // the current file is skipped
+        if (dirName.toLocaleLowerCase().endsWith('/' + config.environmentDir) &&
+          baseNameWithoutExtension.toLowerCase() !== config.environment) {
+          continue;
+        }
+      }
+
+      // Include single element
+      loadedElements.push(singleElement);
+    }
+
+    // Return loaded elements
+    return loadedElements;
+  }
+
+  /**
    * Load configurations from files
    * @param {string} fileOrDirPaths String or array of strings with file or directory path
    * @param {{environment: string, environmentDir: string, patterns: string[]}} config Configuration of the function
@@ -27,56 +101,10 @@ export class YosInitializer {
 
     // Init loaded config
     const loadedConfig: any = {};
+    const loadedElements = await YosInitializer.requireFiles(fileOrDirPaths, config);
 
-    // Check file or dir path
-    if (!fileOrDirPaths) {
-      return loadedConfig;
-    }
-
-    // Process array
-    if (Array.isArray(fileOrDirPaths)) {
-      for (const path of fileOrDirPaths) {
-        const loadedConfigs = YosInitializer.loadConfigs(path, config);
-        YosHelper.specialMerge(loadedConfig, loadedConfigs);
-      }
-      return loadedConfig;
-    }
-
-    // Get full path
-    fileOrDirPaths = path.resolve(<string>fileOrDirPaths);
-
-    // File handling
-    try {
-      return require(fileOrDirPaths);
-    } catch (err) {}
-
-    // Get paths of all config files in directory
-    const filePaths = (await globby(config.patterns, {cwd: fileOrDirPaths})).map((fileName) => {
-      return path.join(<string>fileOrDirPaths, fileName);
-    });
-
-    // Combine configs
-    for (const filePath of filePaths) {
-
-      // Get config from file
-      const singleConfig = require(filePath);
-
-      // Get names
-      const dirName = path.dirname(filePath);
-      const baseNameWithoutExtension = path.basename(filePath, path.extname(filePath));
-
-      // Special handling for environment directory
-      if (config.environmentDir && dirName.toLocaleLowerCase().endsWith('/' + config.environmentDir)) {
-
-        // Check if file name matches the environment
-        if (baseNameWithoutExtension.toLowerCase() !== config.environment) {
-          continue;
-        }
-      }
-
-      // Include single config
-      YosHelper.specialMerge(loadedConfig, singleConfig);
-    }
+    // Include loaded Elements
+    YosHelper.specialMerge(loadedConfig, ...loadedElements);
 
     // Return loaded config
     return loadedConfig;
@@ -126,6 +154,12 @@ export class YosInitializer {
 
     // Process sorted array
     for (const element of _.orderBy(moduleArray, 'position')) {
+
+      // Check deactivated status
+      if (element.config && element.config.deactivated) {
+        continue;
+      }
+
       yosServer.modules[element.id] = await element.item.init(yosServer, element.config);
     }
 
@@ -178,6 +212,12 @@ export class YosInitializer {
 
     // Process sorted array
     for (const element of _.orderBy(serviceArray, 'position')) {
+
+      // Check deactivated status
+      if (element.config && element.config.deactivated) {
+        continue;
+      }
+
       yosServer.services[element.id] = await element.item.init(yosServer, element.config);
     }
 
