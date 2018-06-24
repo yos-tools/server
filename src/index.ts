@@ -28,7 +28,7 @@ export { YosHelper } from './helper/yos-helper.helper';
 // Interfaces exports
 // =====================================================================================================================
 export { YosSchemaDefinition } from './interfaces/yos-schema-definition.interface';
-export { YosGraphqlModuleConfig } from './interfaces/yos-graphql-module-config.interface';
+export { YosGraphQLModuleConfig } from './interfaces/yos-graphql-module-config.interface';
 export { YosActionHooks, YosHookAction, YosHookFilter, YosFilterHooks } from './interfaces/yos-hooks.interface';
 export { YosModuleConfig } from './interfaces/yos-module-config.interface';
 export { YosModulesConfig } from './interfaces/yos-modules-config.interface';

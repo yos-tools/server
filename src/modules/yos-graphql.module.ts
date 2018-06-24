@@ -1,6 +1,5 @@
-import { ApolloServer } from 'apollo-server-express';
-import { ServerRegistration } from 'apollo-server-express/dist/ApolloServer';
-import { YosCoreApi, YosGraphqlModuleConfig, YosHelper, YosModule, YosServer } from '..';
+import { ApolloServer, ServerRegistration } from 'apollo-server-express';
+import { YosCoreApi, YosGraphQLModuleConfig, YosHelper, YosModule, YosServer } from '..';
 
 /**
  * GraphQL module for yos-server
@@ -12,7 +11,14 @@ export class YosGraphQLModule extends YosModule {
   // ===================================================================================================================
 
   // Module configuration is set automatically
-  protected _config: YosGraphqlModuleConfig;
+  protected _config: YosGraphQLModuleConfig;
+
+  // Apollo server
+  protected _apolloServer: ApolloServer;
+
+  // Apollo server config
+  protected _apolloServerRegistration: ServerRegistration;
+
 
   // ===================================================================================================================
   // Methods
@@ -21,65 +27,153 @@ export class YosGraphQLModule extends YosModule {
   /**
    * Initialization of a new YosGraphQLModule
    * @param {YosServer} yosServer
-   * @param {YosGraphqlModuleConfig} config
+   * @param {YosGraphQLModuleConfig} config
    * @returns {YosGraphQLModule}
    */
-  public static init(yosServer: YosServer, config: YosGraphqlModuleConfig): YosGraphQLModule {
+  public static init(yosServer: YosServer, config: YosGraphQLModuleConfig): YosGraphQLModule {
 
     // Init
     const yosGraphQLModule = new YosGraphQLModule(yosServer, config);
-    const graphqlUrl = YosHelper.prepareUrl(yosGraphQLModule.config.url, 'graphql', true);
 
-    // ApolloServer
-    let server = yosGraphQLModule.config.apolloServer;
-    if (!server) {
-      server = new ApolloServer(YosHelper.specialMerge({
-        typeDefs: YosCoreApi.typeDefs,
-        resolvers: YosCoreApi.resolvers,
-        context: () => {
-          return {
-            yosServer: yosGraphQLModule.yosServer,
-            yosModule: yosGraphQLModule
-          };
-        }
-      }, yosGraphQLModule._config.apolloConfig));
-    }
+    // Load schemas
 
+    // Initialize apollo server
+    yosGraphQLModule.initApolloServer();
 
-    // Configuration for apollo
-    const apolloConfig: ServerRegistration = {
-      app: yosGraphQLModule.yosServer.expressApp,
-      path: graphqlUrl,
-      gui: false
-    };
+    // Apply middleware, incl. subscriptions and playground, if desired
+    yosGraphQLModule.applyMiddleware();
 
-    // Check playground
-    if (yosGraphQLModule.config.playground) {
-
-      // Enable playground gui
-      apolloConfig.gui = true;
-
-      // Enable subscriptons
-      if (yosGraphQLModule.config.subscriptions) {
-        const subscriptionsUrl = YosHelper.prepareUrl(yosGraphQLModule.config.subscriptions, 'subscriptions', true);
-        apolloConfig.gui = {subscriptionEndpoint: `ws://${yosGraphQLModule.yosServer.hostname}:${yosGraphQLModule.yosServer.port + subscriptionsUrl}`};
-      }
-    }
-
-    // Add apollo server
-    server.applyMiddleware(apolloConfig);
-
-    // Add action hook
-    yosGraphQLModule.yosServer.services.hooksService.addAction('afterServerStart', {
-      id: 'graphQLStart',
-      priority: 10,
-      func: () => {
-        console.log('GraphQL started: ' + yosGraphQLModule.yosServer.url + server.graphqlPath);
-      }
-    });
+    // System log
+    yosGraphQLModule.systemLog();
 
     // Return module
     return yosGraphQLModule;
   }
 
+  /**
+   * Initialization of apollo server
+   * @returns {ApolloServer}
+   */
+  protected initApolloServer() {
+
+    // Take server from configuration if exists
+    this._apolloServer = this._config.apolloServer;
+
+    // Create new server
+    if (!this._apolloServer) {
+      this._apolloServer = new ApolloServer(YosHelper.specialMerge({
+
+        // Set type definitions
+        typeDefs: YosCoreApi.typeDefs,
+
+        // Set resolvers
+        resolvers: YosCoreApi.resolvers,
+
+        // Set context
+        context: () => {
+          return {
+            yosServer: this._yosServer
+          };
+        }
+
+        // Combine with configuration
+      }, this._config.apolloConfig));
+    }
+
+    // Return configured or new server
+    return this._apolloServer;
+  }
+
+
+  /**
+   * Apply apollo server to express app
+   */
+  protected applyMiddleware() {
+
+    // Check apolloServer
+    if (!this._apolloServer) {
+      this.initApolloServer();
+    }
+
+    // Init
+    const graphqlUrl = YosHelper.prepareUrl(this._config.url, 'graphql', true);
+
+    // Configuration for apollo
+    const apolloConfig: ServerRegistration = {
+      app: this._yosServer.expressApp,
+      path: graphqlUrl,
+      gui: false
+    };
+
+    // Check playground
+    if (this._config.playground) {
+
+      // Enable playground gui
+      apolloConfig.gui = true;
+    }
+
+    // Enable subscriptons
+    if (this._config.subscriptions) {
+      const subscriptionsUrl = YosHelper.prepareUrl(this._config.subscriptions, 'subscriptions', true);
+      apolloConfig.gui = {subscriptionEndpoint: `ws://${this._yosServer.hostname}:${this._yosServer.port + subscriptionsUrl}`};
+    }
+
+    // Add apollo server
+    this._apolloServer.applyMiddleware(apolloConfig);
+
+    // Set config
+    this._apolloServerRegistration = apolloConfig;
+  }
+
+  /**
+   * System log
+   */
+  protected systemLog() {
+
+    // Add action for GraphQL start
+    this._yosServer.services.hooksService.addAction('afterServerStart', {
+      id: 'graphQLStart',
+      priority: 10,
+      func: () => {
+        let str = 'GraphQL ';
+        if (this._config.playground) {
+          str += '(incl. Playground) ';
+        }
+        str += 'started: ';
+        console.log(str + this._yosServer.url + this._apolloServer.graphqlPath);
+      }
+    });
+
+    // Add action for GraphQL subbstriptions start
+    if (this._config.subscriptions) {
+      this._yosServer.services.hooksService.addAction('afterServerStart', {
+        id: 'graphQLSubscriptionStart',
+        priority: 10,
+        func: () => {
+          console.log('GraphQL subscriptions: ' + (<any>this._apolloServerRegistration.gui).subscriptionEndpoint);
+        }
+      });
+    }
+  }
+
+
+  // ===================================================================================================================
+  // Getter & Setter
+  // ===================================================================================================================
+
+  /**
+   * Getter for apollo server
+   * @returns {ApolloServer}
+   */
+  public get apolloServer(): ApolloServer {
+    return this._apolloServer;
+  }
+
+  /**
+   * Getter for apollo server registration
+   * @returns {ServerRegistration}
+   */
+  public get apolloServerRegistration(): ServerRegistration {
+    return this._apolloServerRegistration;
+  }
 }

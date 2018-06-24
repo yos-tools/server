@@ -1,3 +1,4 @@
+import * as path from 'path';
 import {
   YosGraphQLModule,
   YosHooksService,
@@ -52,9 +53,6 @@ export class YosServerDefaultConfig implements YosServerConfig {
     // GraphQL module
     yosGraphQL: {
 
-      // Module config
-      module: YosGraphQLModule,
-
       // Set own apollo server
       // (https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html)
       apolloSever: undefined,
@@ -71,10 +69,19 @@ export class YosServerDefaultConfig implements YosServerConfig {
         mocks: false
       },
 
+      // Dir path, file path or object (array) for core schemas
+      coreSchemas: path.join(__dirname, '../api'),
+
+      // Module config
+      module: YosGraphQLModule,
+
       // Enable playground
       // true => enable playground on graphql url
       // false => disable playground
       playground: true,
+
+      // Dir path, file path or object (array) for project schemas
+      schemas: null,
 
       // Enable subscriptions
       // string => enable subscriptions on this url endpoint

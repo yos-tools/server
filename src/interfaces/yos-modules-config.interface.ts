@@ -1,4 +1,4 @@
-import { YosGraphQLModule, YosGraphqlModuleConfig, YosModule, YosModuleConfig, YosProcessModule } from '..';
+import { YosGraphQLModule, YosGraphQLModuleConfig, YosModule, YosModuleConfig, YosProcessModule } from '..';
 
 /**
  * Interface for configrution of modules
@@ -6,6 +6,6 @@ import { YosGraphQLModule, YosGraphqlModuleConfig, YosModule, YosModuleConfig, Y
 export interface YosModulesConfig {
   [module: string]: YosModule | typeof YosModule | YosModuleConfig
 
-  yosGraphQL?: YosGraphQLModule | typeof YosGraphQLModule | YosGraphqlModuleConfig
+  yosGraphQL?: YosGraphQLModule | typeof YosGraphQLModule | YosGraphQLModuleConfig
   processModule?: YosProcessModule | typeof YosProcessModule | YosModuleConfig
 }

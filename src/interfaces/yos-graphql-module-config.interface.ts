@@ -1,28 +1,40 @@
 import { Config } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server-express';
-import { YosModuleConfig } from '..';
+import { YosGraphQLModule, YosModuleConfig, YosSchemaDefinition } from '..';
 
-export interface YosGraphqlModuleConfig extends YosModuleConfig {
+/**
+ * Interface for gro
+ */
+export interface YosGraphQLModuleConfig extends YosModuleConfig {
 
   // Set own apollo server
-  // (see https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html)
-  apolloSever: ApolloServer,
+  // (https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html)
+  apolloSever?: ApolloServer,
 
   // Configuration for new apollo server
-  // (https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt)
-  apolloConfig: Config,
+  // (see https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html)
+  apolloConfig?: Config,
+
+  // Dir path, file path or object (array) for core schemas
+  coreSchemas?: string | string[] | YosSchemaDefinition | YosSchemaDefinition[],
+
+  // Module config
+  module: typeof YosGraphQLModule,
 
   // Enable playground
-  // true => enable playground on graphql url
+  // true => enable playground on GraphQL url
   // false => disable playground
-  playground: true,
+  playground?: boolean,
+
+  // Dir path, file path or object (array) for project schemas
+  schemas?: string | string[] | YosSchemaDefinition | YosSchemaDefinition[],
 
   // Enable subscriptions
   // string => enable subscriptions on this url endpoint
   // true => enable subscriptions on '/subscriptions'
   // false => disable subscriptions
-  subscriptions: 'subscriptions',
+  subscriptions?: string | boolean,
 
   // URL endpoint
-  url: 'graphql'
+  url?: string
 }
