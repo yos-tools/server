@@ -1,4 +1,5 @@
 import { ApolloServer, ServerRegistration } from 'apollo-server-express';
+import { DefinitionNode, parse, print } from 'graphql';
 import { IResolvers, ITypedef } from 'graphql-tools';
 import * as _ from 'lodash';
 import {
@@ -146,14 +147,92 @@ export class YosGraphQLModule extends YosModule {
    */
   public static mergeGraphQLTypeDefinitions(definitions: string | string[]): string {
 
-    // Array to string
+    // Convert array to string
     if (Array.isArray(definitions)) {
       definitions = definitions.toString();
     }
 
-    // @todo: merge type definitions
+    // Convert definitions string into a GraphQL document node
+    const documentNode = <any> parse(definitions);
 
-    return definitions;
+    // Init associated array for fields (e.g. "id") for every named type (e.g. "User")
+    const typeFields: { [type: string]: { [field: string]: any } } = {};
+
+    // Init associated array for named definitions
+    const typeDefinitions: { [type: string]: any } = {};
+
+    // 1. Round: collect definitions and all fields for each type (with names)
+    // If elements with the same name exist, the last one is used
+    for (const definition of documentNode.definitions) {
+
+      // Check type name
+      if (!_.get(definition, 'name.value', '').length) {
+        continue;
+      }
+
+      // Get type
+      const type = definition.name.value;
+      typeDefinitions[type] = definition;
+
+      // Check if the definition has fields
+      if (!Array.isArray(definition.fields)) {
+        continue;
+      }
+
+      // Init fields of type, if not exist
+      if (!typeFields[type]) {
+        typeFields[type] = {};
+      }
+
+      // Collect all fields of type (existing ones are overwritten)
+      for (const field of definition.fields) {
+        typeFields[type][field.name.value] = field;
+      }
+
+    }
+
+    // Init new definition nodes
+    const definitionNodes: DefinitionNode[] = [];
+
+    // 2. Round: merge definitions
+    // Types with fields are replaced by those created above and duplicates are eliminated
+    for (const definition of documentNode.definitions) {
+
+      // Check type name
+      if (!_.get(definition, 'name.value', '').length) {
+
+        // Add unnamed definition
+        definitionNodes.push(definition);
+
+        continue;
+      }
+
+      // Get type
+      const type = definition.name.value;
+
+      // Check if the type has already been processed
+      if (!typeDefinitions.hasOwnProperty(type)) {
+        continue;
+      }
+
+      // Get last definition of named type
+      const lastDefinitionOfType = typeDefinitions[type];
+
+      // Set fields
+      lastDefinitionOfType.fields = Object.values(typeFields[type]);
+
+      // Add named definition
+      definitionNodes.push(lastDefinitionOfType);
+
+      // Remove definition from typeDefinition
+      delete typeDefinitions[type];
+    }
+
+    // Set new definition nodes
+    documentNode.definitions = definitionNodes;
+
+    // Return string with merged GraphQL type definitions
+    return print(documentNode);
   }
 
 
