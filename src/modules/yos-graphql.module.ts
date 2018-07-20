@@ -3,6 +3,7 @@ import { DefinitionNode, parse, print } from 'graphql';
 import { IResolvers, ITypedef } from 'graphql-tools';
 import * as _ from 'lodash';
 import {
+  YosActionHook,
   YosGraphQLModuleConfig,
   YosGraphQLSchemasConfigType,
   YosHelper,
@@ -23,19 +24,19 @@ export class YosGraphQLModule extends YosModule {
   // Properties
   // ===================================================================================================================
 
-  // Apollo server
+  /** Apollo server */
   protected _apolloServer: ApolloServer;
 
-  // Apollo server config
+  /** Apollo server config */
   protected _apolloServerRegistration: ServerRegistration;
 
-  // Module configuration is set automatically
+  /** Module configuration is set automatically */
   protected _config: YosGraphQLModuleConfig;
 
-  // GraphQL resolvers
+  /** GraphQL resolvers */
   protected _resolvers: IResolvers;
 
-  // GraphQL type definitions
+  /** GraphQL type definitions */
   protected _typeDefs: ITypedef;
 
 
@@ -351,7 +352,7 @@ export class YosGraphQLModule extends YosModule {
   protected systemLog() {
 
     // Add action for GraphQL start
-    this._yosServer.services.hooksService.addAction('afterServerStart', {
+    this._yosServer.services.hooksService.addAction(YosActionHook.AfterServerStart, {
       id: 'graphQLStart',
       priority: 10,
       func: () => {
@@ -366,7 +367,7 @@ export class YosGraphQLModule extends YosModule {
 
     // Add action for GraphQL subbstriptions start
     if (this._config.subscriptions) {
-      this._yosServer.services.hooksService.addAction('afterServerStart', {
+      this._yosServer.services.hooksService.addAction(YosActionHook.AfterServerStart, {
         id: 'graphQLSubscriptionStart',
         priority: 10,
         func: () => {

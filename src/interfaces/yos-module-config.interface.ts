@@ -5,14 +5,14 @@ import { YosModule } from '..';
  */
 export interface YosModuleConfig {
 
-  // Individual properties of the module
+  /** Individual properties of the module */
   [prop: string]: any,
 
-  // Module class
+  /** Module class */
   module: typeof YosModule,
 
-  // Integration position of the module
-  // Modules with a lower integration position are included first (asc)
-  // If no priority is specified, the integration position is 0 and the module is considered one of the first
+  /** Integration position of the module
+   * Modules with a lower integration position are included first (asc)
+   * If no priority is specified, the integration position is 0 and the module is considered one of the first */
   position?: number
 }

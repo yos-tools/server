@@ -5,7 +5,7 @@ import { YosModule, YosServer } from '..';
  */
 export class YosProcessModule extends YosModule {
 
-  // Initialized flag
+  /** Initialized flag */
   public static instance: YosModule;
 
   /**

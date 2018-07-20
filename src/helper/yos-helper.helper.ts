@@ -1,5 +1,8 @@
 import * as _ from 'lodash';
 
+/**
+ * General help functions
+ */
 export class YosHelper {
 
   /**

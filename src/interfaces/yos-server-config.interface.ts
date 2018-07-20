@@ -7,18 +7,18 @@ import { YosModuleConfig, YosModulesConfig, YosServerCoreConfig, YosServicesConf
  */
 export interface YosServerConfig {
 
-  // Core configuration
+  /** Core configuration */
   core?: YosServerCoreConfig,
 
-  // Core modules configuration
+  /** Core modules configuration */
   coreModules?: YosModuleConfig[],
 
-  // Environment
+  /** Environment */
   environment?: string,
 
-  // Modules configuration
+  /** Modules configuration */
   modules?: YosModulesConfig,
 
-  // YosServicesConfig configuration
+  /** YosServicesConfig configuration */
   services?: YosServicesConfig
 }

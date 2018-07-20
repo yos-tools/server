@@ -1,5 +1,14 @@
 import * as _ from 'lodash';
-import { YosActionHooks, YosFilterHooks, YosHookAction, YosHookFilter, YosServer, YosService } from '..';
+import {
+  YosActionHook,
+  YosActionHooks,
+  YosFilterHook,
+  YosFilterHooks,
+  YosHookAction,
+  YosHookFilter,
+  YosServer,
+  YosService
+} from '..';
 
 /**
  * Service for hooks
@@ -10,10 +19,10 @@ export class YosHooksService extends YosService {
   // Properties
   // ===================================================================================================================
 
-  // Action hooks perform an action at the called point
+  /** Action hooks perform an action at the called point */
   protected _actions: YosActionHooks = {};
 
-  // Filter hooks can change a value at the called location and must therefore necessarily return a value
+  /** Filter hooks can change a value at the called location and must therefore necessarily return a value */
   protected _filters: YosFilterHooks = {};
 
 
@@ -31,11 +40,11 @@ export class YosHooksService extends YosService {
 
   /**
    * Perform action
-   * @param {string} hook Name of the hook
+   * @param {YosActionHook} hook Name of the hook
    * @param args Parameters for action function
    * @returns {Promise<void>}
    */
-  async performActions(hook: string, ...args: any[]): Promise<void> {
+  async performActions(hook: YosActionHook, ...args: any[]): Promise<void> {
     const actions = this._actions[hook] || [];
     for (const action of actions) {
       await action.func(...args);
@@ -48,7 +57,7 @@ export class YosHooksService extends YosService {
    * @param args Parameters for filter function
    * @returns {Promise<void>}
    */
-  async performFilters(hook: string, ...args: any[]): Promise<void> {
+  async performFilters(hook: YosFilterHook, ...args: any[]): Promise<void> {
     const filters = this._filters[hook] || [];
     for (const filter of filters) {
       await filter.func(...args);

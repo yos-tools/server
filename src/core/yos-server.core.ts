@@ -1,7 +1,15 @@
 import * as express from 'express';
 import * as http from 'http';
 import * as _ from 'lodash';
-import { YosHelper, YosInitializer, YosModule, YosServerConfig, YosServerDefaultConfig, YosService } from '..';
+import {
+  YosActionHook,
+  YosHelper,
+  YosInitializer,
+  YosModule,
+  YosServerConfig,
+  YosServerDefaultConfig,
+  YosService
+} from '..';
 import getPort = require('get-port');
 
 /**
@@ -13,19 +21,19 @@ export class YosServer {
   // Properties
   // ===================================================================================================================
 
-  // Current configuration
+  /** Current configuration */
   protected _config: YosServerConfig;
 
-  // Express app (as basis for all modules)
+  /** Express app (as basis for all modules) */
   protected _expressApp: express.Application;
 
-  // Loaded modules
+  /** Loaded modules */
   protected _modules: { [module: string]: YosModule } = {};
 
-  // HTTP server
+  /** HTTP server */
   protected _server: http.Server;
 
-  // YosServicesConfig
+  /** YosServicesConfig */
   protected _services: { [module: string]: YosService } = {};
 
 
@@ -153,14 +161,18 @@ export class YosServer {
     return new Promise<express.Application>(async (resolve, reject) => {
 
       // Action hook: before server start
-      await this._services.hooksService.performActions('beforeServerStart');
+      if (_.has(this._services, 'hooksService')) {
+        await this._services.hooksService.performActions(YosActionHook.BeforeServerStart);
+      }
 
       // Start server
       this._server = this.expressApp.listen(port, hostname, async () => {
         console.log(name + ' started: ' + this.url);
 
         // Action hook: after server start
-        await this._services.hooksService.performActions('afterServerStart');
+        if (_.has(this._services, 'hooksService')) {
+          await this._services.hooksService.performActions(YosActionHook.AfterServerStart);
+        }
 
         resolve(this.expressApp);
       });

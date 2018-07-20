@@ -16,88 +16,108 @@ import {
  */
 export class YosServerDefaultConfig implements YosServerConfig {
 
-  // Core
+  /** Core */
   public core: YosServerCoreConfig = {
 
-    // Configuration of automatic configuration handling
+    /** Configuration for the authorization handling */
+    authorization: {
+
+      /** Name of the authorization field of the http header
+       * The standard "Authorization" leads to an error when using directory protection in an upstream server
+       * (e.g. NGINX or Apache) */
+      authorizationField: 'yos-authorization',
+
+      /** JWT configuration
+       * See https:/**github.com/auth0/node-jsonwebtoken */
+      jwt: {
+
+        /** Must be set in the project, otherwise an error is thrown */
+        secretOrPrivateKey: null
+      }
+    },
+
+    /** Configuration of automatic configuration handling */
     configurations: {
 
-      // If a configuration object is transferred, another path is transferred for auto handling
+      /** If a configuration object is transferred, another path is transferred for auto handling */
       paths: null,
 
-      // Specifies whether the configurations from the paths overwrite the configuration contained in this object
+      /** Specifies whether the configurations from the paths overwrite the configuration contained in this object */
       pathsOverwriteCurrent: false
     },
 
-    // Configuration of yos-server
+    /** Configuration of yos-server */
     yosServer: {
 
-      // Hostname under which the server runs
-      // '0.0.0.0' => accessible from outside
-      // '127.0.0.1' / 'localhost' => local-only interface
-      // will be overwritten by process.env.HOSTNAME
+      /** Hostname under which the server runs
+       * '0.0.0.0' => accessible from outside
+       * '127.0.0.1' / 'localhost' => local-only interface
+       * will be overwritten by process.env.HOSTNAME */
       hostname: '0.0.0.0',
 
-      // Name of the server
+      /** Name of the server */
       name: 'YosServer',
 
-      // Port on which the server is running
-      // will be overwritten by process.env.PORT
+      /** Port on which the server is running
+       * will be overwritten by process.env.PORT */
       port: 8080
     }
   };
 
-  // Core modules
+  /** Core modules */
   public modules: YosModulesConfig = {
 
-    // GraphQL module
+    /** GraphQL module */
     yosGraphQL: {
 
-      // Set own apollo server
-      // (https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html)
+      /** Set own apollo server
+       * (https:/**www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html) */
       apolloSever: undefined,
 
-      // Configuration for new apollo server
-      // (see https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html)
+      /** Configuration for new apollo server
+       * (see https:/**www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html) */
       apolloConfig: {
 
-        // Enable mocks
-        // (see: https://www.apollographql.com/docs/apollo-server/v2/features/mocking.html)
-        // object => enable mocks via customize mocks
-        // true => enable auto mocks
-        // false => disable mocks
+        /** Enable mocks
+         * (see: https:/**www.apollographql.com/docs/apollo-server/v2/features/mocking.html)
+         * object => enable mocks via customize mocks
+         * true => enable auto mocks
+         * false => disable mocks */
         mocks: false
       },
 
-      // Dir path, file path or object (array) for core schemas
+      /** Dir path, file path or object (array) for core schemas */
       coreSchemas: path.join(__dirname, '../api'),
 
-      // Module config
+      /** Module config */
       module: YosGraphQLModule,
 
-      // Enable playground
-      // true => enable playground on graphql url
-      // false => disable playground
+      /** Enable playground
+       * true => enable playground on graphql url
+       * false => disable playground */
       playground: true,
 
-      // Dir path, file path or object (array) for project schemas
+      /** Dir path, file path or object (array) for project schemas */
       schemas: null,
 
-      // Enable subscriptions
-      // string => enable subscriptions on this url endpoint
-      // true => enable subscriptions on '/subscriptions'
-      // false => disable subscriptions
+      /** Enable subscriptions
+       * string => enable subscriptions on this url endpoint
+       * true => enable subscriptions on '/subscriptions'
+       * false => disable subscriptions */
       subscriptions: 'subscriptions',
 
-      // URL endpoint
+      /** URL endpoint */
       url: 'graphql'
     },
 
+    /** Module for global processes */
     yosProcessModule: YosProcessModule
   };
 
-  // YosServicesConfig
+  /** YosServicesConfig */
   public services: YosServicesConfig = {
+
+    /** Service for action and filter hooks */
     hooksService: YosHooksService
   };
 }
