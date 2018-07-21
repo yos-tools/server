@@ -1,10 +1,27 @@
-import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
+import { YosService } from '..';
 
 /**
  * Authentication service
  */
-export class YosAuthenticationService {
+export class YosAuthenticationService extends YosService {
+
+  // ===================================================================================================================
+  // Init
+  // ===================================================================================================================
+
+  /**
+   * Initialization of the static service
+   * @returns {typeof YosAuthenticationService}
+   */
+  public static init(): typeof YosAuthenticationService {
+    return YosAuthenticationService;
+  }
+
+  // ===================================================================================================================
+  // Static Methods
+  // ===================================================================================================================
 
   /**
    * Create a new token

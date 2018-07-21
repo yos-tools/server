@@ -2,7 +2,7 @@ import { GraphQLResolveInfo } from 'graphql';
 
 /**
  *  Context of GraphQL Request
- *  See https:/**www.apollographql.com/docs/graphql-tools/resolvers.html#Resolver-function-signature
+ *  See https://www.apollographql.com/docs/graphql-tools/resolvers.html#Resolver-function-signature
  */
 export class YosGraphQLContext {
 
@@ -25,5 +25,5 @@ export class YosGraphQLContext {
   /** The object that contains the result returned from the resolver on the parent field, or, in the case of a top-level
    * Query field, the rootValue passed from the server configuration. This argument enables the nested nature of
    * GraphQL queries. */
-  obj?: any
+  parent?: any
 }

@@ -37,32 +37,38 @@ export class YosResolver {
    * @param {YosGraphQLContext} context
    * @returns {Promise<any>}
    */
-  public static async graphQL(controllerFunction: YosControllerFunction, context?: YosGraphQLContext): Promise<any> {
+  public static graphQL(controllerFunction: YosControllerFunction, context?: YosGraphQLContext): Promise<any> {
+    return YosResolver.resolve(controllerFunction, YosResolver.convertGraphQLContext(context));
+  }
 
-    // Init controller context
-    let controllerContext: YosControllerContext = {};
+  /**
+   * Convert GraphQL context to controller context
+   * @param {YosGraphQLContext} graphQLContext
+   * @param {YosControllerContext} controllerContext
+   * @returns {YosControllerContext}
+   */
+  public static convertGraphQLContext (graphQLContext: YosGraphQLContext, controllerContext: YosControllerContext = {}): YosControllerContext {
 
-    // Map GraphQL context
-    if (context) {
+    // Check GraphQL context
+    if (graphQLContext) {
 
       // Standard context of YosCont
-      controllerContext.params = context.args;
-      if (context.context) {
-        controllerContext.req = context.context.req;
-        controllerContext.res = context.context.res;
-        controllerContext.yosServer = context.context.yosServer;
-        if (context.context.yosServer) {
-          controllerContext.modules = context.context.yosServer.modules;
-          controllerContext.services = context.context.yosServer.services;
+      controllerContext.params = graphQLContext.args;
+      if (graphQLContext.context) {
+        controllerContext.req = graphQLContext.context.req;
+        controllerContext.res = graphQLContext.context.res;
+        controllerContext.yosServer = graphQLContext.context.yosServer;
+        if (graphQLContext.context.yosServer) {
+          controllerContext.modules = graphQLContext.context.yosServer.modules;
+          controllerContext.services = graphQLContext.context.yosServer.services;
         }
       }
 
       // Additional context
-      controllerContext.graphQL = context;
+      controllerContext.graphQL = graphQLContext;
     }
 
-    // Resolve
-    return YosResolver.resolve(controllerFunction, controllerContext);
+    return controllerContext;
   }
 
 }

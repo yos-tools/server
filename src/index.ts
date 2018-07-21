@@ -15,6 +15,7 @@ export { YosCoreApi } from './api/yos-core.api';
 // =====================================================================================================================
 // Core exports
 // =====================================================================================================================
+export { YosResolver } from './core/yos-resolver.core';
 export { YosServer } from './core/yos-server.core';
 export { YosServerDefaultConfig } from './core/yos-server-default-config.core';
 
@@ -56,8 +57,9 @@ export { YosProcessModule } from './modules/yos-process.module';
 // =====================================================================================================================
 // Services exports
 // =====================================================================================================================
-export { YosHooksService } from './services/yos-hooks.service';
 export { YosAuthenticationService } from './services/yos-authentication.service';
+export { YosHooksService } from './services/yos-hooks.service';
+export { YosGraphQLService } from './services/yos-graphql.service';
 
 // =====================================================================================================================
 // Types exports
