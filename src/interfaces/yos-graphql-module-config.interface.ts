@@ -8,11 +8,11 @@ import { YosGraphQLModule, YosGraphQLSchemasConfigType, YosModuleConfig } from '
 export interface YosGraphQLModuleConfig extends YosModuleConfig {
 
   /** Set own apollo server
-   * (https:/**www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html) */
+   * (https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html) */
   apolloSever?: ApolloServer,
 
   /** Configuration for new apollo server
-   * (see https:/**www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html) */
+   * (see https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html) */
   apolloConfig?: Config,
 
   /** Dir path, file path or object (array) for core schemas */

@@ -282,6 +282,13 @@ export class YosGraphQLModule extends YosModule {
 
     // Create new server
     if (!this._apolloServer) {
+
+      // Config playground for subscriptions if necessary
+      if (this._config.apolloConfig.playground && this._config.subscriptions) {
+        const subscriptionsUrl = YosHelper.prepareUrl(this._config.subscriptions, 'subscriptions', true);
+        this._config.apolloConfig.playground = {subscriptionEndpoint: `ws://${this._yosServer.hostname}:${this._yosServer.port + subscriptionsUrl}`};
+      }
+
       this._apolloServer = new ApolloServer(YosHelper.specialMerge({
 
         // Set type definitions
@@ -322,22 +329,8 @@ export class YosGraphQLModule extends YosModule {
     // Configuration for apollo
     const apolloConfig: ServerRegistration = {
       app: this._yosServer.expressApp,
-      path: graphqlUrl,
-      gui: false
+      path: graphqlUrl
     };
-
-    // Check playground
-    if (this._config.playground) {
-
-      // Enable playground gui
-      apolloConfig.gui = true;
-    }
-
-    // Enable subscriptons
-    if (this._config.subscriptions) {
-      const subscriptionsUrl = YosHelper.prepareUrl(this._config.subscriptions, 'subscriptions', true);
-      apolloConfig.gui = {subscriptionEndpoint: `ws://${this._yosServer.hostname}:${this._yosServer.port + subscriptionsUrl}`};
-    }
 
     // Add apollo server
     this._apolloServer.applyMiddleware(apolloConfig);
@@ -371,7 +364,7 @@ export class YosGraphQLModule extends YosModule {
         id: 'graphQLSubscriptionStart',
         priority: 10,
         func: () => {
-          console.log('GraphQL subscriptions: ' + (<any>this._apolloServerRegistration.gui).subscriptionEndpoint);
+          console.log('GraphQL subscriptions: ' + (<any>this._config.apolloConfig.playground).subscriptionEndpoint);
         }
       });
     }

@@ -1,13 +1,22 @@
-import { PubSub, ResolverFn, withFilter } from 'apollo-server';
+import { ResolverFn, withFilter } from 'apollo-server';
 import * as _ from 'lodash';
-import { YosControllerFunction, YosGraphQLContext, YosResolver, YosServer, YosService, YosServiceConfig } from '..';
+import {
+  YosControllerFunction,
+  YosGraphQLContext,
+  YosResolver,
+  YosServer,
+  YosService,
+  YosServiceConfig,
+  YosSubscriptionService
+} from '..';
 
 /**
  * Service for GraphQL handling
  */
 export class YosGraphQLService extends YosService {
 
-  protected _pubsub: PubSub;
+  /** YosSubscriptionService must be loaded before YosGraphQLService */
+  protected _subscriptionService: YosSubscriptionService;
 
   // ===================================================================================================================
   // Init
@@ -15,6 +24,9 @@ export class YosGraphQLService extends YosService {
 
   /**
    * Init instance of GraphQL service
+   *
+   * Hint: YosSubscriptionService must be loaded before YosGraphQLService
+   *
    * @param {YosServer} yosServer
    * @param {YosServiceConfig} config
    * @returns {YosGraphQLService}
@@ -25,7 +37,7 @@ export class YosGraphQLService extends YosService {
     const yosGraphQLService = new YosGraphQLService(yosServer, config);
 
     // Init PubSub
-    yosGraphQLService._pubsub = new PubSub();
+    yosGraphQLService._subscriptionService = <any>yosServer.services.SubscriptionService;
 
     // Return instance
     return yosGraphQLService;
@@ -39,20 +51,20 @@ export class YosGraphQLService extends YosService {
   /**
    * Subscription with optional filter handling
    * @param {string | string[]} triggers
-   * @param {YosGraphQLContext} filterArgs
+   * @param {boolean} filter
    * @param {YosControllerFunction} filterFn
    * @returns {AsyncIterator<T> | ResolverFn}
    */
-  public subscription<T>(triggers: string | string[], filterArgs?: YosGraphQLContext, filterFn?: YosControllerFunction): AsyncIterator<T> | ResolverFn {
+  public subscribe<T>(triggers: string | string[], filter: boolean = false, filterFn?: YosControllerFunction): AsyncIterator<T> | ResolverFn {
 
-    if (filterArgs) {
+    if (filter) {
       return withFilter(
-        () => this._pubsub.asyncIterator(triggers),
+        () => this._subscriptionService.asyncIterator(triggers),
         (parent, args, context, info) => YosGraphQLService.subscriptionFilter({parent, args, context, info}, filterFn)
       );
     }
 
-    return this._pubsub.asyncIterator(triggers);
+    return this._subscriptionService.asyncIterator(triggers);
   }
 
 
@@ -61,7 +73,7 @@ export class YosGraphQLService extends YosService {
   // ===================================================================================================================
 
   /**
-   * Standard subscription filter function
+   * Standard subscribe filter function
    * @param {YosGraphQLContext} context
    * @param {YosControllerFunction} filterFn
    * @returns {Promise<boolean>}

@@ -5,7 +5,7 @@ import { YosModule } from '..';
  */
 export interface YosModuleConfig {
 
-  /** Individual properties of the module */
+  /** Every (custom) property is allowed */
   [prop: string]: any,
 
   /** Module class */

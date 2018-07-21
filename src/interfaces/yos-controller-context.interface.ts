@@ -6,7 +6,7 @@ import { YosServer, YosModule, YosService } from '..';
  */
 export interface YosControllerContext {
 
-  // Every (custom) property is allowed
+  /** Every (custom) property is allowed */
   [prop: string]: any;
 
   /** Modules of yos-server instance (shortcut for yosServer.modules) */

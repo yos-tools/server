@@ -25,7 +25,7 @@
     "start:debug": "ts-node src/start.ts",
     "status": "pm2 status",
     "stop": "pm2 delete yos-server",
-    "typedocs": "typedoc --out typedocs src",
+    "typedocs": "typedoc --excludeExternals --externalPattern \"**/node_modules/**\" --ignoreCompilerErrors --out typedocs src && opener typedocs/index.html",
     "zip": "rm-rf ./*.tgz && npm run build && npm pack"
   },
   "repository": {
@@ -60,6 +60,7 @@
     "jsonwebtoken": "8.3.0",
     "lodash": "4.17.10",
     "mongoose": "5.2.4",
+    "opener": "1.4.3",
     "pm2": "3.0.0",
     "reflect-metadata": "0.1.12",
     "tslint": "5.11.0",

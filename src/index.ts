@@ -60,6 +60,7 @@ export { YosProcessModule } from './modules/yos-process.module';
 export { YosAuthenticationService } from './services/yos-authentication.service';
 export { YosHooksService } from './services/yos-hooks.service';
 export { YosGraphQLService } from './services/yos-graphql.service';
+export { YosSubscriptionService } from './services/yos-subscription.service';
 
 // =====================================================================================================================
 // Types exports

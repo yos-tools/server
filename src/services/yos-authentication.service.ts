@@ -12,7 +12,7 @@ export class YosAuthenticationService extends YosService {
   // ===================================================================================================================
 
   /**
-   * Initialization of the static service
+   * Initialization of the static authentication service
    * @returns {typeof YosAuthenticationService}
    */
   public static init(): typeof YosAuthenticationService {

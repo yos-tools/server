@@ -14,7 +14,7 @@ export interface YosServerCoreConfig {
     authorizationField?: string,
 
     /** JWT configuration
-     * See https:/**github.com/auth0/node-jsonwebtoken */
+     * See https://github.com/auth0/node-jsonwebtoken */
     jwt?: YosJwtConfig
   }
 

@@ -5,7 +5,7 @@ import { YosService } from '..';
  */
 export interface YosServiceConfig {
 
-  /** Individual properties of the service */
+  /** Every (custom) property is allowed */
   [prop: string]: any,
 
   /** Information about the service */

@@ -1,4 +1,4 @@
-import { YosServer } from './';
+import { YosServer } from '.';
 
 YosServer.start();
 

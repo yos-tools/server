@@ -5,7 +5,7 @@ import { YosHelper, YosServer, YosServiceConfig } from '..';
  */
 export abstract class YosService {
 
-  // Individual properties of the service
+  /** Every (custom) property is allowed */
   [prop: string]: any;
 
   /**
