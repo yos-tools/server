@@ -72,7 +72,11 @@ export class YosServerDefaultConfig implements YosServerConfig {
     }
   };
 
-  /** Core modules */
+  /**
+   * Modules
+   *
+   * Here modules can be integrated as classes, instances or within configurations
+   */
   public modules: YosModulesConfig = {
 
     /** GraphQL module */
@@ -133,7 +137,11 @@ export class YosServerDefaultConfig implements YosServerConfig {
     yosProcessModule: YosProcessModule
   };
 
-  /** YosServicesConfig */
+  /**
+   * Services
+   *
+   * Here services can be integrated as classes, instances or within configurations
+   */
   public services: YosServicesConfig = {
 
     /** Service for authentication handling */
