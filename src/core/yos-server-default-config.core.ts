@@ -75,7 +75,7 @@ export class YosServerDefaultConfig implements YosServerConfig {
   /**
    * Modules
    *
-   * Here modules can be integrated as classes, instances or within configurations
+   * Modules can be integrated as classes, instances or within configurations
    */
   public modules: YosModulesConfig = {
 
@@ -140,7 +140,7 @@ export class YosServerDefaultConfig implements YosServerConfig {
   /**
    * Services
    *
-   * Here services can be integrated as classes, instances or within configurations
+   * Services can be integrated as classes, instances or within configurations
    */
   public services: YosServicesConfig = {
 
