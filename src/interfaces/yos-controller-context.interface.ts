@@ -24,6 +24,9 @@ export interface YosControllerContext {
   /** Services of yos-server instance (shortcut for yosServer.services) */
   services?: { [module: string]: YosModule };
 
+  /** Current user */
+  user?: any // @todo: User should be of type UserModel
+
   /** Yos-server instance */
   yosServer?: YosServer;
 }

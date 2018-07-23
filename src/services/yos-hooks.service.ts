@@ -70,6 +70,9 @@ export class YosHooksService extends YosService {
    * @param {YosHookAction} action
    */
   addAction(hook: string, action: YosHookAction): void {
+    if (!action.priority) {
+      action.priority = 0
+    }
     this.removeAction(hook, action.id);
     this._actions[hook] = this._actions[hook] || [];
     this._actions[hook].push(action);
@@ -82,6 +85,9 @@ export class YosHooksService extends YosService {
    * @param {YosHookFilter} filter
    */
   addFilter(hook: string, filter: YosHookFilter): void {
+    if (!filter.priority) {
+      filter.priority = 0
+    }
     this.removeAction(hook, filter.id);
     this._filters[hook] = this._filters[hook] || [];
     this._filters[hook].push(filter);

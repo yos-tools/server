@@ -41,11 +41,13 @@ export { YosGraphQLModuleConfig } from './interfaces/yos-graphql-module-config.i
 export { YosActionHooks, YosHookAction, YosHookFilter, YosFilterHooks } from './interfaces/yos-hooks.interface';
 export { YosJwtConfig } from './interfaces/yos-jwt-config.interface';
 export { YosModuleConfig } from './interfaces/yos-module-config.interface';
+export { YosModules } from './interfaces/yos-modules.interface';
 export { YosModulesConfig } from './interfaces/yos-modules-config.interface';
 export { YosSchemaDefinition } from './interfaces/yos-schema-definition.interface';
 export { YosServerConfig } from './interfaces/yos-server-config.interface';
 export { YosServerCoreConfig } from './interfaces/yos-server-core-config.interface';
 export { YosServiceConfig } from './interfaces/yos-service-config.interface';
+export { YosServices } from './interfaces/yos-services.interface';
 export { YosServicesConfig } from './interfaces/yos-services-config.interface';
 
 // =====================================================================================================================

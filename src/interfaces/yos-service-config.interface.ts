@@ -1,7 +1,7 @@
 import { YosService } from '..';
 
 /**
- * Interface for configuration of yos-server service
+ * Interface for configuration of service
  */
 export interface YosServiceConfig {
 

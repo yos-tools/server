@@ -34,10 +34,9 @@ export abstract class YosService {
    * @param {YosServiceConfig} config
    * @returns {YosService | typeof YosService}
    */
-  public static init(yosServer: YosServer, config?: YosServiceConfig): YosService | Promise<YosService> | typeof YosService | Promise<typeof YosService> {
-    throw new Error('The static init method of "' + YosHelper.getClassName(this) + '" must be set. ' +
-      'Check whether the method is in the class and whether it is static. ' +
-      'If the service only uses static methods, the init method can return the class, otherwise an instance of the class must be returned.');
+  public static init(yosServer: YosServer, config?: YosServiceConfig): YosService | Promise<YosService> {
+    const className: string = YosHelper.getClassName(this);
+    return new (<any>this)[className](yosServer, config);
   }
 
   /**

@@ -3,12 +3,12 @@ import * as http from 'http';
 import * as _ from 'lodash';
 import {
   YosActionHook,
-  YosHelper,
+  YosHelper, YosHooksService,
   YosInitializer,
-  YosModule,
+  YosModules,
   YosServerConfig,
   YosServerDefaultConfig,
-  YosService
+  YosServices
 } from '..';
 import getPort = require('get-port');
 
@@ -28,13 +28,13 @@ export class YosServer {
   protected _expressApp: express.Application;
 
   /** Loaded modules */
-  protected _modules: { [module: string]: YosModule } = {};
+  protected _modules: YosModules = {};
 
   /** HTTP server */
   protected _server: http.Server;
 
   /** YosServicesConfig */
-  protected _services: { [module: string]: YosService } = {};
+  protected _services: YosServices = {};
 
 
   // ===================================================================================================================
@@ -162,7 +162,7 @@ export class YosServer {
 
       // Action hook: before server start
       if (_.has(this._services, 'hooksService')) {
-        await this._services.hooksService.performActions(YosActionHook.BeforeServerStart);
+        await (<YosHooksService>this._services.hooksService).performActions(YosActionHook.BeforeServerStart);
       }
 
       // Start server
@@ -171,7 +171,7 @@ export class YosServer {
 
         // Action hook: after server start
         if (_.has(this._services, 'hooksService')) {
-          await this._services.hooksService.performActions(YosActionHook.AfterServerStart);
+          await (<YosHooksService>this._services.hooksService).performActions(YosActionHook.AfterServerStart);
         }
 
         resolve(this.expressApp);
@@ -228,17 +228,17 @@ export class YosServer {
 
   /**
    * Getter for modules
-   * @returns {{ [module: string]: YosServerModule }}
+   * @returns YosModules
    */
-  public get modules(): { [module: string]: YosModule } {
+  public get modules(): YosModules {
     return this._modules;
   }
 
   /**
    * Setter for modules
-   * @param {{ [module: string]: YosServerModule }} modules
+   * @param {YosModules} modules
    */
-  public set modules(modules: { [module: string]: YosModule }) {
+  public set modules(modules: YosModules) {
     this._modules = modules;
   }
 
@@ -260,17 +260,17 @@ export class YosServer {
 
   /**
    * Getter for services
-   * @returns {{ [service: string]: YosServerService }}
+   * @returns YosServices
    */
-  public get services(): { [service: string]: YosService } {
+  public get services(): YosServices {
     return this._services;
   }
 
   /**
    * Setter for services
-   * @param {{ [service: string]: YosServerService }} services
+   * @param {YosServices} services
    */
-  public set services(services: { [service: string]: YosService }) {
+  public set services(services: YosServices) {
     this._services = services;
   }
 

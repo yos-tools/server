@@ -17,7 +17,7 @@ export interface YosHookAction {
   id: string;
 
   /** Priority of the hook action */
-  priority: number
+  priority?: number
 }
 
 /**
@@ -32,7 +32,7 @@ export interface YosHookFilter {
   id: string;
 
   /** Priority of the hook filter */
-  priority: number
+  priority?: number
 }
 
 /**

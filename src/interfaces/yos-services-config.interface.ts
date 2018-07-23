@@ -5,7 +5,7 @@ import {
 
 
 /**
- * Interface for services
+ * Interface for configuration of services
  */
 export interface YosServicesConfig {
 

@@ -30,9 +30,13 @@ export abstract class YosModule {
 
   /**
    * Initialize method
+   * @param {YosServer} yosServer
+   * @param {YosModuleConfig} config
+   * @returns {YosModule | Promise<YosModule>}
    */
   public static init(yosServer: YosServer, config?: YosModuleConfig): YosModule | Promise<YosModule> {
-    throw new Error('The static init method of "' + YosHelper.getClassName(this) + '" must be set. Check whether the method is in the class and whether it is static.');
+    const className: string = YosHelper.getClassName(this);
+    return new (<any>this)[className](yosServer, config);
   };
 
   /**

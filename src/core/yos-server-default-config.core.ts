@@ -39,7 +39,7 @@ export class YosServerDefaultConfig implements YosServerConfig {
       jwt: {
 
         /** Must be set in the project, otherwise an error is thrown */
-        secretOrPrivateKey: null
+        secretOrPrivateKey: 'REPLACE IN PROJECT!!!' // @todo: Set to null
       }
     },
 
@@ -107,7 +107,7 @@ export class YosServerDefaultConfig implements YosServerConfig {
         /**
          * Enable playground
          * - true => enable playground on graphql url
-         * - false => disable playground #
+         * - false => disable playground
          */
         playground: true
       },

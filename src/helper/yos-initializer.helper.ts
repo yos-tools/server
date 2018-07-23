@@ -1,7 +1,16 @@
 import * as globby from 'globby';
 import * as _ from 'lodash';
 import * as path from 'path';
-import { YosHelper, YosModule, YosModulesConfig, YosServer, YosService, YosServicesConfig } from '..';
+import {
+  YosHelper,
+  YosModule,
+  YosModules,
+  YosModulesConfig,
+  YosServer,
+  YosService,
+  YosServices,
+  YosServicesConfig
+} from '..';
 
 /**
  * YosInitializer is a collection of helper functions to load configs, modules, ...
@@ -11,7 +20,8 @@ export class YosInitializer {
   /**
    * Load files via require
    * @param {string | string[]} fileOrDirPaths String or string array with file or directory path(s)
-   * @param {{environment?: string, environmentDir?: string, patterns?: string[]}} config Config for file patterns and environment handling
+   * @param {{environment?: string, environmentDir?: string, patterns?: string[]}} config Config for file patterns and
+   *   environment handling
    * @returns {Promise<any[]>}
    */
   public static async requireFiles(fileOrDirPaths: string | string[], config?: {
@@ -116,7 +126,7 @@ export class YosInitializer {
    * @param {YosServer} yosServer
    * @returns {Promise<{[module: string]: YosModule}>}
    */
-  public static async initModules(modulesConfig: YosModulesConfig, yosServer: YosServer): Promise<{ [module: string]: YosModule }> {
+  public static async initModules(modulesConfig: YosModulesConfig, yosServer: YosServer): Promise<YosModules> {
 
     // Init
     yosServer.modules = yosServer.modules ? yosServer.modules : {};
@@ -174,7 +184,7 @@ export class YosInitializer {
    * @param {YosServer} yosServer
    * @returns {Promise<{[service: string]: YosService}>}
    */
-  public static async initServices(servicesConfig: YosServicesConfig, yosServer: YosServer): Promise<{ [service: string]: YosService }> {
+  public static async initServices(servicesConfig: YosServicesConfig, yosServer: YosServer): Promise<YosServices> {
 
     // Init
     yosServer.services = yosServer.services ? yosServer.services : {};

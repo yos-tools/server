@@ -50,7 +50,7 @@ export class YosHelper {
    * @param item
    * @returns {string}
    */
-  public static getClassName(item: any) {
+  public static getClassName(item: any): string {
     let classNameRegEx = /(?:\S+\s+){1}([a-zA-Z_$][0-9a-zA-Z_$]*)/;
     return classNameRegEx.exec(item.toString())[1];
   }
