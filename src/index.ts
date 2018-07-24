@@ -57,6 +57,11 @@ export { YosGraphQLModule } from './modules/yos-graphql.module';
 export { YosProcessModule } from './modules/yos-process.module';
 
 // =====================================================================================================================
+// Scalar exports
+// =====================================================================================================================
+export { YosAnyScalar } from './scalars/yos-any.scalar'
+
+// =====================================================================================================================
 // Services exports
 // =====================================================================================================================
 export { YosAuthenticationService } from './services/yos-authentication.service';

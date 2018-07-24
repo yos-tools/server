@@ -46,20 +46,20 @@
     "@types/globby": "8.0.0",
     "@types/graphql": "0.13.3",
     "@types/jsonwebtoken": "7.2.8",
-    "@types/lodash": "4.14.112",
+    "@types/lodash": "4.14.113",
     "@types/node": "10.5.2",
     "@types/ws": "5.1.2",
     "apollo-server": "2.0.0",
     "apollo-server-express": "2.0.0",
     "bcrypt": "3.0.0",
     "express": "4.16.3",
-    "get-port": "3.2.0",
+    "get-port": "4.0.0",
     "globby": "8.0.1",
-    "graphql": "0.13.2",
+    "graphql": "0.13.1",
     "graphql-s2s": "0.16.5",
     "jsonwebtoken": "8.3.0",
     "lodash": "4.17.10",
-    "mongoose": "5.2.4",
+    "mongoose": "5.2.5",
     "opener": "1.4.3",
     "pm2": "3.0.0",
     "reflect-metadata": "0.1.12",
@@ -67,6 +67,6 @@
     "typedoc": "0.11.1",
     "typegoose": "5.2.1",
     "typescript": "2.9.2",
-    "ws": "5.2.2"
+    "ws": "6.0.0"
   }
 }

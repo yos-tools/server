@@ -13,7 +13,7 @@ import {
   YosServer
 } from '..';
 
-const {transpileSchema} = require('graphql-s2s').graphqls2s;
+// const {transpileSchema} = require('graphql-s2s').graphqls2s;
 
 /**
  * GraphQL module for yos-server
@@ -225,7 +225,9 @@ export class YosGraphQLModule extends YosModule {
       const lastDefinitionOfType = typeDefinitions[type];
 
       // Set fields
-      lastDefinitionOfType.fields = Object.values(typeFields[type]);
+      if (typeFields[type]) {
+        lastDefinitionOfType.fields = Object.values(typeFields[type]);
+      }
 
       // Add named definition
       definitionNodes.push(lastDefinitionOfType);
@@ -267,10 +269,11 @@ export class YosGraphQLModule extends YosModule {
 
     // Add GraphQL Schema support for type inheritance, generic typing, metadata decoration
     // (https://github.com/nicolasdao/graphql-s2s)
-    const transpiledTypeDefs = transpileSchema(definition.typeDefs.toString());
+    // @todo: https://github.com/nicolasdao/graphql-s2s/issues/17
+    // const transpiledTypeDefs = transpileSchema(definition.typeDefs.toString());
 
     // Merge typeDefs
-    this._typeDefs = YosGraphQLModule.mergeGraphQLTypeDefinitions(transpiledTypeDefs);
+    this._typeDefs = YosGraphQLModule.mergeGraphQLTypeDefinitions(definition.typeDefs.toString());
 
     // Merge resolvers
     this._resolvers = _.merge({}, ...definition.resolvers);

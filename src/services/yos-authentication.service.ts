@@ -1,8 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import * as _ from 'lodash';
-import { YosService } from '..';
-import { YosServer } from '../index';
+import { YosServer, YosService } from '..';
 
 /**
  * Authentication service
@@ -13,7 +12,11 @@ export class YosAuthenticationService extends YosService {
   // Properties
   // ===================================================================================================================
 
+  /** Secret or private key to encrypt the token */
   protected _secretOrPrivateKey: string;
+
+  /** Secret or public key to decrypt the token */
+  protected _secretOrPublicKey: string;
 
 
   // ===================================================================================================================
@@ -35,6 +38,10 @@ export class YosAuthenticationService extends YosService {
     if (!authenticationService._secretOrPrivateKey) {
       throw new Error('Missing secretOrPrivateKey in config: config.core.authorization.jwt.secretOrPrivateKey');
     }
+
+    // Set secret or public key
+    authenticationService._secretOrPrivateKey =
+      _.get(yosServer, 'config.core.authorization.jwt.secretOrPublicKey') || authenticationService._secretOrPrivateKey;
 
     // Return authorize service instance
     return authenticationService;
@@ -62,9 +69,7 @@ export class YosAuthenticationService extends YosService {
    * @returns {any}
    */
   public getTokenData(token: string, options?: any): any {
-    const secretOrPublicKey =
-      _.get(this.yosServer, 'config.core.authorization.jwt.secretOrPublicKey') || this._secretOrPrivateKey;
-    return jwt.verify(token, secretOrPublicKey, options);
+    return jwt.verify(token, this._secretOrPublicKey, options);
   }
 
   /**
