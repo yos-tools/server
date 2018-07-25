@@ -1,5 +1,20 @@
+import {
+  NegativeFloat,
+  NegativeInt,
+  NonNegativeFloat,
+  NonNegativeInt,
+  NonPositiveFloat,
+  NonPositiveInt,
+  PhoneNumber,
+  PositiveFloat,
+  PositiveInt,
+  PostalCode,
+  URL
+} from '@okgrow/graphql-scalars';
 import { YosSchemaDefinition } from '..';
 import { YosAnyScalar } from '../scalars/yos-any.scalar';
+import { YosDateScalar } from '../scalars/yos-date.scalar';
+import { YosEmailAddressScalar } from '../scalars/yos-email-address.scalar';
 
 // Init
 const packageJson = require('../../package.json');
@@ -68,6 +83,7 @@ export const YosCoreApi: YosSchemaDefinition = {
       DESC
     }
     
+
     # ==================================================================================================================
     # Scalars
     # Custom scalars see https://www.apollographql.com/docs/graphql-tools/scalars.html
@@ -76,6 +92,51 @@ export const YosCoreApi: YosSchemaDefinition = {
     "Scalar for any (JSON) value"
     scalar Any
     
+    "Scalar for dates"
+    scalar Date
+    
+    "Scalar for EmailAddresses"
+    scalar EmailAddress
+    
+    "Scalar for floats that will have a value less than 0"
+    scalar NegativeFloat
+
+    "Scalar for integers that will have a value less than 0"
+    scalar NegativeInt
+    
+    "Scalar for floats that will have a value of 0 or more"
+    scalar NonNegativeFloat
+    
+    "Scalar for integers that will have a value of 0 or more"
+    scalar NonNegativeInt
+    
+    "Scalar for floats that will have a value of 0 or less"
+    scalar NonPositiveFloat
+    
+    "Scalar for integers that will have a value of 0 or less"
+    scalar NonPositiveInt
+    
+    """ 
+    Scalar for telephone numbers according to the standard E.164 format as specified in 
+    [E.164 specification](https://en.wikipedia.org/wiki/E.164). Basically this is +17895551234. The very powerful 
+    [libphonenumber library](https://github.com/googlei18n/libphonenumber) is available to take that format, parse 
+    and display it in whatever display format you want. It can also be used to parse user input and get the 
+    E.164 format to pass into a schema."
+    """
+    scalar PhoneNumber
+    
+    "Scalar for floats that will have a value greater than 0"
+    scalar PositiveFloat
+   
+    "Scalar for integers that will have a value greater than 0"
+    scalar PositiveInt
+    
+    "Scalar for postal code (zip code)"
+    scalar PostalCode
+    
+    "Scalar for the standard URL format as specified in [RFC3986](https://www.ietf.org/rfc/rfc3986.txt)"
+    scalar URL
+
     
     # ==================================================================================================================
     # Types
@@ -94,6 +155,7 @@ export const YosCoreApi: YosSchemaDefinition = {
       version: String
     }
 
+
     # ==================================================================================================================
     # Queries
     # ==================================================================================================================
@@ -106,7 +168,50 @@ export const YosCoreApi: YosSchemaDefinition = {
   `,
 
   resolvers: {
+
+    /** Resolver for any (JSON) */
     Any: YosAnyScalar,
+
+    /** Resolver for dates */
+    Date: YosDateScalar,
+
+    /** Resolver for email addresses */
+    EmailAddress: YosEmailAddressScalar,
+
+    /** Resolver for negative float */
+    NegativeFloat: NegativeFloat,
+
+    /** Resolver for negative integer */
+    NegativeInt: NegativeInt,
+
+    /** Resolver for none negative float */
+    NonNegativeFloat: NonNegativeFloat,
+
+    /** Resolver for none negative integer */
+    NonNegativeInt: NonNegativeInt,
+
+    /** Resolver for none negative float */
+    NonPositiveFloat: NonPositiveFloat,
+
+    /** Resolver for none negative integer */
+    NonPositiveInt: NonPositiveInt,
+
+    /** Resolver for phone number */
+    PhoneNumber: PhoneNumber,
+
+    /** Resolver for positive float */
+    PositiveFloat: PositiveFloat,
+
+    /** Resolver for positive integer */
+    PositiveInt: PositiveInt,
+
+    /** Resolver for postal code (zip code) */
+    PostalCode: PostalCode,
+
+    /** Resolver for URL */
+    URL: URL,
+
+    /** Resolver for queries */
     Query: {
       api: () => {
         return {

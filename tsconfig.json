@@ -9,13 +9,14 @@
     ],
     "module": "commonjs",
     "moduleResolution": "node",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noUnusedLocals": true,
     "outDir": "dist",
     "paths": {
       "*": [
         "node_modules/*",
-        "src/types/*"
+        "src/types/*",
+        "src/definitions/*"
       ]
     },
     "sourceMap": true,

@@ -59,7 +59,9 @@ export { YosProcessModule } from './modules/yos-process.module';
 // =====================================================================================================================
 // Scalar exports
 // =====================================================================================================================
-export { YosAnyScalar } from './scalars/yos-any.scalar'
+export { YosAnyScalar } from './scalars/yos-any.scalar';
+export { YosDateScalar } from './scalars/yos-date.scalar';
+export { YosEmailAddressScalar } from './scalars/yos-email-address.scalar';
 
 // =====================================================================================================================
 // Services exports
