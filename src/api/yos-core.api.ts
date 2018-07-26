@@ -83,6 +83,25 @@ export const YosCoreApi: YosSchemaDefinition = {
       DESC
     }
     
+    # ==================================================================================================================
+    # Inputs
+    # ==================================================================================================================
+    
+    "Filter for values"
+    input ValueFilter {
+    
+      "[Negate operator](https://docs.mongodb.com/manual/reference/operator/query/not/)"    
+      not: Boolean
+      
+      "[Comparison operator](https://docs.mongodb.com/manual/reference/operator/query-comparison/)"
+      operator: ComparisonOperator!
+      
+      "[Options](https://docs.mongodb.com/manual/reference/operator/query/regex/#op._S_options) for [REGEX](https://docs.mongodb.com/manual/reference/operator/query/regex/) operator"
+      options: [String!]
+      
+      "Value for the filter"
+      value: Any 
+    }
 
     # ==================================================================================================================
     # Scalars
