@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { YosServer, YosModule, YosService } from '..';
 
 /**
- * Interface for controller context
+ * Interface for controllers context
  */
 export interface YosControllerContext {
 

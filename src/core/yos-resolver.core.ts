@@ -19,7 +19,7 @@ export class YosResolver {
       context = await context.services.hooksService.performFilters(YosFilterHook.IncomingRequestContext, context);
     }
 
-    // Process request via controller function
+    // Process request via controllers function
     let response = await controllerFunction(context);
 
     // Filter hook: outgoing response
@@ -42,7 +42,7 @@ export class YosResolver {
   }
 
   /**
-   * Convert GraphQL context to controller context
+   * Convert GraphQL context to controllers context
    * @param {YosGraphQLContext} graphQLContext
    * @param {YosControllerContext} controllerContext
    * @returns {YosControllerContext}

@@ -58,6 +58,7 @@
     "get-port": "4.0.0",
     "globby": "8.0.1",
     "graphql": "0.13.2",
+    "graphql-geojson-scalar-types": "0.0.2",
     "graphql-s2s": "0.16.5",
     "jsonwebtoken": "8.3.0",
     "lodash": "4.17.10",

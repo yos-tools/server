@@ -1,7 +1,7 @@
 import { YosControllerContext } from '..';
 
 /**
- * Interface for the controller functions
+ * Interface for the controllers functions
  */
 export interface YosControllerFunction {
 

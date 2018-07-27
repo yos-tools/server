@@ -88,7 +88,7 @@ export const YosCoreApi: YosSchemaDefinition = {
     # ==================================================================================================================
     
     "Filter for values"
-    input ValueFilter {
+    input Filter {
     
       "[Negate operator](https://docs.mongodb.com/manual/reference/operator/query/not/)"    
       not: Boolean
@@ -100,7 +100,44 @@ export const YosCoreApi: YosSchemaDefinition = {
       options: [String!]
       
       "Value for the filter"
-      value: Any 
+      value: Any!
+    }
+    
+    "Pagination"
+    input Pagination {
+      
+      """
+      Limits the number of matching items 
+      (see [$limit](https://docs.mongodb.com/manual/reference/operator/aggregation/limit/))
+      """
+      limit: Int
+      
+      """
+      Skips over the specified number of matching items
+      (see [$skip](https://docs.mongodb.com/manual/reference/operator/aggregation/skip/))
+      """
+      skip: Int
+      
+      """
+      Specifies the order in which the query returns matching items
+      (see [$sort](https://docs.mongodb.com/manual/reference/operator/aggregation/sort/)).
+      
+      If several sorts are specified, they are processed one after the other. The subsequent elements sort only the 
+      elements with the same sort rank, i.e. the elements that could have been returned in a different valid sequence.
+      """
+      sort: [Sort!]
+    }
+    
+    """
+    Sort specifies the order in which queries return matching items
+    (see [$sort](https://docs.mongodb.com/manual/reference/operator/aggregation/sort/))
+    """
+    input Sort {
+      "Field to be sorted"
+      field: String
+      
+      "The sort order in which the items are to be sorted: ASC or DESC"
+      order: SortOrder
     }
 
     # ==================================================================================================================
@@ -111,7 +148,10 @@ export const YosCoreApi: YosSchemaDefinition = {
     "Scalar for any (JSON) value"
     scalar Any
     
-    "Scalar for dates"
+    """
+    Scalar for dates.
+    String will be converted into a JavaScript date object 
+    """
     scalar Date
     
     "Scalar for EmailAddresses"
@@ -165,7 +205,7 @@ export const YosCoreApi: YosSchemaDefinition = {
     type API {
      
       "Environment of the API"
-      env: String
+      environment: String
       
       "Name of the API"
       name: String
@@ -181,10 +221,15 @@ export const YosCoreApi: YosSchemaDefinition = {
 
     type Query {
     
-      "Get information about the API"
+      "Information about the API"
       api: API
     }
   `,
+
+
+  // ===================================================================================================================
+  // Resolvers
+  // ===================================================================================================================
 
   resolvers: {
 
@@ -234,7 +279,7 @@ export const YosCoreApi: YosSchemaDefinition = {
     Query: {
       api: () => {
         return {
-          env: env,
+          environment: env,
           name: name,
           version: version
         };
