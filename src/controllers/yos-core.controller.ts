@@ -6,7 +6,7 @@ import { YosControllerContext } from '..';
 export class YosCoreController {
 
   /**
-   * Api contntroller
+   * Api controller
    * @param context
    */
   public static async api(context: YosControllerContext): Promise<any> {
