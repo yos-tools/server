@@ -11,11 +11,11 @@ export interface YosServices {
   /** Service for authentication handling */
   authenticationService?: YosAuthenticationService;
 
-  /** Service for action and filter hooks */
-  hooksService?: YosHooksService;
-
   /** Service for GraphQL api */
   graphQLService?: YosGraphQLService;
+
+  /** Service for action and filter hooks */
+  hooksService?: YosHooksService;
 
   /** Service for subscription handling */
   subscriptionService?: YosSubscriptionService;

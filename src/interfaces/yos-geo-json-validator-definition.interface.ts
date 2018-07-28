@@ -16,5 +16,5 @@ export interface YosGeoJsonValidatorDefinition {
    * @param {YosGeoJsonValidatorCallback} callback
    * @return {boolean}
    */
-  (object: any, callback?: YosGeoJsonValidatorCallback): boolean
+  (object: any, callback?: YosGeoJsonValidatorCallback): boolean;
 }

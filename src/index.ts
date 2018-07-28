@@ -13,6 +13,11 @@ export { YosService } from './abstracts/yos-service.abstract';
 export { YosCoreApi } from './api/yos-core.api';
 
 // =====================================================================================================================
+// Controllers
+// =====================================================================================================================
+export { YosCoreController } from './controllers/yos-core.controller';
+
+// =====================================================================================================================
 // Core exports
 // =====================================================================================================================
 export { YosResolver } from './core/yos-resolver.core';
@@ -30,14 +35,17 @@ export { YosFilterHook } from './enums/yos-filter-hook.enum';
 // =====================================================================================================================
 export { YosGeoJsonValidator } from './helper/yos-geo-json-validator.helper';
 export { YosGraphQL } from './helper/yos-graphql.helper';
-export { YosInitializer } from './helper/yos-initializer.helper';
 export { YosHelper } from './helper/yos-helper.helper';
+export { YosInitializer } from './helper/yos-initializer.helper';
 
 // =====================================================================================================================
 // Interfaces exports
 // =====================================================================================================================
-export { YosControllerFunction } from './interfaces/yos-controller-function.interface';
+export { YosContext } from './interfaces/yos-context.interface';
+export { YosContextInitFunction } from './interfaces/yos-context-init-function.interface';
+export { YosContextModuleConfig } from './interfaces/yos-context-module-config';
 export { YosControllerContext } from './interfaces/yos-controller-context.interface';
+export { YosControllerFunction } from './interfaces/yos-controller-function.interface';
 export { YosGeoJsonValidatorCallback } from './interfaces/yos-geo-json-validator-callback.interface';
 export { YosGeoJsonValidatorCustomDefinition } from './interfaces/yos-geo-json-validator-custom-definition.interface';
 export { YosGeoJsonValidatorDefinition } from './interfaces/yos-geo-json-validator-definition.interface';
@@ -58,6 +66,8 @@ export { YosServicesConfig } from './interfaces/yos-services-config.interface';
 // =====================================================================================================================
 // Modules exports
 // =====================================================================================================================
+export { YosAuthenticationModule } from './modules/yos-authentication.module';
+export { YosContextModule } from './modules/yos-context.module';
 export { YosGraphQLModule } from './modules/yos-graphql.module';
 export { YosProcessModule } from './modules/yos-process.module';
 

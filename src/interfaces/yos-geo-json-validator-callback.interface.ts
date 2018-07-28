@@ -11,5 +11,5 @@ export interface YosGeoJsonValidatorCallback {
    *
    * @return {*} the return value is not processed further
    */
-  (valid: boolean, messages: string[]): any
+  (valid: boolean, messages: string[]): any;
 }

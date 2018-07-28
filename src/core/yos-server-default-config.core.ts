@@ -1,13 +1,17 @@
 import * as path from 'path';
 import {
+  YosAuthenticationModule,
   YosAuthenticationService,
-  YosGraphQLModule, YosGraphQLService,
+  YosContextModule,
+  YosGraphQLModule,
+  YosGraphQLService,
   YosHooksService,
   YosModulesConfig,
   YosProcessModule,
   YosServerConfig,
   YosServerCoreConfig,
-  YosServicesConfig, YosSubscriptionService
+  YosServicesConfig,
+  YosSubscriptionService
 } from '..';
 
 /**
@@ -79,8 +83,23 @@ export class YosServerDefaultConfig implements YosServerConfig {
    */
   public modules: YosModulesConfig = {
 
+    /** Module to initialize the authentication handling*/
+    authenticationModule: YosAuthenticationModule,
+
+    /** Module to set the context in YosServer instance */
+    contextModule: {
+
+      /** Initialize functions for context variables */
+      initFunctions: {
+        ipLookup: YosContextModule.initIpLookup
+      },
+
+      /** Module class */
+      module: YosContextModule
+    },
+
     /** GraphQL module */
-    yosGraphQL: {
+    graphQLModule: {
 
       /** Set own apollo server
        * (https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html) */
@@ -115,7 +134,7 @@ export class YosServerDefaultConfig implements YosServerConfig {
       /** Dir path, file path or object (array) for core schemas */
       coreSchemas: path.join(__dirname, '../api'),
 
-      /** Module config */
+      /** Module class*/
       module: YosGraphQLModule,
 
       /** Dir path, file path or object (array) for project schemas */
@@ -134,7 +153,7 @@ export class YosServerDefaultConfig implements YosServerConfig {
     },
 
     /** Module for global processes */
-    yosProcessModule: YosProcessModule
+    processModule: YosProcessModule
   };
 
   /**
@@ -156,7 +175,14 @@ export class YosServerDefaultConfig implements YosServerConfig {
       /** GraphQL service */
       service: YosGraphQLService,
 
-      /** Due to the dependency, the position must be larger than that of the subscriptionService */
+      /**
+       * Due to the dependency, the position must be larger than that of the subscriptionService.
+       *
+       * Alternatively, the GraphQLService can be organized so that the methods always access the
+       * YosSubscriptionService via the current YosServer instance. This means that the YosSubscriptionService does not
+       * have to be available during initialization. But this makes the handling within the GraphQLService more
+       * complicated.
+       */
       position: 10
     },
 

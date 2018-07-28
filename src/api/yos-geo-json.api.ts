@@ -1,5 +1,5 @@
 import { YosSchemaDefinition } from '..';
-import {YosGeoJsonScalar} from '../scalars/yos-geo-json.scalar';
+import { YosGeoJsonScalar } from '../scalars/yos-geo-json.scalar';
 
 /**
  * GeoJson

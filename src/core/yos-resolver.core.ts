@@ -1,5 +1,5 @@
-import { YosControllerContext, YosControllerFunction, YosFilterHook, YosGraphQLContext } from '..';
 import * as _ from 'lodash';
+import { YosControllerContext, YosControllerFunction, YosFilterHook, YosGraphQLContext } from '..';
 
 /**
  * Resolver
@@ -15,7 +15,7 @@ export class YosResolver {
   protected static async resolve(controllerFunction: YosControllerFunction, context: YosControllerContext): Promise<any> {
 
     // Filter hook: incoming request
-    if (_.has(context,'services.hooksService')) {
+    if (_.has(context, 'services.hooksService')) {
       context = await context.services.hooksService.performFilters(YosFilterHook.IncomingRequestContext, context);
     }
 
@@ -23,7 +23,7 @@ export class YosResolver {
     let response = await controllerFunction(context);
 
     // Filter hook: outgoing response
-    if (_.has(context,'services.hooksService')) {
+    if (_.has(context, 'services.hooksService')) {
       response = await context.services.hooksService.performFilters(YosFilterHook.OutgoingResponse, response);
     }
 
@@ -47,7 +47,7 @@ export class YosResolver {
    * @param {YosControllerContext} controllerContext
    * @returns {YosControllerContext}
    */
-  public static convertGraphQLContext (graphQLContext: YosGraphQLContext, controllerContext: YosControllerContext = {}): YosControllerContext {
+  public static convertGraphQLContext(graphQLContext: YosGraphQLContext, controllerContext: YosControllerContext = {}): YosControllerContext {
 
     // Check GraphQL context
     if (graphQLContext) {

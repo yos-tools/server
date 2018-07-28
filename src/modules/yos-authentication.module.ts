@@ -71,7 +71,7 @@ export class YosAuthenticationModule extends YosModule {
     if (token && token.startsWith('JWT')) {
       token = token.replace('JWT ', '');
       const data = this._authenticationService.getTokenData(token);
-      // @todo: Get users from the database
+      // @ToDo: Get users from the database
       context.user = data.user;
     }
 

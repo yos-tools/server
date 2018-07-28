@@ -16,7 +16,9 @@ import {
 // const {transpileSchema} = require('graphql-s2s').graphqls2s;
 
 /**
- * GraphQL module for yos-server
+ * GraphQL module
+ *
+ * Der Context von der aktuellen YosServer Instanz (siehe YosContextModule) wird in den Context des Requests integriert.
  */
 export class YosGraphQLModule extends YosModule {
 
@@ -305,11 +307,10 @@ export class YosGraphQLModule extends YosModule {
         // Set resolvers
         resolvers: this._resolvers,
 
-        // Set context
+        // The context is passed within a function to ensure that the context is always up-to-date with
+        // the yosServer instance.
         context: () => {
-          return {
-            yosServer: this._yosServer
-          };
+          return YosHelper.specialMerge({}, this._yosServer.context, {yosServer: this._yosServer});
         }
 
         // Combine with configuration

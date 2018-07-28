@@ -3,7 +3,9 @@ import * as http from 'http';
 import * as _ from 'lodash';
 import {
   YosActionHook,
-  YosHelper, YosHooksService,
+  YosContext,
+  YosHelper,
+  YosHooksService,
   YosInitializer,
   YosModules,
   YosServerConfig,
@@ -35,6 +37,8 @@ export class YosServer {
 
   /** YosServicesConfig */
   protected _services: YosServices = {};
+
+  protected _context: YosContext = {};
 
 
   // ===================================================================================================================
@@ -208,6 +212,22 @@ export class YosServer {
    */
   public set config(config: YosServerConfig) {
     this._config = config;
+  }
+
+  /**
+   * Getter for context
+   * @returns {YosContext}
+   */
+  public get context(): YosContext {
+    return this._context;
+  }
+
+  /**
+   * Setter for context
+   * @param {YosContext} context
+   */
+  public set context(context: YosContext) {
+    this._context = context;
   }
 
   /**

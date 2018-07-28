@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { YosServer, YosModule, YosService } from '..';
+import { YosServer, YosModule, YosService, YosContext } from '..';
 
 /**
  * Interface for controllers context
  */
-export interface YosControllerContext {
+export interface YosControllerContext extends YosContext {
 
   /** Every (custom) property is allowed */
   [prop: string]: any;

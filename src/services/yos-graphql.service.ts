@@ -15,7 +15,13 @@ import {
  */
 export class YosGraphQLService extends YosService {
 
-  /** YosSubscriptionService must be loaded before YosGraphQLService */
+  /**
+   * YosSubscriptionService must be loaded before YosGraphQLService
+   *
+   * Alternatively, the GraphQLService can be organized so that the methods always access the YosSubscriptionService
+   * via the current YosServer instance. This means that the YosSubscriptionService does not have to be available
+   * during initialization. But this makes the handling within the GraphQLService more complicated.
+   */
   protected _subscriptionService: YosSubscriptionService;
 
   // ===================================================================================================================

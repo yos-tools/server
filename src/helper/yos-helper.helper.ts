@@ -1,9 +1,16 @@
 import * as _ from 'lodash';
+import * as request from 'request-promise-native';
 
 /**
  * General help functions
  */
 export class YosHelper {
+
+  /**
+   * Request handling
+   * See https://github.com/request/request-promise
+   */
+  public static request = request;
 
   /**
    * Special merge function (e.g. for configurations)

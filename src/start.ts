@@ -2,7 +2,6 @@ import { YosServer } from '.';
 
 YosServer.start();
 
-
 /*
 // Further processing
 (async function () {
@@ -10,4 +9,3 @@ YosServer.start();
   // ...
 })();
 */
-

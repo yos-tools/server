@@ -2,7 +2,7 @@ import { Kind, ValueNode } from 'graphql';
 import Maybe from 'graphql/tsutils/Maybe';
 
 /**
- * Helper for Grq
+ * Helper for GraphQL
  */
 export class YosGraphQL {
 

@@ -15,12 +15,12 @@ export class YosGeoJsonValidator {
   /**
    * Custom validation functions
    */
-  public static definitions: {[definition: string]: YosGeoJsonValidatorCustomDefinition} = {};
+  public static definitions: { [definition: string]: YosGeoJsonValidatorCustomDefinition } = {};
 
   /**
    * Non geo types
    */
-  public static readonly nonGeoTypes: {[type: string]: YosGeoJsonValidatorDefinition} = {
+  public static readonly nonGeoTypes: { [type: string]: YosGeoJsonValidatorDefinition } = {
     Feature: YosGeoJsonValidator.isFeature,
     FeatureCollection: YosGeoJsonValidator.isFeatureCollection
   };
@@ -28,7 +28,7 @@ export class YosGeoJsonValidator {
   /**
    * Geo types
    */
-  public static readonly geoTypes: {[type: string]: YosGeoJsonValidatorDefinition} = {
+  public static readonly geoTypes: { [type: string]: YosGeoJsonValidatorDefinition } = {
     GeometryCollection: YosGeoJsonValidator.isGeometryCollection,
     LineString: YosGeoJsonValidator.isLineString,
     MultiLineString: YosGeoJsonValidator.isMultiLineString,
@@ -41,7 +41,7 @@ export class YosGeoJsonValidator {
   /**
    * All types
    */
-  public static readonly allTypes: {[type: string]: YosGeoJsonValidatorDefinition} = {
+  public static readonly allTypes: { [type: string]: YosGeoJsonValidatorDefinition } = {
     Bbox: YosGeoJsonValidator.isBbox,
     Feature: YosGeoJsonValidator.isFeature,
     FeatureCollection: YosGeoJsonValidator.isFeatureCollection,
@@ -67,7 +67,7 @@ export class YosGeoJsonValidator {
    * @return {boolean}
    */
   public static isFunction(object: any): boolean {
-    return typeof (object) === 'function'
+    return typeof (object) === 'function';
   }
 
   /**
@@ -75,8 +75,8 @@ export class YosGeoJsonValidator {
    * @param {*} object
    * @return {boolean}
    */
-  public static isObject (object: any): boolean {
-    return object === Object(object)
+  public static isObject(object: any): boolean {
+    return object === Object(object);
   }
 
   /**
@@ -93,14 +93,14 @@ export class YosGeoJsonValidator {
 
     // Evaluate message
     if (typeof errorMessages === 'string') {
-      messages = [errorMessages]
+      messages = [errorMessages];
     } else if (Object.prototype.toString.call(errorMessages) === '[object Array]') {
       messages = errorMessages;
       if (messages.length === 0) {
-        valid = true
+        valid = true;
       }
     } else {
-      valid = true
+      valid = true;
     }
 
     // Call callback function
@@ -109,7 +109,7 @@ export class YosGeoJsonValidator {
     }
 
     // Return result
-    return valid
+    return valid;
   }
 
   /**
@@ -129,16 +129,16 @@ export class YosGeoJsonValidator {
       try {
         result = YosGeoJsonValidator.definitions[type](object);
       } catch (e) {
-        errors = ['Problem with custom definition for '+type+': '+e];
+        errors = ['Problem with custom definition for ' + type + ': ' + e];
       }
       if (typeof result === 'string') {
-        errors = [result]
+        errors = [result];
       }
       if (Object.prototype.toString.call(errors) === '[object Array]') {
-        return errors
+        return errors;
       }
     }
-    return []
+    return [];
   }
 
   /**
@@ -150,9 +150,9 @@ export class YosGeoJsonValidator {
   public static define(type: string, definition: YosGeoJsonValidatorCustomDefinition): boolean {
     if ((type in YosGeoJsonValidator.allTypes) && YosGeoJsonValidator.isFunction(definition)) {
       YosGeoJsonValidator.definitions[type] = definition;
-      return true
+      return true;
     } else {
-      return false
+      return false;
     }
   }
 
@@ -178,13 +178,13 @@ export class YosGeoJsonValidator {
         errors.push('Position must be at least two elements');
       }
 
-      position.forEach(function(pos, index) {
+      position.forEach(function (pos, index) {
         if (typeof pos !== 'number') {
-          errors.push('Position must only contain numbers. Item '+pos+' at index '+index+' is invalid.')
+          errors.push('Position must only contain numbers. Item ' + pos + ' at index ' + index + ' is invalid.');
         }
-      })
+      });
     } else {
-      errors.push('Position must be an array')
+      errors.push('Position must be an array');
     }
 
     // run custom checks
@@ -201,19 +201,19 @@ export class YosGeoJsonValidator {
    */
   public static isGeoJSONObject(geoJSONObject: any, callback?: YosGeoJsonValidatorCallback): boolean {
     if (!YosGeoJsonValidator.isObject(geoJSONObject)) {
-      return YosGeoJsonValidator.done(callback, ['must be a JSON Object'])
+      return YosGeoJsonValidator.done(callback, ['must be a JSON Object']);
     } else {
       let errors = [];
       if ('type' in geoJSONObject) {
         if (YosGeoJsonValidator.nonGeoTypes[geoJSONObject.type]) {
-          return YosGeoJsonValidator.nonGeoTypes[geoJSONObject.type](geoJSONObject, callback)
+          return YosGeoJsonValidator.nonGeoTypes[geoJSONObject.type](geoJSONObject, callback);
         } else if (YosGeoJsonValidator.geoTypes[geoJSONObject.type]) {
-          return YosGeoJsonValidator.geoTypes[geoJSONObject.type](geoJSONObject, callback)
+          return YosGeoJsonValidator.geoTypes[geoJSONObject.type](geoJSONObject, callback);
         } else {
-          errors.push('type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", or "FeatureCollection"')
+          errors.push('type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", or "FeatureCollection"');
         }
       } else {
-        errors.push('must have a member with the name "type"')
+        errors.push('must have a member with the name "type"');
       }
 
       // run custom checks
@@ -240,19 +240,19 @@ export class YosGeoJsonValidator {
    */
   public static isGeometryObject(geometryObject: any, callback?: YosGeoJsonValidatorCallback): boolean {
     if (!YosGeoJsonValidator.isObject(geometryObject)) {
-      return YosGeoJsonValidator.done(callback, ['must be a JSON Object'])
+      return YosGeoJsonValidator.done(callback, ['must be a JSON Object']);
     }
 
     let errors: string[] = [];
 
     if ('type' in geometryObject) {
       if (YosGeoJsonValidator.geoTypes[geometryObject.type]) {
-        return YosGeoJsonValidator.geoTypes[geometryObject.type](geometryObject, callback)
+        return YosGeoJsonValidator.geoTypes[geometryObject.type](geometryObject, callback);
       } else {
-        errors.push('type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon" or "GeometryCollection"')
+        errors.push('type must be one of: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon" or "GeometryCollection"');
       }
     } else {
-      errors.push('must have a member with the name "type"')
+      errors.push('must have a member with the name "type"');
     }
 
     // run custom checks
@@ -268,7 +268,7 @@ export class YosGeoJsonValidator {
    */
   public static isPoint(point: any, callback?: YosGeoJsonValidatorCallback): boolean {
     if (!YosGeoJsonValidator.isObject(point)) {
-      return YosGeoJsonValidator.done(callback, ['must be a JSON Object'])
+      return YosGeoJsonValidator.done(callback, ['must be a JSON Object']);
     }
 
     let errors: string[] = [];
@@ -276,27 +276,27 @@ export class YosGeoJsonValidator {
     if ('bbox' in point) {
       YosGeoJsonValidator.isBbox(point.bbox, (valid: boolean, err: string[]) => {
         if (!valid) {
-          errors = errors.concat(err)
+          errors = errors.concat(err);
         }
-      })
+      });
     }
 
     if ('type' in point) {
       if (point.type !== 'Point') {
-        errors.push('type must be "Point"')
+        errors.push('type must be "Point"');
       }
     } else {
-      errors.push('must have a member with the name "type"')
+      errors.push('must have a member with the name "type"');
     }
 
     if ('coordinates' in point) {
       YosGeoJsonValidator.isPosition(point.coordinates, (valid: boolean) => {
         if (!valid) {
-          errors.push('Coordinates must be a single position')
+          errors.push('Coordinates must be a single position');
         }
-      })
+      });
     } else {
-      errors.push('must have a member with the name "coordinates"')
+      errors.push('must have a member with the name "coordinates"');
     }
 
     // run custom checks
@@ -321,16 +321,17 @@ export class YosGeoJsonValidator {
             // modify the err msg from "isPosition" to note the element number
             err[0] = 'at ' + index + ': '.concat(err[0]);
             // build a list of invalide positions
-            errors = errors.concat(err)
+            errors = errors.concat(err);
           }
-        })
-      })
+        });
+      });
     } else {
-      errors.push('coordinates must be an array')
+      errors.push('coordinates must be an array');
     }
 
     return YosGeoJsonValidator.done(callback, errors);
   }
+
   /**
    * Determines if an object is a MultiPoint or not
    * @param {*} multiPoint
@@ -339,7 +340,7 @@ export class YosGeoJsonValidator {
    */
   public static isMultiPoint(multiPoint: any, callback?: YosGeoJsonValidatorCallback): boolean {
     if (!YosGeoJsonValidator.isObject(multiPoint)) {
-      return YosGeoJsonValidator.done(callback, ['must be a JSON Object'])
+      return YosGeoJsonValidator.done(callback, ['must be a JSON Object']);
     }
 
     let errors: string[] = [];
@@ -347,27 +348,27 @@ export class YosGeoJsonValidator {
     if ('bbox' in multiPoint) {
       YosGeoJsonValidator.isBbox(multiPoint.bbox, (valid: boolean, err: string[]) => {
         if (!valid) {
-          errors = errors.concat(err)
+          errors = errors.concat(err);
         }
-      })
+      });
     }
 
     if ('type' in multiPoint) {
       if (multiPoint.type !== 'MultiPoint') {
-        errors.push('type must be "MultiPoint"')
+        errors.push('type must be "MultiPoint"');
       }
     } else {
-      errors.push('must have a member with the name "type"')
+      errors.push('must have a member with the name "type"');
     }
 
     if ('coordinates' in multiPoint) {
       YosGeoJsonValidator.isMultiPointCoordinates(multiPoint.coordinates, (valid: boolean, err: string[]) => {
         if (!valid) {
-          errors = errors.concat(err)
+          errors = errors.concat(err);
         }
-      })
+      });
     } else {
-      errors.push('must have a member with the name "coordinates"')
+      errors.push('must have a member with the name "coordinates"');
     }
 
     // run custom checks
@@ -392,15 +393,15 @@ export class YosGeoJsonValidator {
               // modify the err msg from 'isPosition' to note the element number
               err[0] = 'at ' + index + ': '.concat(err[0]);
               // build a list of invalide positions
-              errors = errors.concat(err)
+              errors = errors.concat(err);
             }
-          })
-        })
+          });
+        });
       } else {
-        errors.push('coordinates must have at least two elements')
+        errors.push('coordinates must have at least two elements');
       }
     } else {
-      errors.push('coordinates must be an array')
+      errors.push('coordinates must be an array');
     }
 
     return YosGeoJsonValidator.done(callback, errors);
@@ -414,7 +415,7 @@ export class YosGeoJsonValidator {
    */
   public static isLineString(lineString: any, callback?: YosGeoJsonValidatorCallback): boolean {
     if (!YosGeoJsonValidator.isObject(lineString)) {
-      return YosGeoJsonValidator.done(callback, ['must be a JSON Object'])
+      return YosGeoJsonValidator.done(callback, ['must be a JSON Object']);
     }
 
     let errors: string[] = [];
@@ -422,27 +423,27 @@ export class YosGeoJsonValidator {
     if ('bbox' in lineString) {
       YosGeoJsonValidator.isBbox(lineString.bbox, (valid: boolean, err: string[]) => {
         if (!valid) {
-          errors = errors.concat(err)
+          errors = errors.concat(err);
         }
-      })
+      });
     }
 
     if ('type' in lineString) {
       if (lineString.type !== 'LineString') {
-        errors.push('type must be "LineString"')
+        errors.push('type must be "LineString"');
       }
     } else {
-      errors.push('must have a member with the name "type"')
+      errors.push('must have a member with the name "type"');
     }
 
     if ('coordinates' in lineString) {
       YosGeoJsonValidator.isLineStringCoordinates(lineString.coordinates, (valid: boolean, err: string[]) => {
         if (!valid) {
-          errors = errors.concat(err)
+          errors = errors.concat(err);
         }
-      })
+      });
     } else {
-      errors.push('must have a member with the name "coordinates"')
+      errors.push('must have a member with the name "coordinates"');
     }
 
     // run custom checks
@@ -466,12 +467,12 @@ export class YosGeoJsonValidator {
             // modify the err msg from 'isPosition' to note the element number
             err[0] = 'at ' + index + ': '.concat(err[0]);
             // build a list of invalide positions
-            errors = errors.concat(err)
+            errors = errors.concat(err);
           }
-        })
-      })
+        });
+      });
     } else {
-      errors.push('coordinates must be an array')
+      errors.push('coordinates must be an array');
     }
     return YosGeoJsonValidator.done(callback, errors);
   }
@@ -484,7 +485,7 @@ export class YosGeoJsonValidator {
    */
   public static isMultiLineString(multiLineString: any, callback?: YosGeoJsonValidatorCallback): boolean {
     if (!YosGeoJsonValidator.isObject(multiLineString)) {
-      return YosGeoJsonValidator.done(callback, ['must be a JSON Object'])
+      return YosGeoJsonValidator.done(callback, ['must be a JSON Object']);
     }
 
     let errors: string[] = [];
@@ -492,27 +493,27 @@ export class YosGeoJsonValidator {
     if ('bbox' in multiLineString) {
       YosGeoJsonValidator.isBbox(multiLineString.bbox, (valid: boolean, err: string[]) => {
         if (!valid) {
-          errors = errors.concat(err)
+          errors = errors.concat(err);
         }
-      })
+      });
     }
 
     if ('type' in multiLineString) {
       if (multiLineString.type !== 'MultiLineString') {
-        errors.push('type must be "MultiLineString"')
+        errors.push('type must be "MultiLineString"');
       }
     } else {
-      errors.push('must have a member with the name "type"')
+      errors.push('must have a member with the name "type"');
     }
 
     if ('coordinates' in multiLineString) {
       YosGeoJsonValidator.isMultiLineStringCoordinates(multiLineString.coordinates, (valid: boolean, err: string[]) => {
         if (!valid) {
-          errors = errors.concat(err)
+          errors = errors.concat(err);
         }
-      })
+      });
     } else {
-      errors.push('must have a member with the name "coordinates"')
+      errors.push('must have a member with the name "coordinates"');
     }
 
     // run custom checks
@@ -538,22 +539,22 @@ export class YosGeoJsonValidator {
             // modify the err msg from 'isPosition' to note the element number
             err[0] = 'at ' + index + ': '.concat(err[0]);
             // build a list of invalide positions
-            errors = errors.concat(err)
+            errors = errors.concat(err);
           }
-        })
+        });
       });
 
       // check the first and last positions to see if they are equivalent
       // Todo: maybe better checking?
       if (coordinates[0].toString() !== coordinates[coordinates.length - 1].toString()) {
-        errors.push('The first and last positions must be equivalent')
+        errors.push('The first and last positions must be equivalent');
       }
 
       if (coordinates.length < 4) {
-        errors.push('coordinates must have at least four positions')
+        errors.push('coordinates must have at least four positions');
       }
     } else {
-      errors.push('coordinates must be an array')
+      errors.push('coordinates must be an array');
     }
 
     return YosGeoJsonValidator.done(callback, errors);
@@ -574,12 +575,12 @@ export class YosGeoJsonValidator {
             // modify the err msg from 'isPosition' to note the element number
             err[0] = 'at ' + index + ': '.concat(err[0]);
             // build a list of invalid positions
-            errors = errors.concat(err)
+            errors = errors.concat(err);
           }
-        })
-      })
+        });
+      });
     } else {
-      errors.push('coordinates must be an array')
+      errors.push('coordinates must be an array');
     }
 
     return YosGeoJsonValidator.done(callback, errors);
@@ -593,7 +594,7 @@ export class YosGeoJsonValidator {
    */
   public static isPolygon(polygon: any, callback?: YosGeoJsonValidatorCallback): boolean {
     if (!YosGeoJsonValidator.isObject(polygon)) {
-      return YosGeoJsonValidator.done(callback, ['must be a JSON Object'])
+      return YosGeoJsonValidator.done(callback, ['must be a JSON Object']);
     }
 
     let errors: string[] = [];
@@ -601,27 +602,27 @@ export class YosGeoJsonValidator {
     if ('bbox' in polygon) {
       YosGeoJsonValidator.isBbox(polygon.bbox, (valid: boolean, err: string[]) => {
         if (!valid) {
-          errors = errors.concat(err)
+          errors = errors.concat(err);
         }
-      })
+      });
     }
 
     if ('type' in polygon) {
       if (polygon.type !== 'Polygon') {
-        errors.push('type must be "Polygon"')
+        errors.push('type must be "Polygon"');
       }
     } else {
-      errors.push('must have a member with the name "type"')
+      errors.push('must have a member with the name "type"');
     }
 
     if ('coordinates' in polygon) {
       YosGeoJsonValidator.isPolygonCoor(polygon.coordinates, (valid: boolean, err: string[]) => {
         if (!valid) {
-          errors = errors.concat(err)
+          errors = errors.concat(err);
         }
-      })
+      });
     } else {
-      errors.push('must have a member with the name "coordinates"')
+      errors.push('must have a member with the name "coordinates"');
     }
 
     // run custom checks
@@ -645,12 +646,12 @@ export class YosGeoJsonValidator {
             // modify the err msg from 'isPosition' to note the element number
             err[0] = 'at ' + index + ': '.concat(err[0]);
             // build a list of invalide positions
-            errors = errors.concat(err)
+            errors = errors.concat(err);
           }
-        })
-      })
+        });
+      });
     } else {
-      errors.push('coordinates must be an array')
+      errors.push('coordinates must be an array');
     }
 
     return YosGeoJsonValidator.done(callback, errors);
@@ -664,7 +665,7 @@ export class YosGeoJsonValidator {
    */
   public static isMultiPolygon(multiPolygon: any, callback?: YosGeoJsonValidatorCallback): boolean {
     if (!YosGeoJsonValidator.isObject(multiPolygon)) {
-      return YosGeoJsonValidator.done(callback, ['must be a JSON Object'])
+      return YosGeoJsonValidator.done(callback, ['must be a JSON Object']);
     }
 
     let errors: string[] = [];
@@ -672,27 +673,27 @@ export class YosGeoJsonValidator {
     if ('bbox' in multiPolygon) {
       YosGeoJsonValidator.isBbox(multiPolygon.bbox, (valid: boolean, err: string[]) => {
         if (!valid) {
-          errors = errors.concat(err)
+          errors = errors.concat(err);
         }
-      })
+      });
     }
 
     if ('type' in multiPolygon) {
       if (multiPolygon.type !== 'MultiPolygon') {
-        errors.push('type must be "MultiPolygon"')
+        errors.push('type must be "MultiPolygon"');
       }
     } else {
-      errors.push('must have a member with the name "type"')
+      errors.push('must have a member with the name "type"');
     }
 
     if ('coordinates' in multiPolygon) {
       YosGeoJsonValidator.isMultiPolygonCoor(multiPolygon.coordinates, (valid: boolean, err: string[]) => {
         if (!valid) {
-          errors = errors.concat(err)
+          errors = errors.concat(err);
         }
-      })
+      });
     } else {
-      errors.push('must have a member with the name "coordinates"')
+      errors.push('must have a member with the name "coordinates"');
     }
 
     // run custom checks
@@ -709,7 +710,7 @@ export class YosGeoJsonValidator {
    */
   public static isGeometryCollection(geometryCollection: any, callback?: YosGeoJsonValidatorCallback): boolean {
     if (!YosGeoJsonValidator.isObject(geometryCollection)) {
-      return YosGeoJsonValidator.done(callback, ['must be a JSON Object'])
+      return YosGeoJsonValidator.done(callback, ['must be a JSON Object']);
     }
 
     let errors: string[] = [];
@@ -717,17 +718,17 @@ export class YosGeoJsonValidator {
     if ('bbox' in geometryCollection) {
       YosGeoJsonValidator.isBbox(geometryCollection.bbox, (valid: boolean, err: string[]) => {
         if (!valid) {
-          errors = errors.concat(err)
+          errors = errors.concat(err);
         }
-      })
+      });
     }
 
     if ('type' in geometryCollection) {
       if (geometryCollection.type !== 'GeometryCollection') {
-        errors.push('type must be "GeometryCollection"')
+        errors.push('type must be "GeometryCollection"');
       }
     } else {
-      errors.push('must have a member with the name "type"')
+      errors.push('must have a member with the name "type"');
     }
 
     if ('geometries' in geometryCollection) {
@@ -738,15 +739,15 @@ export class YosGeoJsonValidator {
               // modify the err msg from 'isPosition' to note the element number
               err[0] = 'at ' + index + ': '.concat(err[0]);
               // build a list of invalid positions
-              errors = errors.concat(err)
+              errors = errors.concat(err);
             }
-          })
-        })
+          });
+        });
       } else {
-        errors.push('"geometries" must be an array')
+        errors.push('"geometries" must be an array');
       }
     } else {
-      errors.push('must have a member with the name "geometries"')
+      errors.push('must have a member with the name "geometries"');
     }
 
     // run custom checks
@@ -763,7 +764,7 @@ export class YosGeoJsonValidator {
    */
   public static isFeature(feature: any, callback?: YosGeoJsonValidatorCallback): boolean {
     if (!YosGeoJsonValidator.isObject(feature)) {
-      return YosGeoJsonValidator.done(callback, ['must be a JSON Object'])
+      return YosGeoJsonValidator.done(callback, ['must be a JSON Object']);
     }
 
     let errors: string[] = [];
@@ -771,33 +772,33 @@ export class YosGeoJsonValidator {
     if ('bbox' in feature) {
       YosGeoJsonValidator.isBbox(feature.bbox, (valid: boolean, err: string[]) => {
         if (!valid) {
-          errors = errors.concat(err)
+          errors = errors.concat(err);
         }
-      })
+      });
     }
 
     if ('type' in feature) {
       if (feature.type !== 'Feature') {
-        errors.push('type must be "Feature"')
+        errors.push('type must be "Feature"');
       }
     } else {
-      errors.push('must have a member with the name "type"')
+      errors.push('must have a member with the name "type"');
     }
 
     if (!('properties' in feature)) {
-      errors.push('must have a member with the name "properties"')
+      errors.push('must have a member with the name "properties"');
     }
 
     if ('geometry' in feature) {
       if (feature.geometry !== null) {
         YosGeoJsonValidator.isGeometryObject(feature.geometry, (valid: boolean, err: string[]) => {
           if (!valid) {
-            errors = errors.concat(err)
+            errors = errors.concat(err);
           }
-        })
+        });
       }
     } else {
-      errors.push('must have a member with the name "geometry"')
+      errors.push('must have a member with the name "geometry"');
     }
 
     // run custom checks
@@ -814,7 +815,7 @@ export class YosGeoJsonValidator {
    */
   public static isFeatureCollection(featureCollection: any, callback?: YosGeoJsonValidatorCallback): boolean {
     if (!YosGeoJsonValidator.isObject(featureCollection)) {
-      return YosGeoJsonValidator.done(callback, ['must be a JSON Object'])
+      return YosGeoJsonValidator.done(callback, ['must be a JSON Object']);
     }
 
     let errors: string[] = [];
@@ -822,17 +823,17 @@ export class YosGeoJsonValidator {
     if ('bbox' in featureCollection) {
       YosGeoJsonValidator.isBbox(featureCollection.bbox, (valid: boolean, err: string[]) => {
         if (!valid) {
-          errors = errors.concat(err)
+          errors = errors.concat(err);
         }
-      })
+      });
     }
 
     if ('type' in featureCollection) {
       if (featureCollection.type !== 'FeatureCollection') {
-        errors.push('type must be "FeatureCollection"')
+        errors.push('type must be "FeatureCollection"');
       }
     } else {
-      errors.push('must have a member with the name "type"')
+      errors.push('must have a member with the name "type"');
     }
 
     if ('features' in featureCollection) {
@@ -843,15 +844,15 @@ export class YosGeoJsonValidator {
               // modify the err msg from 'isPosition' to note the element number
               err[0] = 'at ' + index + ': '.concat(err[0]);
               // build a list of invalide positions
-              errors = errors.concat(err)
+              errors = errors.concat(err);
             }
-          })
-        })
+          });
+        });
       } else {
-        errors.push('"Features" must be an array')
+        errors.push('"Features" must be an array');
       }
     } else {
-      errors.push('must have a member with the name "Features"')
+      errors.push('must have a member with the name "Features"');
     }
 
     // run custom checks
@@ -870,10 +871,10 @@ export class YosGeoJsonValidator {
     let errors: string[] = [];
     if (Array.isArray(bbox)) {
       if (bbox.length % 2 !== 0) {
-        errors.push('bbox, must be a 2*n array')
+        errors.push('bbox, must be a 2*n array');
       }
     } else {
-      errors.push('bbox must be an array')
+      errors.push('bbox must be an array');
     }
 
     // run custom checks

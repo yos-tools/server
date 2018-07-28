@@ -13,5 +13,5 @@ export interface YosGeoJsonValidatorCustomDefinition {
    * @param {*} object
    * @return {null | string | string[]} error messages
    */
-  (object: any): null | string | string []
+  (object: any): null | string | string [];
 }

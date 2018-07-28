@@ -9,32 +9,32 @@ export interface YosGraphQLModuleConfig extends YosModuleConfig {
 
   /** Set own apollo server
    * (https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html) */
-  apolloSever?: ApolloServer,
+  apolloSever?: ApolloServer;
 
   /** Configuration for new apollo server
    * (see https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html) */
-  apolloConfig?: Config,
+  apolloConfig?: Config;
 
   /** Dir path, file path or object (array) for core schemas */
-  coreSchemas?: YosGraphQLSchemasConfigType,
+  coreSchemas?: YosGraphQLSchemasConfigType;
 
-  /** Module config */
-  module: typeof YosGraphQLModule,
+  /** Module class */
+  module: typeof YosGraphQLModule;
 
   /** Enable playground
    * true => enable playground on GraphQL url
    * false => disable playground */
-  playground?: boolean,
+  playground?: boolean;
 
   /** Dir path, file path or object (array) for project schemas */
-  schemas?: YosGraphQLSchemasConfigType,
+  schemas?: YosGraphQLSchemasConfigType;
 
   /** Enable subscriptions
    * string => enable subscriptions on this url endpoint
    * true => enable subscriptions on '/subscriptions'
    * false => disable subscriptions */
-  subscriptions?: string | boolean,
+  subscriptions?: string | boolean;
 
   /** URL endpoint */
-  url?: string
+  url?: string;
 }

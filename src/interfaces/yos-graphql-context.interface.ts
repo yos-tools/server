@@ -25,5 +25,5 @@ export class YosGraphQLContext {
   /** The object that contains the result returned from the resolver on the parent field, or, in the case of a top-level
    * Query field, the rootValue passed from the server configuration. This argument enables the nested nature of
    * GraphQL queries. */
-  parent?: any
+  parent?: any;
 }

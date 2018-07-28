@@ -11,16 +11,10 @@ import {
   PostalCode,
   URL
 } from '@okgrow/graphql-scalars';
-import { YosSchemaDefinition } from '..';
+import { YosCoreController, YosResolver, YosSchemaDefinition } from '..';
 import { YosAnyScalar } from '../scalars/yos-any.scalar';
 import { YosDateScalar } from '../scalars/yos-date.scalar';
 import { YosEmailAddressScalar } from '../scalars/yos-email-address.scalar';
-
-// Init
-const packageJson = require('../../package.json');
-const env: string = process.env.NODE_ENV ? process.env.NODE_ENV : 'development';
-const name = packageJson.name;
-const version = packageJson.version;
 
 
 /**
@@ -214,7 +208,7 @@ export const YosCoreApi: YosSchemaDefinition = {
       version: String!
       
       "Current Position"
-      position: GeoJsonPoint
+      ipLookup: Any
     }
 
 
@@ -280,20 +274,7 @@ export const YosCoreApi: YosSchemaDefinition = {
 
     /** Resolver for queries */
     Query: {
-      api: () => {
-        return {
-          environment: env,
-          name: name,
-          version: version,
-          position: {
-            "type": "Point",
-            "coordinates": [
-              8.066930,
-              51.107980
-            ]
-          }
-        };
-      }
+      api: (parent, args, context, info) => YosResolver.graphQL(YosCoreController.api, {parent, args, context, info})
     }
   }
 };
