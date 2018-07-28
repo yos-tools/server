@@ -35,6 +35,14 @@ export class YosHelper {
   }
 
   /**
+   * Get plain data object, without functions or not own properties
+   * @param object
+   */
+  public static plainDataObject(object: {[key: string]: any}): any {
+    return JSON.parse(JSON.stringify(object));
+  }
+
+  /**
    * Prepare URL
    *
    * @param {any} url URL

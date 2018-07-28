@@ -40,8 +40,8 @@ export class YosHooksService extends YosService {
 
   /**
    * Perform action
-   * @param {YosActionHook} hook Name of the hook
-   * @param args Parameters for action function
+   * @param {YosActionHook} hook - Name of the hook
+   * @param args Parameters for - action function
    * @returns {Promise<void>}
    */
   async performActions(hook: YosActionHook, ...args: any[]): Promise<void> {
@@ -53,15 +53,17 @@ export class YosHooksService extends YosService {
 
   /**
    * Perform filter
-   * @param {string} hook Name of the hook
+   * @param {string} hook - Name of the hook
+   * @param {value} value - value to be processed
    * @param args Parameters for filter function
-   * @returns {Promise<void>}
+   * @returns {Promise<any>}
    */
-  async performFilters(hook: YosFilterHook, ...args: any[]): Promise<void> {
+  async performFilters(hook: YosFilterHook, value: any, ...args: any[]): Promise<any> {
     const filters = this._filters[hook] || [];
     for (const filter of filters) {
-      await filter.func(...args);
+      value = await filter.func(value, ...args);
     }
+    return value;
   }
 
   /**

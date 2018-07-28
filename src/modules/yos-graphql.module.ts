@@ -307,10 +307,9 @@ export class YosGraphQLModule extends YosModule {
         // Set resolvers
         resolvers: this._resolvers,
 
-        // The context is passed within a function to ensure that the context is always up-to-date with
-        // the yosServer instance.
-        context: () => {
-          return YosHelper.specialMerge({}, this._yosServer.context, {yosServer: this._yosServer});
+        // Combine context
+        context: (context: any) => {
+          return YosHelper.specialMerge({}, this._yosServer.context, {yosServer: this._yosServer}, context);
         }
 
         // Combine with configuration

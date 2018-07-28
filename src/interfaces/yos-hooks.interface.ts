@@ -26,7 +26,7 @@ export interface YosHookAction {
 export interface YosHookFilter {
 
   /** Filter */
-  func: (...args: any[]) => any;
+  func: (value: any, ...args: any[]) => any;
 
   /** ID of the hook filter */
   id: string;

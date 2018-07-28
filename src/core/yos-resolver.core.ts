@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { YosControllerContext, YosControllerFunction, YosFilterHook, YosGraphQLContext } from '..';
+import { YosControllerContext, YosControllerFunction, YosFilterHook, YosGraphQLContext, YosHelper } from '..';
 
 /**
  * Resolver
@@ -66,6 +66,9 @@ export class YosResolver {
 
       // Additional context
       controllerContext.graphQL = graphQLContext;
+
+      // Move yosServer context up
+      controllerContext = YosHelper.specialMerge({}, controllerContext.yosServer.context, controllerContext);
     }
 
     return controllerContext;

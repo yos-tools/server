@@ -15,11 +15,8 @@ export class YosContextModule extends YosModule {
   // Properties
   // ===================================================================================================================
 
-  /** Process environment variables **/
-  public readonly env: { [key: string]: string } = process.env;
-
   /** Context variables **/
-  public context: { [key: string]: any } = process.env;
+  public context: { [key: string]: any } = {};
 
   /** Init functions to prepare context variables **/
   public initFunctions:
@@ -74,7 +71,7 @@ export class YosContextModule extends YosModule {
     let ipLookup: any;
     if (env['IP_LOOKUP_KEY']) {
       try {
-        ipLookup = JSON.parse(await YosHelper.request.get('http://api.ipstack.com/check?access_key=' + process.env.IP_LOOKUP_KEY));
+        ipLookup = JSON.parse(await YosHelper.request.get('http://api.ipstack.com/check?access_key=' + env.IP_LOOKUP_KEY));
       } catch (err) {
         console.log(err);
       }
