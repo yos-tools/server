@@ -205,13 +205,16 @@ export const YosCoreApi: YosSchemaDefinition = {
     type API {
      
       "Environment of the API"
-      environment: String
+      environment: String!
       
       "Name of the API"
-      name: String
+      name: String!
       
       "Current version of API"
-      version: String
+      version: String!
+      
+      "Current Position"
+      position: GeoJsonPoint
     }
 
 
@@ -281,7 +284,14 @@ export const YosCoreApi: YosSchemaDefinition = {
         return {
           environment: env,
           name: name,
-          version: version
+          version: version,
+          position: {
+            "type": "Point",
+            "coordinates": [
+              8.066930,
+              51.107980
+            ]
+          }
         };
       }
     }

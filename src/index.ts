@@ -28,6 +28,8 @@ export { YosFilterHook } from './enums/yos-filter-hook.enum';
 // =====================================================================================================================
 // Helper exports
 // =====================================================================================================================
+export { YosGeoJsonValidator } from './helper/yos-geo-json-validator.helper';
+export { YosGraphQL } from './helper/yos-graphql.helper';
 export { YosInitializer } from './helper/yos-initializer.helper';
 export { YosHelper } from './helper/yos-helper.helper';
 
@@ -36,6 +38,9 @@ export { YosHelper } from './helper/yos-helper.helper';
 // =====================================================================================================================
 export { YosControllerFunction } from './interfaces/yos-controller-function.interface';
 export { YosControllerContext } from './interfaces/yos-controller-context.interface';
+export { YosGeoJsonValidatorCallback } from './interfaces/yos-geo-json-validator-callback.interface';
+export { YosGeoJsonValidatorCustomDefinition } from './interfaces/yos-geo-json-validator-custom-definition.interface';
+export { YosGeoJsonValidatorDefinition } from './interfaces/yos-geo-json-validator-definition.interface';
 export { YosGraphQLContext } from './interfaces/yos-graphql-context.interface';
 export { YosGraphQLModuleConfig } from './interfaces/yos-graphql-module-config.interface';
 export { YosActionHooks, YosHookAction, YosHookFilter, YosFilterHooks } from './interfaces/yos-hooks.interface';
@@ -62,6 +67,7 @@ export { YosProcessModule } from './modules/yos-process.module';
 export { YosAnyScalar } from './scalars/yos-any.scalar';
 export { YosDateScalar } from './scalars/yos-date.scalar';
 export { YosEmailAddressScalar } from './scalars/yos-email-address.scalar';
+export { YosGeoJsonScalar } from './scalars/yos-geo-json.scalar';
 
 // =====================================================================================================================
 // Services exports

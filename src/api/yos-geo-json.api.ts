@@ -1,21 +1,8 @@
 import { YosSchemaDefinition } from '..';
-import {
-  Bbox,
-  Feature,
-  FeatureCollection,
-  Geometry,
-  GeometryCollection,
-  LineString,
-  MultiLineString,
-  MultiPoint,
-  MultiPolygon,
-  Point,
-  Polygon,
-  Position
-} from 'graphql-geojson-scalar-types';
+import {YosGeoJsonScalar} from '../scalars/yos-geo-json.scalar';
 
 /**
- * GeoJSON
+ * GeoJson
  * @type {YosSchemaDefinition}
  *
  * See https://github.com/enniel/graphql-geojson-scalar-types
@@ -30,26 +17,26 @@ export const YosCoreApi: YosSchemaDefinition = {
   typeDefs: `
   
     # ==================================================================================================================
-    # GeoJSON Enums
+    # GeoJson Enums
     #
     # Following the specification: https://tools.ietf.org/html/rfc7946
     # ==================================================================================================================
     
     """
     The Bounding Box "bbox" values define shapes with edges that follow lines of constant longitude, latitude, and 
-    elevation (see [GeoJSON Bounding Box](https://tools.ietf.org/html/rfc7946#section-5))
+    elevation (see [GeoJson Bounding Box](https://tools.ietf.org/html/rfc7946#section-5))
     """
-    scalar GeoJSONBboxScalar
+    scalar GeoJsonBbox
     
     """
-    A Feature object represents a spatially bounded thing.  Every Feature object is a GeoJSON object no matter where it 
-    occurs in a GeoJSON text.
+    A Feature object represents a spatially bounded thing.  Every Feature object is a GeoJson object no matter where it 
+    occurs in a GeoJson text.
     
     - A Feature object has a "type" member with the value "Feature".
     - A Feature object has a member with the name "geometry".  The value of the geometry member SHALL be either a 
-      Geometry object as defined above or, in the case that the Feature is unlocated, a JSON null value.
+      Geometry object as defined above or, in the case that the Feature is unlocated, a Json null value.
     - A Feature object has a member with the name "properties".  The value of the properties member is an object 
-      (any JSON object or a JSON null value).
+      (any Json object or a Json null value).
       
     Example of a 2D bbox member on a Feature:
     \`\`\`
@@ -71,13 +58,13 @@ export const YosCoreApi: YosSchemaDefinition = {
     }
     \`\`\`
     
-    (see [GeoJSON Feature](https://tools.ietf.org/html/rfc7946#section-3.2))
+    (see [GeoJson Feature](https://tools.ietf.org/html/rfc7946#section-3.2))
     """
-    scalar GeoJSONFeatureScalar
+    scalar GeoJsonFeature
     
     """
-    A GeoJSON object with the type "FeatureCollection" is a FeatureCollection object.  A FeatureCollection object has a 
-    member with the name "features".  The value of "features" is a JSON array. Each element of the array is a Feature 
+    A GeoJson object with the type "FeatureCollection" is a FeatureCollection object.  A FeatureCollection object has a 
+    member with the name "features".  The value of "features" is a Json array. Each element of the array is a Feature 
     object as defined above. It is possible for this array to be empty.
     
     Example of a 2D bbox member on a FeatureCollection:
@@ -102,26 +89,26 @@ export const YosCoreApi: YosSchemaDefinition = {
     }
     \`\`\`
     
-    (see [GeoJSON FeatureCollection](https://tools.ietf.org/html/rfc7946#section-3.3))
+    (see [GeoJson FeatureCollection](https://tools.ietf.org/html/rfc7946#section-3.3))
     """
-    scalar GeoJSONFeatureCollectionScalar
+    scalar GeoJsonFeatureCollection
     
     """
-    A Geometry object represents points, curves, and surfaces in coordinate space.  Every Geometry object is a GeoJSON 
-    object no matter where it occurs in a GeoJSON text.
+    A Geometry object represents points, curves, and surfaces in coordinate space.  Every Geometry object is a GeoJson 
+    object no matter where it occurs in a GeoJson text.
     
-    (See [GeoJSON Geometry](https://tools.ietf.org/html/rfc7946#section-3.1))
+    (See [GeoJson Geometry](https://tools.ietf.org/html/rfc7946#section-3.1))
     """
-    scalar GeoJSONGeometryScalar
+    scalar GeoJsonGeometryObject
     
     """
-    A GeoJSON object with type "GeometryCollection" is a Geometry object. A GeometryCollection has a member with the 
-    name "geometries".  The value of "geometries" is an array.  Each element of this array is a GeoJSON Geometry object.  
+    A GeoJson object with type "GeometryCollection" is a Geometry object. A GeometryCollection has a member with the 
+    name "geometries".  The value of "geometries" is an array.  Each element of this array is a GeoJson Geometry object.  
     It is possible for this array to be empty.
     
-    (See [GeoJSON GeometryCollection](https://tools.ietf.org/html/rfc7946#section-3.1.8))
+    (See [GeoJson GeometryCollection](https://tools.ietf.org/html/rfc7946#section-3.1.8))
     """
-    scalar GeoJSONGeometryCollectionScalar
+    scalar GeoJsonGeometryCollection
     
     """
     For type "LineString", the "coordinates" member is an array of two or more positions.
@@ -137,9 +124,9 @@ export const YosCoreApi: YosSchemaDefinition = {
     }
     \`\`\`
     
-    (See [GeoJSON LineString](https://tools.ietf.org/html/rfc7946#section-3.1.4))
+    (See [GeoJson LineString](https://tools.ietf.org/html/rfc7946#section-3.1.4))
     """
-    scalar GeoJSONLineStringScalar
+    scalar GeoJsonLineString
     
     """
     For type "MultiLineString", the "coordinates" member is an array of LineString coordinate arrays.
@@ -161,9 +148,9 @@ export const YosCoreApi: YosSchemaDefinition = {
     }
     \`\`\`
     
-    (See [GeoJSON MultiLineString](https://tools.ietf.org/html/rfc7946#section-3.1.5))
+    (See [GeoJson MultiLineString](https://tools.ietf.org/html/rfc7946#section-3.1.5))
     """
-    scalar GeoJSONMultiLineStringScalar
+    scalar GeoJsonMultiLineString
     
     """
     For type "MultiPoint", the "coordinates" member is an array of positions.
@@ -179,9 +166,9 @@ export const YosCoreApi: YosSchemaDefinition = {
     }
     \`\`\`
     
-    (See [GeoJSON MultiPoint](https://tools.ietf.org/html/rfc7946#section-3.1.3))
+    (See [GeoJson MultiPoint](https://tools.ietf.org/html/rfc7946#section-3.1.3))
     """
-    scalar GeoJSONMultiPointScalar
+    scalar GeoJsonMultiPoint
     
     """
     For type "MultiPolygon", the "coordinates" member is an array of Polygon coordinate arrays.
@@ -220,9 +207,9 @@ export const YosCoreApi: YosSchemaDefinition = {
     }
     \`\`\`
     
-    (See: [GeoJSON MultiPolygon](https://tools.ietf.org/html/rfc7946#section-3.1.7))
+    (See: [GeoJson MultiPolygon](https://tools.ietf.org/html/rfc7946#section-3.1.7))
     """
-    scalar GeoJSONMultiPolygonScalar
+    scalar GeoJsonMultiPolygon
     
     """
     For type "Point", the "coordinates" member is a single position.
@@ -235,9 +222,9 @@ export const YosCoreApi: YosSchemaDefinition = {
     }
     \`\`\`
     
-    (See: [GeoJSON Point](https://tools.ietf.org/html/rfc7946#section-3.1.2))
+    (See: [GeoJson Point](https://tools.ietf.org/html/rfc7946#section-3.1.2))
     """
-    scalar GeoJSONPointScalar
+    scalar GeoJsonPoint
     
     """
     To specify a constraint specific to Polygons, it is useful to introduce the concept of a linear ring
@@ -288,9 +275,9 @@ export const YosCoreApi: YosSchemaDefinition = {
     }
     \`\`\`
     
-    (See: [GeoJSON Polygon](https://tools.ietf.org/html/rfc7946#section-3.1.6))
+    (See: [GeoJson Polygon](https://tools.ietf.org/html/rfc7946#section-3.1.6))
     """
-    scalar GeoJSONPolygonScalar
+    scalar GeoJsonPolygon
     
     """
     A position is the fundamental geometry construct.  The "coordinates" member of a Geometry object is composed of 
@@ -306,9 +293,9 @@ export const YosCoreApi: YosSchemaDefinition = {
     latitude, or easting and northing, precisely in that order and using decimal numbers.  Altitude or elevation MAY be 
     included as an optional third element.
    
-    (See: [GeoJSON Position](https://tools.ietf.org/html/rfc7946#section-3.1.1))
+    (See: [GeoJson Position](https://tools.ietf.org/html/rfc7946#section-3.1.1))
     """
-    scalar GeoJSONPositionScalar
+    scalar GeoJsonPosition
   `,
 
   // ===================================================================================================================
@@ -317,40 +304,40 @@ export const YosCoreApi: YosSchemaDefinition = {
 
   resolvers: {
 
-    /** Resolver for any GeoJSON Bbox */
-    GeoJSONBboxScalar: Bbox,
+    /** Resolver for any GeoJson Bbox */
+    GeoJsonBbox: YosGeoJsonScalar.get('Bbox'),
 
-    /** Resolver for any GeoJSON Feature */
-    GeoJSONFeatureScalar: Feature,
+    /** Resolver for any GeoJson Feature */
+    GeoJsonFeature: YosGeoJsonScalar.get('Feature'),
 
-    /** Resolver for any GeoJSON FeatureCollection */
-    GeoJSONFeatureCollectionScalar: FeatureCollection,
+    /** Resolver for any GeoJson FeatureCollection */
+    GeoJsonFeatureCollection: YosGeoJsonScalar.get('FeatureCollection'),
 
-    /** Resolver for any GeoJSON Geometry */
-    GeoJSONGeometryScalar: Geometry,
+    /** Resolver for any GeoJson GeometryObject */
+    GeoJsonGeometryObject: YosGeoJsonScalar.get('GeometryObject'),
 
-    /** Resolver for any GeoJSON GeometryCollection */
-    GeoJSONGeometryCollectionScalar: GeometryCollection,
+    /** Resolver for any GeoJson GeometryCollection */
+    GeoJsonGeometryCollection: YosGeoJsonScalar.get('GeometryCollection'),
 
-    /** Resolver for any GeoJSON LineString */
-    GeoJSONLineStringScalar: LineString,
+    /** Resolver for any GeoJson LineString */
+    GeoJsonLineString: YosGeoJsonScalar.get('LineString'),
 
-    /** Resolver for any GeoJSON MultiLineString */
-    GeoJSONMultiLineStringScalar: MultiLineString,
+    /** Resolver for any GeoJson MultiLineString */
+    GeoJsonMultiLineString: YosGeoJsonScalar.get('MultiLineString'),
 
-    /** Resolver for any GeoJSON MultiPoint */
-    GeoJSONMultiPointScalar: MultiPoint,
+    /** Resolver for any GeoJson MultiPoint */
+    GeoJsonMultiPoint: YosGeoJsonScalar.get('MultiPoint'),
 
-    /** Resolver for any GeoJSON MultiPolygon */
-    GeoJSONMultiPolygonScalar: MultiPolygon,
+    /** Resolver for any GeoJson MultiPolygon */
+    GeoJsonMultiPolygon: YosGeoJsonScalar.get('MultiPolygon'),
 
-    /** Resolver for any GeoJSON Point */
-    GeoJSONPointScalar: Point,
+    /** Resolver for any GeoJson Point */
+    GeoJsonPoint: YosGeoJsonScalar.get('Point'),
 
-    /** Resolver for any GeoJSON Polygon */
-    GeoJSONPolygonScalar: Polygon,
+    /** Resolver for any GeoJson Polygon */
+    GeoJsonPolygon: YosGeoJsonScalar.get('Polygon'),
 
-    /** Resolver for any GeoJSON Position */
-    GeoJSONPositionScalar: Position
- }
+    /** Resolver for any GeoJson Position */
+    GeoJsonPosition: YosGeoJsonScalar.get('Position')
+  }
 };
