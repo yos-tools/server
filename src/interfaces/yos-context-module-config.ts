@@ -5,6 +5,9 @@ import { YosContextInitFunction, YosContextModule, YosModuleConfig } from '..';
  */
 export interface YosContextModuleConfig extends YosModuleConfig {
 
+  /** Initial context */
+  context?: {[key: string]: any};
+
   /** Initialize functions for context variables */
   initFunctions?: {
 

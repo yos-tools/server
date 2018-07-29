@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { YosContextModuleConfig, YosHelper, YosModule, YosServer } from '..';
 
 /**
@@ -33,7 +34,10 @@ export class YosContextModule extends YosModule {
    * @param {YosModuleConfig} config
    * @returns {YosContextModule}
    */
-  public static async init(yosServer: YosServer, config?: YosContextModuleConfig): Promise<YosContextModule> {
+  public static async init(yosServer: YosServer, config: YosContextModuleConfig): Promise<YosContextModule> {
+
+    // Init context
+    const context: {[key: string]: any} = _.get(config, 'context', {});
 
     // Create new service
     const contextModule = new YosContextModule(yosServer, config);
@@ -43,7 +47,7 @@ export class YosContextModule extends YosModule {
 
     // Process init functions and save results in context
     for (const [key, func] of Object.entries(contextModule.initFunctions)) {
-      contextModule.context[key] = await (<(...any: any[]) => any>func)(yosServer.context, process.env);
+      contextModule.context[key] = await (<(...any: any[]) => any>func)(context, process.env);
     }
 
     // Set context in yosServer

@@ -89,6 +89,9 @@ export class YosServerDefaultConfig implements YosServerConfig {
     /** Module to set the context in YosServer instance */
     contextModule: {
 
+      /** Initial context */
+      context: {},
+
       /** Initialize functions for context variables */
       initFunctions: {
         ipLookup: YosContextModule.initIpLookup
