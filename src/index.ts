@@ -52,6 +52,7 @@ export { YosGeoJsonValidatorDefinition } from './interfaces/yos-geo-json-validat
 export { YosGraphQLContext } from './interfaces/yos-graphql-context.interface';
 export { YosGraphQLModuleConfig } from './interfaces/yos-graphql-module-config.interface';
 export { YosActionHooks, YosHookAction, YosHookFilter, YosFilterHooks } from './interfaces/yos-hooks.interface';
+export { YosObject } from './interfaces/yos-object.interface';
 export { YosJwtConfig } from './interfaces/yos-jwt-config.interface';
 export { YosModuleConfig } from './interfaces/yos-module-config.interface';
 export { YosModules } from './interfaces/yos-modules.interface';
@@ -62,6 +63,7 @@ export { YosServerCoreConfig } from './interfaces/yos-server-core-config.interfa
 export { YosServiceConfig } from './interfaces/yos-service-config.interface';
 export { YosServices } from './interfaces/yos-services.interface';
 export { YosServicesConfig } from './interfaces/yos-services-config.interface';
+export { YosSetUserViaTokenConfig } from './interfaces/yos-set-user-via-token-config.interface';
 
 // =====================================================================================================================
 // Modules exports

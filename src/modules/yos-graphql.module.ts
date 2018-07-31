@@ -4,11 +4,13 @@ import { IResolvers, ITypedef } from 'graphql-tools';
 import * as _ from 'lodash';
 import {
   YosActionHook,
+  YosFilterHook,
   YosGraphQLModuleConfig,
   YosGraphQLSchemasConfigType,
   YosHelper,
   YosInitializer,
   YosModule,
+  YosObject,
   YosSchemaDefinition,
   YosServer
 } from '..';
@@ -164,10 +166,10 @@ export class YosGraphQLModule extends YosModule {
     const documentNode = <any> parse(definitions);
 
     // Init associated array for fields (e.g. "id") for every named type (e.g. "User")
-    const typeFields: { [type: string]: { [field: string]: any } } = {};
+    const typeFields: { [type: string]: YosObject } = {};
 
     // Init associated array for named definitions
-    const typeDefinitions: { [type: string]: any } = {};
+    const typeDefinitions: YosObject = {};
 
     // 1. Round: collect definitions and all fields for each type (with names)
     // If elements with the same name exist, the last one is used
@@ -308,8 +310,17 @@ export class YosGraphQLModule extends YosModule {
         resolvers: this._resolvers,
 
         // Combine context
-        context: (context: any) => {
-          return YosHelper.specialMerge({}, this._yosServer.context, {yosServer: this._yosServer}, context);
+        context: async (context: any) => {
+
+          // Context combined with yosServer context (see YosContextModule)
+          context = YosHelper.specialMerge({}, this._yosServer.context, {yosServer: this._yosServer}, context);
+
+          // Filter hook: GraphQL context
+          if (_.has(this.yosServer, 'services.hooksService')) {
+            context = await context.services.hooksService.performFilters(YosFilterHook.IncomingRequestContext, context);
+          }
+
+          return context;
         }
 
         // Combine with configuration

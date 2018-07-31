@@ -1,9 +1,19 @@
 import { Request, Response } from 'express';
 import {
-  YosServer, YosModule, YosService, YosContext, YosAuthenticationService, YosHooksService,
-  YosAuthenticationModule, YosProcessModule
+  YosAuthenticationModule,
+  YosAuthenticationService,
+  YosContext,
+  YosContextModule,
+  YosGraphQLModule,
+  YosGraphQLService,
+  YosHooksService,
+  YosModule,
+  YosObject,
+  YosProcessModule,
+  YosServer,
+  YosService,
+  YosSubscriptionService
 } from '..';
-import { YosContextModule, YosGraphQLModule, YosGraphQLService, YosSubscriptionService } from '../index';
 
 /**
  * Interface for controllers context
@@ -33,7 +43,7 @@ export interface YosControllerContext extends YosContext {
   };
 
   /** Params from request */
-  params?: { [param: string]: any };
+  params?: YosObject;
 
   /** Express request */
   req?: Request;

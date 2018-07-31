@@ -1,4 +1,4 @@
-import { YosContextInitFunction, YosContextModule, YosModuleConfig } from '..';
+import { YosContextInitFunction, YosContextModule, YosModuleConfig, YosObject } from '..';
 
 /**
  * Configuration of context module
@@ -6,7 +6,7 @@ import { YosContextInitFunction, YosContextModule, YosModuleConfig } from '..';
 export interface YosContextModuleConfig extends YosModuleConfig {
 
   /** Initial context */
-  context?: {[key: string]: any};
+  context?: YosObject;
 
   /** Initialize functions for context variables */
   initFunctions?: {

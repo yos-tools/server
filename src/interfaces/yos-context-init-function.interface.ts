@@ -1,3 +1,5 @@
+import { YosObject } from '..';
+
 /**
  * Interface for context initialize function of context variables
  */
@@ -8,5 +10,5 @@ export interface YosContextInitFunction {
    * @param context
    * @param env
    */
-  (context?: { [key: string]: any }, env?: { [key: string]: string }): any | Promise<any>;
+  (context?: YosObject, env?: { [key: string]: string }): any | Promise<any>;
 }

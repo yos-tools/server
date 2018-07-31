@@ -4,8 +4,10 @@ import {
   YosActionHooks,
   YosFilterHook,
   YosFilterHooks,
+  YosHelper,
   YosHookAction,
   YosHookFilter,
+  YosObject,
   YosServer,
   YosService
 } from '..';
@@ -41,13 +43,13 @@ export class YosHooksService extends YosService {
   /**
    * Perform action
    * @param {YosActionHook} hook - Name of the hook
-   * @param args Parameters for - action function
+   * @param config - Configuration for action hook
    * @returns {Promise<void>}
    */
-  async performActions(hook: YosActionHook, ...args: any[]): Promise<void> {
+  async performActions(hook: YosActionHook, config?: YosObject): Promise<void> {
     const actions = this._actions[hook] || [];
     for (const action of actions) {
-      await action.func(...args);
+      await action.func(YosHelper.specialMerge({}, action.config, config));
     }
   }
 
@@ -55,13 +57,13 @@ export class YosHooksService extends YosService {
    * Perform filter
    * @param {string} hook - Name of the hook
    * @param {value} value - value to be processed
-   * @param args Parameters for filter function
+   * @param config - Configuration for filter hook
    * @returns {Promise<any>}
    */
-  async performFilters(hook: YosFilterHook, value: any, ...args: any[]): Promise<any> {
+  async performFilters(hook: YosFilterHook, value: any, config?: YosObject): Promise<any> {
     const filters = this._filters[hook] || [];
     for (const filter of filters) {
-      value = await filter.func(value, ...args);
+      value = await filter.func(value, YosHelper.specialMerge({}, filter.config, config));
     }
     return value;
   }
@@ -73,7 +75,7 @@ export class YosHooksService extends YosService {
    */
   addAction(hook: string, action: YosHookAction): void {
     if (!action.priority) {
-      action.priority = 0
+      action.priority = 0;
     }
     this.removeAction(hook, action.id);
     this._actions[hook] = this._actions[hook] || [];
@@ -88,7 +90,7 @@ export class YosHooksService extends YosService {
    */
   addFilter(hook: string, filter: YosHookFilter): void {
     if (!filter.priority) {
-      filter.priority = 0
+      filter.priority = 0;
     }
     this.removeAction(hook, filter.id);
     this._filters[hook] = this._filters[hook] || [];

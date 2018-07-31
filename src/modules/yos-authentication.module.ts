@@ -1,14 +1,29 @@
 import * as _ from 'lodash';
-import { YosAuthenticationService, YosControllerContext, YosFilterHook, YosHelper, YosModule, YosServer } from '..';
-
+import {
+  YosAuthenticationService,
+  YosControllerContext,
+  YosFilterHook,
+  YosHelper,
+  YosHooksService,
+  YosModule,
+  YosServer,
+  YosSetUserViaTokenConfig
+} from '..';
 
 /**
  * Authentication module
  */
 export class YosAuthenticationModule extends YosModule {
 
+  // ===================================================================================================================
+  // Properties
+  // ===================================================================================================================
+
   /** Authentication service */
   protected _authenticationService: YosAuthenticationService;
+
+  /** Hook service */
+  protected _hooksService: YosHooksService;
 
 
   // ===================================================================================================================
@@ -25,23 +40,11 @@ export class YosAuthenticationModule extends YosModule {
     // New authentication model
     const authenticationModel = new YosAuthenticationModule(yosServer);
 
-    // Set authentication service
-    authenticationModel._authenticationService = <YosAuthenticationService> yosServer.services.authenticationService;
-    if (!authenticationModel._authenticationService) {
-      throw Error('Missing instance of AuthenticationService in ' + YosHelper.getClassName(this));
-    }
+    // Set services for internal use
+    authenticationModel.setServices(yosServer);
 
-    // Check hooks service
-    const hooksService = yosServer.services.hooksService;
-    if (!hooksService) {
-      throw Error('Missing instance of HookService in ' + YosHelper.getClassName(this));
-    }
-
-    // Set user in request context via filter
-    hooksService.addFilter(YosFilterHook.IncomingRequestContext, {
-      id: 'YosAuthenticationModule.setUserViaToken',
-      func: authenticationModel.setUserViaToken
-    });
+    // Set user in contexts via filters
+    authenticationModel.setFilters();
 
     // Return authentication model instance
     return authenticationModel;
@@ -53,11 +56,58 @@ export class YosAuthenticationModule extends YosModule {
   // ===================================================================================================================
 
   /**
+   * Set services
+   * @param yosServer
+   */
+  protected setServices(yosServer: YosServer) {
+
+    // Set authentication service
+    this._authenticationService = <YosAuthenticationService> yosServer.services.authenticationService;
+    if (!this._authenticationService) {
+      throw Error('Missing instance of AuthenticationService in ' + YosHelper.getClassName(this));
+    }
+
+    // Check hooks service
+    this._hooksService = yosServer.services.hooksService;
+    if (!this._hooksService) {
+      throw Error('Missing instance of HookService in ' + YosHelper.getClassName(this));
+    }
+  }
+
+  /**
+   * Set filters
+   */
+  protected setFilters() {
+
+    // Set user in request context via filter
+    this._hooksService.addFilter(YosFilterHook.IncomingRequestContext, {
+      id: 'YosAuthenticationModule.setUserViaToken',
+      func: this.setUserViaToken,
+      config: {overwrite: false}
+    });
+
+    // Set user in GraphQL context via filter
+    this._hooksService.addFilter(YosFilterHook.GraphQLContext, {
+      id: 'YosAuthenticationModule.setUserViaToken',
+      func: this.setUserViaToken
+    });
+  }
+
+  /**
    * Set current user in context via token data
    * @param {YosControllerContext} context
+   * @param config - Configuration
    * @returns {Promise<YosControllerContext>}
    */
-  public async setUserViaToken(context: YosControllerContext): Promise<YosControllerContext> {
+  public async setUserViaToken(
+    context: YosControllerContext,
+    config: YosSetUserViaTokenConfig = {overwrite: true}
+  ): Promise<YosControllerContext> {
+
+    // Check if the user has already been set and should not be overwritten
+    if (_.get(context, 'user') && !_.get(config, 'overwrite')) {
+      return context;
+    }
 
     // Authorization field in header
     const authorizationField = _.get(
@@ -78,5 +128,4 @@ export class YosAuthenticationModule extends YosModule {
     // Return context
     return context;
   }
-
 }

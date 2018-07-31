@@ -1,5 +1,6 @@
 import { Kind, ValueNode } from 'graphql';
 import Maybe from 'graphql/tsutils/Maybe';
+import { YosObject } from '..';
 
 /**
  * Helper for GraphQL
@@ -12,7 +13,7 @@ export class YosGraphQL {
    * @param variables
    * @returns {any}
    */
-  public static parseLiteral(valueNode: ValueNode, variables?: Maybe<{ [key: string]: any }>): any {
+  public static parseLiteral(valueNode: ValueNode, variables?: Maybe<YosObject>): any {
     switch (valueNode.kind) {
       case Kind.STRING:
       case Kind.BOOLEAN:

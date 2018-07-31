@@ -1,4 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
+import { YosObject } from '..';
 
 /**
  *  Context of GraphQL Request
@@ -11,7 +12,7 @@ export class YosGraphQLContext {
 
   /** An object with the arguments passed into the field in the query. For example, if the field was called with
    * author(name: "Ada"), the args object would be: { "name": "Ada" }. */
-  args?: {[arg: string]: any};
+  args?: YosObject;
 
   /** This is an object shared by all resolvers in a particular query, and is used to contain per-request state,
    * including authentication information, dataloader instances, and anything else that should be taken into account

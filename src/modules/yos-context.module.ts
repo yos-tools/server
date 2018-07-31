@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { YosContextModuleConfig, YosHelper, YosModule, YosServer } from '..';
+import { YosContextModuleConfig, YosHelper, YosModule, YosObject, YosServer } from '..';
 
 /**
  * Context module
@@ -17,11 +17,11 @@ export class YosContextModule extends YosModule {
   // ===================================================================================================================
 
   /** Context variables **/
-  public context: { [key: string]: any } = {};
+  public context: YosObject = {};
 
   /** Init functions to prepare context variables **/
   public initFunctions:
-    { [key: string]: (context?: { [key: string]: any }, env?: { [key: string]: string }) => any | Promise<any> } = {};
+    { [key: string]: (context?: YosObject, env?: { [key: string]: string }) => any | Promise<any> } = {};
 
 
   // ===================================================================================================================
@@ -37,7 +37,7 @@ export class YosContextModule extends YosModule {
   public static async init(yosServer: YosServer, config: YosContextModuleConfig): Promise<YosContextModule> {
 
     // Init context
-    const context: {[key: string]: any} = _.get(config, 'context', {});
+    const context: YosObject = _.get(config, 'context', {});
 
     // Create new service
     const contextModule = new YosContextModule(yosServer, config);
@@ -71,7 +71,7 @@ export class YosContextModule extends YosModule {
    * @param context
    * @param env
    */
-  public static async initIpLookup(context: { [key: string]: any }, env: { [key: string]: string }): Promise<any> {
+  public static async initIpLookup(context: YosObject, env: { [key: string]: string }): Promise<any> {
     let ipLookup: any;
     if (env['IP_LOOKUP_KEY']) {
       try {
