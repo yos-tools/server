@@ -1,4 +1,4 @@
-import { ApolloServer, ServerRegistration } from 'apollo-server-express';
+import { ApolloServer, SchemaDirectiveVisitor, ServerRegistration } from 'apollo-server-express';
 import { DefinitionNode, parse, print } from 'graphql';
 import { IResolvers, ITypedef } from 'graphql-tools';
 import * as _ from 'lodash';
@@ -39,6 +39,9 @@ export class YosGraphQLModule extends YosModule {
 
   /** GraphQL resolvers */
   protected _resolvers: IResolvers;
+
+  /** GraphQL schema directives */
+  protected _schemaDirectives: { [name: string]: typeof SchemaDirectiveVisitor };
 
   /** GraphQL type definitions */
   protected _typeDefs: ITypedef;
@@ -85,11 +88,16 @@ export class YosGraphQLModule extends YosModule {
    * @param {YosGraphQLSchemasConfigType} items Object(s) or file and directory path string(s)
    * @returns {Promise<YosSchemaDefinition>}
    */
-  public static async getGraphQLSchemaDefinition(items: YosGraphQLSchemasConfigType): Promise<{ typeDefs: ITypedef[], resolvers: IResolvers[] }> {
+  public static async getGraphQLSchemaDefinition(items: YosGraphQLSchemasConfigType):
+    Promise<{ typeDefs: ITypedef[], resolvers: IResolvers[], schemaDirectives: { [name: string]: typeof SchemaDirectiveVisitor }[] }> {
 
     // Init
     let schemas: YosSchemaDefinition[] = [];
-    const definition: { typeDefs: ITypedef[], resolvers: IResolvers[] } = {typeDefs: [], resolvers: []};
+    const definition: {
+      typeDefs: ITypedef[],
+      resolvers: IResolvers[],
+      schemaDirectives: { [name: string]: typeof SchemaDirectiveVisitor }[]
+    } = {typeDefs: [], resolvers: [], schemaDirectives: []};
 
     // Convert to array for
     if (!Array.isArray(items)) {
@@ -111,7 +119,11 @@ export class YosGraphQLModule extends YosModule {
             const object = file[name];
 
             // Check object
-            if ((typeof object.typeDefs === 'string' && object.typeDefs.length) || object.resolvers) {
+            if (
+              (typeof object.typeDefs === 'string' && object.typeDefs.length) ||
+              object.resolvers ||
+              object.schemaDirectives
+            ) {
 
               // Add schema
               schemas.push(object);
@@ -142,6 +154,13 @@ export class YosGraphQLModule extends YosModule {
           definition.resolvers = definition.resolvers.concat(schema.resolvers);
         } else {
           definition.resolvers.push(schema.resolvers);
+        }
+
+        // Process schema directives
+        if (Array.isArray(schema.schemaDirectives)) {
+          definition.schemaDirectives = definition.schemaDirectives.concat(schema.schemaDirectives);
+        } else {
+          definition.schemaDirectives.push(schema.schemaDirectives);
         }
       }
     }
@@ -258,7 +277,7 @@ export class YosGraphQLModule extends YosModule {
    */
   protected async initGraphQLSchemas() {
 
-    // Get definitions
+    // Get definitions from core and from config(s)
     const definitions = await Promise.all([this._config.coreSchemas, this._config.schemas].map(
       async (item) => {
         return await YosGraphQLModule.getGraphQLSchemaDefinition(item);
@@ -268,7 +287,8 @@ export class YosGraphQLModule extends YosModule {
     // Concat definitions to one definition
     const definition = {
       typeDefs: definitions[0].typeDefs.concat(definitions[1].typeDefs),
-      resolvers: definitions[0].resolvers.concat(definitions[1].resolvers)
+      resolvers: definitions[0].resolvers.concat(definitions[1].resolvers),
+      schemaDirectives: definitions[0].schemaDirectives.concat(definitions[1].schemaDirectives)
     };
 
     // Add GraphQL Schema support for type inheritance, generic typing, metadata decoration
@@ -281,6 +301,9 @@ export class YosGraphQLModule extends YosModule {
 
     // Merge resolvers
     this._resolvers = _.merge({}, ...definition.resolvers);
+
+    // Merge schema directives
+    this._schemaDirectives = _.merge({}, ...definition.schemaDirectives);
   }
 
   /**
@@ -308,6 +331,9 @@ export class YosGraphQLModule extends YosModule {
 
         // Set resolvers
         resolvers: this._resolvers,
+
+        // Set schema directives
+        schemaDirectives: this._schemaDirectives,
 
         // Combine context
         context: async (context: any) => {
@@ -416,6 +442,14 @@ export class YosGraphQLModule extends YosModule {
    */
   public get resolvers(): IResolvers {
     return this._resolvers;
+  }
+
+  /**
+   * Getter for GraphQL schema directives
+   * @returns {{ [name: string]: typeof SchemaDirectiveVisitor }}
+   */
+  public get schemaDirectives(): { [name: string]: typeof SchemaDirectiveVisitor } {
+    return this._schemaDirectives;
   }
 
   /**

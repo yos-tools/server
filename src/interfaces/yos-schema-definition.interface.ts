@@ -1,3 +1,4 @@
+import { SchemaDirectiveVisitor } from 'apollo-server-express';
 import { IResolvers, ITypeDefinitions } from 'graphql-tools';
 
 /**
@@ -5,9 +6,21 @@ import { IResolvers, ITypeDefinitions } from 'graphql-tools';
  */
 export interface YosSchemaDefinition<TContext = any> {
 
-  /** Definitions of GraphQL types */
+  /**
+   * Definitions of GraphQL types
+   * (https://www.apollographql.com/docs/graphql-tools/generate-schema.html)
+   */
   typeDefs: ITypeDefinitions;
 
-  /** Resolvers for queries, mutations and subscriptions */
+  /**
+   * Resolvers for queries, mutations and subscriptions
+   * (https://www.apollographql.com/docs/graphql-tools/resolvers.html)
+   */
   resolvers?: IResolvers<any, TContext> | Array<IResolvers<any, TContext>>;
+
+  /**
+   * Schema directives of type SchemaDirectiveVisitor
+   * (https://www.apollographql.com/docs/graphql-tools/schema-directives.html)
+   */
+  schemaDirectives?: {[name: string]: typeof SchemaDirectiveVisitor}
 }

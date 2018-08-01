@@ -12,6 +12,7 @@ import {
   URL
 } from '@okgrow/graphql-scalars';
 import { YosCoreController, YosResolver, YosSchemaDefinition } from '..';
+import { YosDeprecatedDirective } from '../directives/yos-deprecated.directive';
 import { YosAnyScalar } from '../scalars/yos-any.scalar';
 import { YosDateScalar } from '../scalars/yos-date.scalar';
 import { YosEmailAddressScalar } from '../scalars/yos-email-address.scalar';
@@ -28,6 +29,16 @@ export const YosCoreApi: YosSchemaDefinition = {
   // ===================================================================================================================
 
   typeDefs: `
+  
+    # ==================================================================================================================
+    # Directives
+    # ==================================================================================================================
+    
+    "Marks a field or an enum as deprecated (https://www.apollographql.com/docs/graphql-tools/schema-directives.html)"
+    directive @deprecated(
+      "Allows to specify a reason for the tag as deprecated"
+      reason: String = "No longer supported"
+    ) on FIELD_DEFINITION | ENUM_VALUE
   
     # ==================================================================================================================
     # Enums
@@ -208,7 +219,7 @@ export const YosCoreApi: YosSchemaDefinition = {
       version: String!
       
       "Current Position"
-      ipLookup: Any
+      ipLookup: Any @deprecated(reason: "Use \`newField\`.")
     }
 
 
@@ -276,5 +287,13 @@ export const YosCoreApi: YosSchemaDefinition = {
     Query: {
       api: (parent, args, context, info) => YosResolver.graphQL(YosCoreController.api, {parent, args, context, info})
     }
+  },
+
+  // ===================================================================================================================
+  // Directives
+  // ===================================================================================================================
+
+  schemaDirectives: {
+    deprecated: YosDeprecatedDirective
   }
 };
