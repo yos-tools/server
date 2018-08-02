@@ -37,7 +37,7 @@ export class YosResolver {
    * @param {YosGraphQLContext} context
    * @returns {Promise<any>}
    */
-  public static graphQL(controllerFunction: YosControllerFunction, context?: YosGraphQLContext): Promise<any> {
+  public static graphQL(controllerFunction: YosControllerFunction, context?: YosGraphQLContext | any[]): Promise<any> {
     return YosResolver.resolve(controllerFunction, YosResolver.convertGraphQLContext(context));
   }
 
@@ -47,7 +47,16 @@ export class YosResolver {
    * @param {YosControllerContext} controllerContext
    * @returns {YosControllerContext}
    */
-  public static convertGraphQLContext(graphQLContext: YosGraphQLContext, controllerContext: YosControllerContext = {}): YosControllerContext {
+  public static convertGraphQLContext(graphQLContext: YosGraphQLContext, controllerContext: YosControllerContext | any[] = {}): YosControllerContext {
+
+    if (Array.isArray(controllerContext)) {
+      controllerContext = {
+        parent: controllerContext[0],
+        args: controllerContext[1],
+        context: controllerContext[2],
+        info: controllerContext[3]
+      };
+    }
 
     // Check GraphQL context
     if (graphQLContext) {

@@ -33,7 +33,7 @@ export abstract class YosService {
    * @param {YosServer} yosServer
    * @param {YosServiceConfig} config
    */
-  public static init(yosServer: YosServer, config?: YosServiceConfig): YosService | Promise<YosService> {
+  public static<T extends YosService>(this: new(...params: any[]) => T, yosServer: YosServer, config?: YosServiceConfig): T | Promise<T> {
     return new (<any>this)(yosServer, config);
   }
 
