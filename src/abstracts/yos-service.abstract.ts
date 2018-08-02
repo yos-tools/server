@@ -1,4 +1,4 @@
-import { YosHelper, YosServer, YosServiceConfig } from '..';
+import { YosServer, YosServiceConfig } from '..';
 
 /**
  * Absract class for yos-server service
@@ -32,11 +32,9 @@ export abstract class YosService {
    * Initialize method
    * @param {YosServer} yosServer
    * @param {YosServiceConfig} config
-   * @returns {YosService | typeof YosService}
    */
-  public static init(yosServer: YosServer, config?: YosServiceConfig): YosService | Promise<YosService> {
-    const className: string = YosHelper.getClassName(this);
-    return new (<any>this)[className](yosServer, config);
+  public static init<T extends YosService>(yosServer: YosServer, config?: YosServiceConfig): T | Promise<T> {
+    return new (<any>this)(yosServer, config);
   }
 
   /**
