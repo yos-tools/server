@@ -1,6 +1,6 @@
 import { Config } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server-express';
-import { YosGraphQLModule, YosGraphQLSchemasConfigType, YosModuleConfig, YosType } from '..';
+import { YosGraphQLModule, YosGraphQLSchemasConfigType, YosModuleConfig, YosExtends } from '..';
 
 /**
  * Interface for GraphQL module config
@@ -19,7 +19,7 @@ export interface YosGraphQLModuleConfig extends YosModuleConfig {
   coreSchemas?: YosGraphQLSchemasConfigType;
 
   /** Module class */
-  module: YosType<YosGraphQLModule>;
+  module: YosExtends<YosGraphQLModule>;
 
   /** Enable playground
    * true => enable playground on GraphQL url

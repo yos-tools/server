@@ -1,4 +1,4 @@
-import { YosModule, YosType } from '..';
+import { YosModule, YosExtends } from '..';
 
 /**
  * Interface for configuration of yos-server modules
@@ -9,7 +9,7 @@ export interface YosModuleConfig {
   [prop: string]: any;
 
   /** Module class */
-  module: YosType<YosModule>;
+  module: YosExtends<YosModule>;
 
   /** Integration position of the module
    * Modules with a lower integration position are included first (asc)

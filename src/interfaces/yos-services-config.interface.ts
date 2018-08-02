@@ -5,7 +5,7 @@ import {
   YosService,
   YosServiceConfig,
   YosSubscriptionService,
-  YosType
+  YosExtends
 } from '..';
 
 
@@ -15,17 +15,17 @@ import {
 export interface YosServicesConfig {
 
   /** Additional services from the respective project */
-  [service: string]: YosService | YosType<YosService> | YosServiceConfig;
+  [service: string]: YosService | YosExtends<YosService> | YosServiceConfig;
 
   /** Service for authentication handling */
-  authenticationService?: YosAuthenticationService | YosType<YosAuthenticationService> | YosServiceConfig;
+  authenticationService?: YosAuthenticationService | YosExtends<YosAuthenticationService> | YosServiceConfig;
 
   /** Service for GraphQL api */
-  graphQLService?: YosGraphQLService | YosType<YosGraphQLService> | YosServiceConfig;
+  graphQLService?: YosGraphQLService | YosExtends<YosGraphQLService> | YosServiceConfig;
 
   /** Service for action and filter hooks */
-  hooksService?: YosHooksService | YosType<YosHooksService> | YosServiceConfig;
+  hooksService?: YosHooksService | YosExtends<YosHooksService> | YosServiceConfig;
 
   /** Service for subscription handling */
-  subscriptionService?: YosSubscriptionService | YosType<YosSubscriptionService> | YosServiceConfig;
+  subscriptionService?: YosSubscriptionService | YosExtends<YosSubscriptionService> | YosServiceConfig;
 }

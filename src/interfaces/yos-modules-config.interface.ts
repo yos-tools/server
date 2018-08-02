@@ -7,7 +7,7 @@ import {
   YosModule,
   YosModuleConfig,
   YosProcessModule,
-  YosType
+  YosExtends
 } from '..';
 
 /**
@@ -16,17 +16,17 @@ import {
 export interface YosModulesConfig {
 
   /** Additional modules from the respective project */
-  [module: string]: YosModule | YosType<YosModule> | YosModuleConfig;
+  [module: string]: YosModule | YosExtends<YosModule> | YosModuleConfig;
 
   /** Module to initialize the authentication handling*/
-  authenticationModule?: YosAuthenticationModule | YosType<YosAuthenticationModule> | YosModuleConfig;
+  authenticationModule?: YosAuthenticationModule | YosExtends<YosAuthenticationModule> | YosModuleConfig;
 
   /** Module to set the context in YosServer instance */
-  contextModule?: YosContextModule | YosType<YosContextModule> | YosContextModuleConfig;
+  contextModule?: YosContextModule | YosExtends<YosContextModule> | YosContextModuleConfig;
 
   /** Module for integration of GraphQL handling */
-  graphQLModule?: YosGraphQLModule | YosType<YosGraphQLModule> | YosGraphQLModuleConfig;
+  graphQLModule?: YosGraphQLModule | YosExtends<YosGraphQLModule> | YosGraphQLModuleConfig;
 
   /** Module for global processes */
-  processModule?: YosProcessModule | YosType<YosProcessModule> | YosModuleConfig;
+  processModule?: YosProcessModule | YosExtends<YosProcessModule> | YosModuleConfig;
 }

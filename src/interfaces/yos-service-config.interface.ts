@@ -1,4 +1,4 @@
-import { YosService, YosType } from '..';
+import { YosService, YosExtends } from '..';
 
 /**
  * Interface for configuration of service
@@ -9,7 +9,7 @@ export interface YosServiceConfig {
   [prop: string]: any;
 
   /** Information about the service */
-  service: YosType<YosService>;
+  service: YosExtends<YosService>;
 
   /** Integration position of the service
    * Services with a lower integration position are included first (asc)

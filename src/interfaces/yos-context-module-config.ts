@@ -1,4 +1,4 @@
-import { YosContextInitFunction, YosContextModule, YosModuleConfig, YosObject, YosType } from '..';
+import { YosContextInitFunction, YosContextModule, YosModuleConfig, YosObject, YosExtends } from '..';
 
 /**
  * Configuration of context module
@@ -19,5 +19,5 @@ export interface YosContextModuleConfig extends YosModuleConfig {
   },
 
   /** Module class */
-  module: YosType<YosContextModule>
+  module: YosExtends<YosContextModule>
 }
