@@ -1,10 +1,13 @@
 import {
-  YosAuthenticationModule, YosContextModule, YosContextModuleConfig,
+  YosAuthenticationModule,
+  YosContextModule,
+  YosContextModuleConfig,
   YosGraphQLModule,
   YosGraphQLModuleConfig,
   YosModule,
   YosModuleConfig,
-  YosProcessModule
+  YosProcessModule,
+  YosType
 } from '..';
 
 /**
@@ -13,17 +16,17 @@ import {
 export interface YosModulesConfig {
 
   /** Additional modules from the respective project */
-  [module: string]: YosModule | typeof YosModule | YosModuleConfig;
+  [module: string]: YosModule | YosType<YosModule> | YosModuleConfig;
 
   /** Module to initialize the authentication handling*/
-  authenticationModule?: YosAuthenticationModule | typeof YosAuthenticationModule | YosModuleConfig;
+  authenticationModule?: YosAuthenticationModule | YosType<YosAuthenticationModule> | YosModuleConfig;
 
   /** Module to set the context in YosServer instance */
-  contextModule?: YosContextModule | typeof YosContextModule | YosContextModuleConfig;
+  contextModule?: YosContextModule | YosType<YosContextModule> | YosContextModuleConfig;
 
   /** Module for integration of GraphQL handling */
-  graphQLModule?: YosGraphQLModule | typeof YosGraphQLModule | YosGraphQLModuleConfig;
+  graphQLModule?: YosGraphQLModule | YosType<YosGraphQLModule> | YosGraphQLModuleConfig;
 
   /** Module for global processes */
-  processModule?: YosProcessModule | typeof YosProcessModule | YosModuleConfig;
+  processModule?: YosProcessModule | YosType<YosProcessModule> | YosModuleConfig;
 }

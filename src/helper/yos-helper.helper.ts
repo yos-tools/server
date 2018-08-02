@@ -27,7 +27,7 @@ export class YosHelper {
    * @param {any[]} sources source objects
    * @returns {any}
    */
-  public static specialMerge(object: any, ...sources: any[]): any {
+  public static specialMerge(object: YosObject, ...sources: any[]): any {
     return _.mergeWith(object, ...sources, (objValue: any, srcValue: any) => {
       if (_.isArray(srcValue)) {
         return srcValue;

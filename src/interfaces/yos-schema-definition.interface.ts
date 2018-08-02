@@ -22,5 +22,5 @@ export interface YosSchemaDefinition<TContext = any> {
    * Schema directives of type SchemaDirectiveVisitor
    * (https://www.apollographql.com/docs/graphql-tools/schema-directives.html)
    */
-  schemaDirectives?: {[name: string]: typeof SchemaDirectiveVisitor}
+  schemaDirectives?: { [name: string]: typeof SchemaDirectiveVisitor }
 }

@@ -23,7 +23,7 @@ export abstract class YosModule {
    * @param {YosServer} yosServer Current yos-server instance
    * @param {YosModuleConfig} config Configuration of the module
    */
-  protected constructor(yosServer: YosServer, config?: YosModuleConfig) {
+  public constructor(yosServer: YosServer, config?: YosModuleConfig) {
     this._yosServer = yosServer;
     this._config = config;
   }
@@ -33,7 +33,7 @@ export abstract class YosModule {
    * @param {YosServer} yosServer
    * @param {YosModuleConfig} config
    */
-  public static init<T extends YosModule>(yosServer: YosServer, config?: YosModuleConfig): T | Promise<T> {
+  public static init(yosServer: YosServer, config?: YosModuleConfig): YosModule | Promise<YosModule> {
     return new (<any>this)(yosServer, config);
   };
 

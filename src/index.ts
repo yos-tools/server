@@ -69,6 +69,7 @@ export { YosServiceConfig } from './interfaces/yos-service-config.interface';
 export { YosServices } from './interfaces/yos-services.interface';
 export { YosServicesConfig } from './interfaces/yos-services-config.interface';
 export { YosSetUserViaTokenConfig } from './interfaces/yos-set-user-via-token-config.interface';
+export { YosType } from './interfaces/yos-type.interface';
 
 // =====================================================================================================================
 // Modules

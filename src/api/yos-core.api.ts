@@ -285,7 +285,7 @@ export const YosCoreApi: YosSchemaDefinition = {
 
     /** Resolver for queries */
     Query: {
-      api: (parent, args, context, info) => YosResolver.graphQL(YosCoreController.api, {parent, args, context, info})
+      api: (parent: any, args: any, context: any, info: any) => YosResolver.graphQL(YosCoreController.api, {parent, args, context, info})
     }
   },
 
