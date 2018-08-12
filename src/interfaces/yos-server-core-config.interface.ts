@@ -1,3 +1,5 @@
+import { FortuneOptions } from 'graphql-genie';
+
 /**
  * Interface for yos-server core configuration
  */
@@ -6,15 +8,18 @@ import { YosJwtConfig } from './yos-jwt-config.interface';
 export interface YosServerCoreConfig {
 
   /** Configuration for the authorization handling */
-  authorization: {
+  authorization?: {
 
     /** Name of the authorization field of the http header
      * The standard "Authorization" leads to an error when using directory protection in an upstream server
      * (e.g. NGINX or Apache) */
     authorizationField?: string;
 
-    /** JWT configuration
-     * See https://github.com/auth0/node-jsonwebtoken */
+    /**
+     * JWT configuration
+     *
+     * See https://github.com/auth0/node-jsonwebtoken
+     */
     jwt?: YosJwtConfig;
   };
 
@@ -27,6 +32,15 @@ export interface YosServerCoreConfig {
     /** Specifies whether the configurations from the paths overwrite the configuration contained in this object. */
     pathsOverwriteCurrent?: boolean;
   };
+
+  /**
+   * Configuration of fortune
+   *
+   * Fortune.js is a non-native graph database abstraction layer for Node.js and web browsers.
+   *
+   * See http://fortune.js.org/api/#fortune-constructor
+   */
+  fortune?: FortuneOptions,
 
   /** Configuration of yos-server */
   yosServer?: {

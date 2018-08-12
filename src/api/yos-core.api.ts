@@ -25,6 +25,52 @@ import { YosEmailAddressScalar } from '../scalars/yos-email-address.scalar';
 export const YosCoreApi: YosSchemaDefinition = {
 
   // ===================================================================================================================
+  // Type definitions for automatic process handling
+  // ===================================================================================================================
+
+  autoTypeDefs: `
+    # ==================================================================================================================
+    # Enums
+    # ==================================================================================================================
+  
+    "User roles"
+    enum Role {
+    
+      "User must be an admin"
+      ADMIN
+      
+      "Open to all requests"
+      ANY
+      
+      "User must have created/be the type"
+      OWNER
+      
+      "Must be logged in"
+      USER
+    }
+  
+    "User"
+    type User @model @auth(create: ANY, read: ANY, update: OWNER, delete: ADMIN) {
+      
+      "ID of the user"
+      id: ID! @unique
+      
+      "Unique username"
+      username: String @unique
+    
+      "Email of the user"
+      email: String! @unique @auth(create: ANY, read: OWNER, update: OWNER, delete: ADMIN)
+    
+      # only admins can read password
+      password: String! @auth(create: ANY, read: ADMIN, update: OWNER, delete: ADMIN)
+      
+      # Only admins can alter roles, will need additional logic in authenticate function so users can only set themself to USER role
+      # So we set only:USER in the rules so we can find that later in our authenticate function
+      roles: [Role] @default(value: "USER") @auth(create: ANY, read: ADMIN, update: ADMIN, delete: ADMIN, rules: "only:USER")
+    }
+  `,
+
+  // ===================================================================================================================
   // Type definitions
   // ===================================================================================================================
 
@@ -219,7 +265,7 @@ export const YosCoreApi: YosSchemaDefinition = {
       version: String!
       
       "Current Position"
-      ipLookup: Any @deprecated(reason: "Use \`newField\`.")
+      ipLookup: Any @deprecated(reason: "May be to much information")
     }
 
 

@@ -7,7 +7,7 @@ import {
   YosModule,
   YosModuleConfig,
   YosProcessModule,
-  YosExtends
+  YosExtends, YosGraphQLGenieModule, YosGraphQLGenieModuleConfig
 } from '..';
 
 /**
@@ -23,6 +23,13 @@ export interface YosModulesConfig {
 
   /** Module to set the context in YosServer instance */
   contextModule?: YosContextModule | YosExtends<YosContextModule> | YosContextModuleConfig;
+
+  /**
+   * Module to integrate GraphQL Genie
+   *
+   * See https://github.com/genie-team/graphql-genie
+   */
+  graphQLGenieModule?: YosGraphQLGenieModule | YosExtends<YosGraphQLGenieModule> | YosGraphQLGenieModuleConfig;
 
   /** Module for integration of GraphQL handling */
   graphQLModule?: YosGraphQLModule | YosExtends<YosGraphQLModule> | YosGraphQLModuleConfig;

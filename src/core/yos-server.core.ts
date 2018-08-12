@@ -165,8 +165,9 @@ export class YosServer {
     return new Promise<express.Application>(async (resolve, reject) => {
 
       // Action hook: before server start
-      if (_.has(this._services, 'hooksService')) {
-        await (<YosHooksService>this._services.hooksService).performActions(YosActionHook.BeforeServerStart);
+      const hooksService: YosHooksService = _.get(this._services, 'hooksService');
+      if (hooksService) {
+        await hooksService.performActions(YosActionHook.BeforeServerStart);
       }
 
       // Start server
@@ -174,8 +175,8 @@ export class YosServer {
         console.log(name + ' started: ' + this.url);
 
         // Action hook: after server start
-        if (_.has(this._services, 'hooksService')) {
-          await (<YosHooksService>this._services.hooksService).performActions(YosActionHook.AfterServerStart);
+        if (hooksService) {
+          await hooksService.performActions(YosActionHook.AfterServerStart);
         }
 
         resolve(this.expressApp);

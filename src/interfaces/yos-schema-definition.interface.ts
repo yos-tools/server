@@ -7,10 +7,16 @@ import { IResolvers, ITypeDefinitions } from 'graphql-tools';
 export interface YosSchemaDefinition<TContext = any> {
 
   /**
+   * Definitions of GraphQL types for automatic processing by GraphQL Genie
+   * (https://www.apollographql.com/docs/graphql-tools/generate-schema.html)
+   */
+  autoTypeDefs?: ITypeDefinitions;
+
+  /**
    * Definitions of GraphQL types
    * (https://www.apollographql.com/docs/graphql-tools/generate-schema.html)
    */
-  typeDefs: ITypeDefinitions;
+  typeDefs?: ITypeDefinitions;
 
   /**
    * Resolvers for queries, mutations and subscriptions

@@ -1,5 +1,12 @@
 import * as _ from 'lodash';
-import { YosControllerContext, YosControllerFunction, YosFilterHook, YosGraphQLContext, YosHelper } from '..';
+import {
+  YosControllerContext,
+  YosControllerFunction,
+  YosFilterHook,
+  YosGraphQLContext,
+  YosHelper,
+  YosHooksService
+} from '..';
 
 /**
  * Resolver
@@ -15,16 +22,17 @@ export class YosResolver {
   protected static async resolve(controllerFunction: YosControllerFunction, context: YosControllerContext): Promise<any> {
 
     // Filter hook: incoming request
-    if (_.has(context, 'services.hooksService')) {
-      context = await context.services.hooksService.performFilters(YosFilterHook.IncomingRequestContext, context);
+    const hooksService: YosHooksService = _.get(context, 'services.hooksService');
+    if (hooksService) {
+      context = await hooksService.performFilters(YosFilterHook.IncomingRequestContext, context);
     }
 
     // Process request via controllers function
     let response = await controllerFunction(context);
 
     // Filter hook: outgoing response
-    if (_.has(context, 'services.hooksService')) {
-      response = await context.services.hooksService.performFilters(YosFilterHook.OutgoingResponse, response);
+    if (hooksService) {
+      response = await hooksService.performFilters(YosFilterHook.OutgoingResponse, response);
     }
 
     // Return response
@@ -47,14 +55,15 @@ export class YosResolver {
    * @param {YosControllerContext} controllerContext
    * @returns {YosControllerContext}
    */
-  public static convertGraphQLContext(graphQLContext: YosGraphQLContext, controllerContext: YosControllerContext | any[] = {}): YosControllerContext {
+  public static convertGraphQLContext(graphQLContext: YosGraphQLContext | any[], controllerContext: YosControllerContext = <any>{}): YosControllerContext {
 
-    if (Array.isArray(controllerContext)) {
-      controllerContext = {
-        parent: controllerContext[0],
-        args: controllerContext[1],
-        context: controllerContext[2],
-        info: controllerContext[3]
+    // Spread context if array
+    if (Array.isArray(graphQLContext)) {
+      graphQLContext = {
+        parent: graphQLContext[0],
+        args: graphQLContext[1],
+        context: graphQLContext[2],
+        info: graphQLContext[3]
       };
     }
 

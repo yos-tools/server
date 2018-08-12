@@ -3,6 +3,7 @@ import {
   YosAuthenticationModule,
   YosAuthenticationService,
   YosContextModule,
+  YosGraphQLGenieModule,
   YosGraphQLModule,
   YosGraphQLService,
   YosHooksService,
@@ -13,6 +14,8 @@ import {
   YosServicesConfig,
   YosSubscriptionService
 } from '..';
+
+const mongodbAdapter = require('fortune-mongodb');
 
 /**
  * Default yos-server configuration
@@ -55,6 +58,45 @@ export class YosServerDefaultConfig implements YosServerConfig {
 
       /** Specifies whether the configurations from the paths overwrite the configuration contained in this object */
       pathsOverwriteCurrent: false
+    },
+
+    /**
+     * Configuration of fortune
+     *
+     * Fortune.js is a non-native graph database abstraction layer for Node.js and web browsers.
+     *
+     * See http://fortune.js.org/api/#fortune-constructor
+     */
+    fortune: {
+
+      /**
+       * Adapter for fortune
+       *
+       * See http://fortune.js.org/plugins/
+       */
+      adapter: [
+
+        // MongoDB adapter
+        mongodbAdapter,
+
+        // Configuration of MongoDB adapter (see https://github.com/fortunejs/fortune-mongodb#options)
+        {
+          url: 'mongodb://localhost:27017/yos'
+        }
+      ],
+
+      /** Internal settings for fortune */
+      settings: {
+
+        /** Whether or not to enforce referential integrity. Default: `true` for server, `false` for browser */
+        enforceLinks: true,
+
+        /** Name of the application used for display purposes */
+        name: 'Yos Server',
+
+        /** Description of the application used for display purposes */
+        description: 'media type "application/vnd.micro+json"'
+      }
     },
 
     /** Configuration of yos-server */
@@ -101,11 +143,70 @@ export class YosServerDefaultConfig implements YosServerConfig {
       module: YosContextModule
     },
 
+    /**
+     * GraphQL Genie module
+     *
+     * See https://github.com/genie-team/graphql-genie
+     */
+    graphQLGenieModule: {
+
+      /**
+       * Generator options
+       *
+       * See https://github.com/genie-team/graphql-genie/blob/master/docs/GraphQLGenieAPI.md#constructor
+       */
+      generatorOptions: {
+
+        /** GraphQL API will have a Query to get all of a type, with filters, that returns a Connection rather than simple array */
+        generateConnections: true,
+
+        /** GraphQL API will have a Mutation to create new data of each type */
+        generateCreate: true,
+
+        /** GraphQL API will have a Mutation to delete data of each type */
+        generateDelete: true,
+
+        /** GraphQL API will have a Query to get all of a type, with filters */
+        generateGetAll: true,
+
+        /** GraphQL API will have a singular queries using unique fields */
+        generateGetOne: true,
+
+        /** A Query exportData and a Mutation importData will be created */
+        generateMigration: true,
+
+        /** GraphQL API will have a Mutation to update data of each type */
+        generateUpdate: true,
+
+        /** GraphQL API will have a Mutation to upsert data of each type */
+        generateUpsert: true
+      },
+
+      /** Module class*/
+      module: YosGraphQLGenieModule,
+
+      /**
+       * Schema builder for advanced use cases
+       *
+       * See https://github.com/genie-team/graphql-genie/blob/master/docs/GraphQLGenieAPI.md#graphqlschemabuilder-api
+       */
+      schemaBuilder: undefined,
+
+      /**
+       * Enable subscriptions (see GraphQLModule)
+       * - true => enable subscriptions
+       * - false => disable subscriptions
+       */
+      subscriptions: true
+    },
+
     /** GraphQL module */
     graphQLModule: {
 
-      /** Set own apollo server
-       * (https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html) */
+      /**
+       * Set own apollo server
+       * (https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html)
+       */
       apolloSever: undefined,
 
       /**
@@ -139,6 +240,9 @@ export class YosServerDefaultConfig implements YosServerConfig {
 
       /** Module class*/
       module: YosGraphQLModule,
+
+      /** Must be loaded after the GraphQLGenieModule because it integrates its schema via hook */
+      position: 10,
 
       /** Dir path, file path or object (array) for project schemas */
       schemas: null,

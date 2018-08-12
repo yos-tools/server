@@ -55,6 +55,7 @@ export { YosGeoJsonValidatorCallback } from './interfaces/yos-geo-json-validator
 export { YosGeoJsonValidatorCustomDefinition } from './interfaces/yos-geo-json-validator-custom-definition.interface';
 export { YosGeoJsonValidatorDefinition } from './interfaces/yos-geo-json-validator-definition.interface';
 export { YosGraphQLContext } from './interfaces/yos-graphql-context.interface';
+export { YosGraphQLGenieModuleConfig } from './interfaces/yos-graphql-genie-module-config.interface';
 export { YosGraphQLModuleConfig } from './interfaces/yos-graphql-module-config.interface';
 export { YosActionHooks, YosHookAction, YosHookFilter, YosFilterHooks } from './interfaces/yos-hooks.interface';
 export { YosObject } from './interfaces/yos-object.interface';
@@ -76,6 +77,7 @@ export { YosExtends } from './interfaces/yos-extends.interface';
 // =====================================================================================================================
 export { YosAuthenticationModule } from './modules/yos-authentication.module';
 export { YosContextModule } from './modules/yos-context.module';
+export { YosGraphQLGenieModule } from './modules/yos-graphql-genie.module';
 export { YosGraphQLModule } from './modules/yos-graphql.module';
 export { YosProcessModule } from './modules/yos-process.module';
 

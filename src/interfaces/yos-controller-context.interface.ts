@@ -3,7 +3,7 @@ import {
   YosAuthenticationModule,
   YosAuthenticationService,
   YosContext,
-  YosContextModule,
+  YosContextModule, YosGraphQLGenieModule,
   YosGraphQLModule,
   YosGraphQLService,
   YosHooksService,
@@ -34,6 +34,9 @@ export interface YosControllerContext extends YosContext {
 
     /** Module to set the context in YosServer instance */
     contextModule?: YosContextModule;
+
+    /** GraphQL Genie module */
+    graphQLGenieModule?: YosGraphQLGenieModule;
 
     /** GraphQL module */
     graphQLModule?: YosGraphQLModule;

@@ -1,4 +1,11 @@
-import { YosAuthenticationModule, YosContextModule, YosGraphQLModule, YosModule, YosProcessModule } from '..';
+import {
+  YosAuthenticationModule,
+  YosContextModule,
+  YosGraphQLGenieModule,
+  YosGraphQLModule,
+  YosModule,
+  YosProcessModule
+} from '..';
 
 /**
  * Interface for modules
@@ -13,6 +20,9 @@ export interface YosModules {
 
   /** Module to set the context in YosServer instance */
   contextModule?: YosContextModule;
+
+  /** Module for integration of GraphQL Genie handling */
+  graphQLGenieModule?: YosGraphQLGenieModule;
 
   /** Module for integration of GraphQL handling */
   graphQLModule?: YosGraphQLModule;

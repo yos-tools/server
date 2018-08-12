@@ -1,4 +1,4 @@
-import { YosModuleConfig, YosServer } from '..';
+import { YosHelper, YosModuleConfig, YosServer } from '..';
 
 /**
  * Absract class for yos-server modules
@@ -11,7 +11,7 @@ export abstract class YosModule {
   /**
    * Module configuration
    */
-  protected _config: YosModuleConfig;
+  protected _config: YosModuleConfig = <any>{};
 
   /**
    * Current yos-server instance
@@ -20,22 +20,37 @@ export abstract class YosModule {
 
   /**
    * Default constructor
-   * @param {YosServer} yosServer Current yos-server instance
-   * @param {YosModuleConfig} config Configuration of the module
+   * @param yosServer - Current yos-server instance
+   * @param config - Configuration of the module
+   * @param params - Additional params
    */
-  public constructor(yosServer: YosServer, config?: YosModuleConfig) {
+  public constructor(yosServer: YosServer, config: YosModuleConfig = <any>{}, ...params: any[]) {
     this._yosServer = yosServer;
     this._config = config;
   }
 
   /**
-   * Initialize method
-   * @param {YosServer} yosServer
-   * @param {YosModuleConfig} config
+   * Static initialize method
+   * @param yosServer - Current yos-server instance
+   * @param config - Configuration of the module
+   * @param params - Additional params
    */
-  public static init<T extends YosModule>(this: new(...params: any[]) => T, yosServer: YosServer, config?: YosModuleConfig): T | Promise<T> {
-    return new (<any>this)(yosServer, config);
+  public static init(yosServer: YosServer, config: YosModuleConfig = <any>{}, ...params: any[]): YosModule | Promise<YosModule> {
+    const module =  new (<any>this)(yosServer, config);
+    return module.init(yosServer, config, ...params);
   };
+
+  /**
+   * Initialize method
+   * @param yosServer
+   * @param config
+   * @param params
+   */
+  public init(yosServer: YosServer, config: YosModuleConfig = <any>{}, ...params: any[]): YosModule | Promise<YosModule> {
+    this._yosServer = yosServer;
+    this._config = YosHelper.specialMerge(this._config, config);
+    return this;
+  }
 
   /**
    * Getter for yosServer

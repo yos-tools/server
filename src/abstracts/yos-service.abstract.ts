@@ -1,4 +1,4 @@
-import { YosServer, YosServiceConfig } from '..';
+import { YosHelper, YosServer, YosServiceConfig } from '..';
 
 /**
  * Absract class for yos-server service
@@ -20,21 +20,36 @@ export abstract class YosService {
 
   /**
    * Default constructor
-   * @param {YosServer} yosServer Current yos-server instance
-   * @param {YosModuleConfig} config Configuration of the service
+   * @param yosServer - Current yos-server instance
+   * @param config - Configuration of the service
+   * @param params
    */
-  public constructor(yosServer: YosServer, config?: YosServiceConfig) {
+  public constructor(yosServer: YosServer, config: YosServiceConfig = <any>{}, ...params: any[]) {
     this._yosServer = yosServer;
     this._config = config;
   }
 
   /**
-   * Initialize method
-   * @param {YosServer} yosServer
-   * @param {YosServiceConfig} config
+   * Static initialize method
+   * @param yosServer - Current yos-server instance
+   * @param config - Configuration of the service
+   * @param params
    */
-  public static<T extends YosService>(this: new(...params: any[]) => T, yosServer: YosServer, config?: YosServiceConfig): T | Promise<T> {
-    return new (<any>this)(yosServer, config);
+  public static init(yosServer: YosServer, config: YosServiceConfig = <any>{}, ...params: any[]): YosService | Promise<YosService> {
+    const module = new (<any>this)(yosServer, config);
+    return module.init(yosServer, config);
+  };
+
+  /**
+   * Initialize method
+   * @param yosServer - Current yos-server instance
+   * @param config - Configuration of the service
+   * @param params
+   */
+  public init(yosServer: YosServer, config: YosServiceConfig = <any>{}, ...params: any[]): YosService | Promise<YosService> {
+    this._yosServer = yosServer;
+    this._config = YosHelper.specialMerge(this._config, config);
+    return this;
   }
 
   /**

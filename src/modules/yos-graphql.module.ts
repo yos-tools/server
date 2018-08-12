@@ -1,5 +1,6 @@
+import { makeExecutableSchema } from 'apollo-server';
 import { ApolloServer, SchemaDirectiveVisitor, ServerRegistration } from 'apollo-server-express';
-import { DefinitionNode, parse, print } from 'graphql';
+import { DefinitionNode, GraphQLSchema, parse, print } from 'graphql';
 import { IResolvers, ITypedef } from 'graphql-tools';
 import * as _ from 'lodash';
 import {
@@ -28,6 +29,9 @@ export class YosGraphQLModule extends YosModule {
   // Properties
   // ===================================================================================================================
 
+  /** GraphQL type definitions */
+  protected _autoTypeDefs: ITypedef;
+
   /** Apollo server */
   protected _apolloServer: ApolloServer;
 
@@ -39,6 +43,9 @@ export class YosGraphQLModule extends YosModule {
 
   /** GraphQL resolvers */
   protected _resolvers: IResolvers;
+
+  /** GraphQL executable schema */
+  protected _schema: GraphQLSchema;
 
   /** GraphQL schema directives */
   protected _schemaDirectives: { [name: string]: typeof SchemaDirectiveVisitor };
@@ -66,7 +73,7 @@ export class YosGraphQLModule extends YosModule {
     await yosGraphQLModule.initGraphQLSchemas();
 
     // Initialize apollo server
-    yosGraphQLModule.initApolloServer();
+    await yosGraphQLModule.initApolloServer();
 
     // Apply middleware, incl. subscriptions and playground, if desired
     yosGraphQLModule.applyMiddleware();
@@ -89,15 +96,21 @@ export class YosGraphQLModule extends YosModule {
    * @returns {Promise<YosSchemaDefinition>}
    */
   public static async getGraphQLSchemaDefinition(items: YosGraphQLSchemasConfigType):
-    Promise<{ typeDefs: ITypedef[], resolvers: IResolvers[], schemaDirectives: { [name: string]: typeof SchemaDirectiveVisitor }[] }> {
+    Promise<{
+      autoTypeDefs: ITypedef[],
+      typeDefs: ITypedef[],
+      resolvers: IResolvers[],
+      schemaDirectives: { [name: string]: typeof SchemaDirectiveVisitor }[]
+    }> {
 
     // Init
     let schemas: YosSchemaDefinition[] = [];
     const definition: {
+      autoTypeDefs: ITypedef[],
       typeDefs: ITypedef[],
       resolvers: IResolvers[],
       schemaDirectives: { [name: string]: typeof SchemaDirectiveVisitor }[]
-    } = {typeDefs: [], resolvers: [], schemaDirectives: []};
+    } = {autoTypeDefs: [], typeDefs: [], resolvers: [], schemaDirectives: []};
 
     // Convert to array for
     if (!Array.isArray(items)) {
@@ -120,6 +133,7 @@ export class YosGraphQLModule extends YosModule {
 
             // Check object
             if (
+              (typeof object.autoTypeDefs === 'string' && object.autoTypeDefs.length) ||
               (typeof object.typeDefs === 'string' && object.typeDefs.length) ||
               object.resolvers ||
               object.schemaDirectives
@@ -141,6 +155,13 @@ export class YosGraphQLModule extends YosModule {
     // Process schemas
     if (schemas.length) {
       for (const schema of schemas) {
+
+        // Process autoTypeDefs
+        if (Array.isArray(schema.autoTypeDefs)) {
+          definition.autoTypeDefs = definition.autoTypeDefs.concat(schema.autoTypeDefs);
+        } else {
+          definition.autoTypeDefs.push(schema.autoTypeDefs);
+        }
 
         // Process typeDefs
         if (Array.isArray(schema.typeDefs)) {
@@ -285,7 +306,8 @@ export class YosGraphQLModule extends YosModule {
     ));
 
     // Concat definitions to one definition
-    const definition = {
+    let definition = {
+      autoTypeDefs: definitions[0].autoTypeDefs.concat(definitions[1].autoTypeDefs),
       typeDefs: definitions[0].typeDefs.concat(definitions[1].typeDefs),
       resolvers: definitions[0].resolvers.concat(definitions[1].resolvers),
       schemaDirectives: definitions[0].schemaDirectives.concat(definitions[1].schemaDirectives)
@@ -296,8 +318,17 @@ export class YosGraphQLModule extends YosModule {
     // @todo: https://github.com/nicolasdao/graphql-s2s/issues/17
     // const transpiledTypeDefs = transpileSchema(definition.typeDefs.toString());
 
-    // Merge typeDefs
-    this._typeDefs = YosGraphQLModule.mergeGraphQLTypeDefinitions(definition.typeDefs.toString());
+    // Hook for GraphQL definition
+    const hooksService = _.get(this._yosServer, 'services.hooksService');
+    if (hooksService) {
+      definition = await hooksService.performFilters(YosFilterHook.GraphQLDefinition, definition);
+    }
+
+    // Merge type definitions for automatic process handling
+    this._autoTypeDefs = YosGraphQLModule.mergeGraphQLTypeDefinitions(definition.autoTypeDefs.toString());
+
+    // Merge type definitions inclusive auto type definitions
+    this._typeDefs = YosGraphQLModule.mergeGraphQLTypeDefinitions(definition.autoTypeDefs.concat(definition.typeDefs).toString());
 
     // Merge resolvers
     this._resolvers = _.merge({}, ...definition.resolvers);
@@ -310,7 +341,7 @@ export class YosGraphQLModule extends YosModule {
    * Initialization of apollo server
    * @returns {ApolloServer}
    */
-  protected initApolloServer() {
+  protected async initApolloServer() {
 
     // Take server from configuration if exists
     this._apolloServer = this._config.apolloServer;
@@ -324,7 +355,11 @@ export class YosGraphQLModule extends YosModule {
         this._config.apolloConfig.playground = {subscriptionEndpoint: `ws://${this._yosServer.hostname}:${this._yosServer.port + subscriptionsUrl}`};
       }
 
-      this._apolloServer = new ApolloServer(YosHelper.specialMerge({
+      // Schema definitions
+      const schemaDefinitions = {
+
+        // Set types for automatic process handling
+        autoTypeDefs: this._autoTypeDefs,
 
         // Set type definitions
         typeDefs: this._typeDefs,
@@ -333,7 +368,22 @@ export class YosGraphQLModule extends YosModule {
         resolvers: this._resolvers,
 
         // Set schema directives
-        schemaDirectives: this._schemaDirectives,
+        schemaDirectives: this._schemaDirectives
+      };
+
+      // Generate executable schema
+      const executableSchema = makeExecutableSchema(schemaDefinitions);
+
+      // Generate schema
+      this._schema = executableSchema;
+
+      // Hook for GraphQL schema
+      this._schema = await this._yosServer.services.hooksService.performFilters(YosFilterHook.GraphQLSchema, this.schema, schemaDefinitions);
+
+      this._apolloServer = new ApolloServer(YosHelper.specialMerge({
+
+        // Set type definitions
+        schema: this._schema,
 
         // Combine context
         context: async (context: any) => {
@@ -342,10 +392,12 @@ export class YosGraphQLModule extends YosModule {
           context = YosHelper.specialMerge({}, this._yosServer.context, {yosServer: this._yosServer}, context);
 
           // Filter hook: GraphQL context
-          if (_.has(this.yosServer, 'services.hooksService')) {
-            context = await context.services.hooksService.performFilters(YosFilterHook.IncomingRequestContext, context);
+          const hooksService = _.get(this._yosServer, 'services.hooksService');
+          if (hooksService) {
+            context = await hooksService.performFilters(YosFilterHook.GraphQLContext, context);
           }
 
+          // console.log('CONTEXT', context);
           return context;
         }
 
@@ -442,6 +494,14 @@ export class YosGraphQLModule extends YosModule {
    */
   public get resolvers(): IResolvers {
     return this._resolvers;
+  }
+
+  /**
+   * Getter for GraphQL schema
+   * @returns {GraphQLSchema}
+   */
+  public get schema(): GraphQLSchema {
+    return this._schema;
   }
 
   /**

@@ -87,7 +87,7 @@ export class YosGraphQLService extends YosService {
   public static async subscriptionFilter(context: YosGraphQLContext, filterFn?: YosControllerFunction): Promise<boolean> {
 
     // Init
-    const data = _.has(context, 'info.fieldName') && _.has(context, 'parent.' + context.info.fieldName) ?
+    const data = _.get(context, 'info.fieldName') && _.get(context, 'parent.' + context.info.fieldName) ?
       context.parent[context.info.fieldName] : context.parent;
     const filter = _.get(context, 'args.filter', context.args);
 
