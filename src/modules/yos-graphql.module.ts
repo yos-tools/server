@@ -378,7 +378,7 @@ export class YosGraphQLModule extends YosModule {
       this._schema = executableSchema;
 
       // Hook for GraphQL schema
-      this._schema = await this._yosServer.services.hooksService.performFilters(YosFilterHook.GraphQLSchema, this.schema, schemaDefinitions);
+      this._schema = await this._yosServer.services.hooksService.performFilters(YosFilterHook.GraphQLSchema, this._schema, schemaDefinitions);
 
       this._apolloServer = new ApolloServer(YosHelper.specialMerge({
 
@@ -397,7 +397,7 @@ export class YosGraphQLModule extends YosModule {
             context = await hooksService.performFilters(YosFilterHook.GraphQLContext, context);
           }
 
-          // console.log('CONTEXT', context);
+          // Return prepared context
           return context;
         }
 

@@ -10,6 +10,12 @@ export interface YosServerCoreConfig {
   /** Configuration for the authorization handling */
   authorization?: {
 
+    /** Email address of admin - must be set in the project, otherwise an error is thrown */
+    adminEmail: string,
+
+    /** Password of admin - must be set in the project, otherwise an error is thrown */
+    adminPassword: string,
+
     /** Name of the authorization field of the http header
      * The standard "Authorization" leads to an error when using directory protection in an upstream server
      * (e.g. NGINX or Apache) */

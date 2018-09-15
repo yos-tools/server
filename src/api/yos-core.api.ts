@@ -61,12 +61,26 @@ export const YosCoreApi: YosSchemaDefinition = {
       "Email of the user"
       email: String! @unique @auth(create: ANY, read: OWNER, update: OWNER, delete: ADMIN)
     
-      # only admins can read password
+      "Only admins can read password"
       password: String! @auth(create: ANY, read: ADMIN, update: OWNER, delete: ADMIN)
       
-      # Only admins can alter roles, will need additional logic in authenticate function so users can only set themself to USER role
-      # So we set only:USER in the rules so we can find that later in our authenticate function
+      """
+      Only admins can alter roles, will need additional logic in authenticate function so users can only set themself 
+      to USER role, so the only:USER in the rules can be used in the authenticate function
+      """
       roles: [Role] @default(value: "USER") @auth(create: ANY, read: ADMIN, update: ADMIN, delete: ADMIN, rules: "only:USER")
+    }
+    
+    """
+    UserIdentifiers aren't part of the model, so queries/mutations won't be created for it.
+    Via @auth the importData resolver could alter it otherwise
+    """
+    type UserIdentifiers @auth {
+      id: ID!
+      userID: ID
+      password: String
+      identifiers: [String]
+      roles: [Role]
     }
   `,
 

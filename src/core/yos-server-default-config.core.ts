@@ -1,6 +1,5 @@
 import * as path from 'path';
 import {
-  YosAuthenticationModule,
   YosAuthenticationService,
   YosContextModule,
   YosGraphQLGenieModule,
@@ -30,6 +29,12 @@ export class YosServerDefaultConfig implements YosServerConfig {
     /** Configuration for the authorization handling */
     authorization: {
 
+      /** Email address of admin - must be set in the project, otherwise an error is thrown */
+      adminEmail: null,
+
+      /** Password of admin - must be set in the project, otherwise an error is thrown */
+      adminPassword: null,
+
       /**
        * Name of the authorization field of the http header
        *
@@ -45,8 +50,11 @@ export class YosServerDefaultConfig implements YosServerConfig {
        */
       jwt: {
 
-        /** Must be set in the project, otherwise an error is thrown */
-        secretOrPrivateKey: 'REPLACE IN PROJECT!!!' // @todo: Set to null
+        /** Secret or private key - must be set in the project, otherwise an error is thrown */
+        secretOrPrivateKey: null,
+
+        /** Options of JSON web token **/
+        options: null
       }
     },
 
@@ -125,8 +133,8 @@ export class YosServerDefaultConfig implements YosServerConfig {
    */
   public modules: YosModulesConfig = {
 
-    /** Module to initialize the authentication handling*/
-    authenticationModule: YosAuthenticationModule,
+    // /** Module to initialize the authentication handling*/
+    // authenticationModule: YosAuthenticationModule, ** Replaced by graphQLGenieModule **
 
     /** Module to set the context in YosServer instance */
     contextModule: {

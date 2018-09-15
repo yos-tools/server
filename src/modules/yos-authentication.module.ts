@@ -113,15 +113,23 @@ export class YosAuthenticationModule extends YosModule {
     const authorizationField = _.get(
       context,
       'yosServer.config.core.authorization.authorizationField',
-      'Authorization'
+      'authorization'
     );
 
-    // Process token
-    let token: string = <string> context.req.headers[authorizationField];
-    if (token && token.startsWith('JWT')) {
-      token = token.replace('JWT ', '');
+    // Get authorization field
+    let authorization: string = <string> context.req.headers[authorizationField];
+    if (!authorization) {
+      return context;
+    }
+
+    // Get token
+    const authorizationParts = authorization.split(' ');
+    if (authorizationParts[0].toLowerCase() === 'bearer' || authorizationParts[0].toLowerCase() === 'jwt') {
+      const token = authorizationParts[1];
       const data = this._authenticationService.getTokenData(token);
-      // @ToDo: Get users from the database
+
+      // Set user
+      // @ToDo: Get user from the database to get the latest data
       context.user = data.user;
     }
 

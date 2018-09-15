@@ -18,6 +18,9 @@ export class YosAuthenticationService extends YosService {
   /** Secret or public key to decrypt the token */
   protected _secretOrPublicKey: string;
 
+  /** Default options from configuration */
+  protected _options: any;
+
 
   // ===================================================================================================================
   // Init
@@ -43,6 +46,9 @@ export class YosAuthenticationService extends YosService {
     authenticationService._secretOrPrivateKey =
       _.get(yosServer, 'config.core.authorization.jwt.secretOrPublicKey') || authenticationService._secretOrPrivateKey;
 
+    // Set options from configuration
+    authenticationService._options = _.get(yosServer, 'config.core.authorization.jwt.options');
+
     // Return authorize service instance
     return authenticationService;
   }
@@ -58,7 +64,7 @@ export class YosAuthenticationService extends YosService {
    * @param options
    * @returns {string}
    */
-  public createToken(data: any, options?: any): string {
+  public createToken(data: any, options: any = this._options): string {
     return jwt.sign(data, this._secretOrPrivateKey, options);
   }
 
@@ -68,7 +74,7 @@ export class YosAuthenticationService extends YosService {
    * @param options see https://github.com/auth0/node-jsonwebtoken
    * @returns {any}
    */
-  public getTokenData(token: string, options?: any): any {
+  public getTokenData(token: string, options: any = this._options): any {
     return jwt.verify(token, this._secretOrPublicKey, options);
   }
 

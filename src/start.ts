@@ -1,6 +1,16 @@
 import { YosServer } from '.';
 
-YosServer.start();
+YosServer.start({
+  core: {
+    authorization: {
+      adminEmail: 'admin@yos.tools',
+      adminPassword: '********',
+      jwt: {
+        secretOrPrivateKey: 'SECRET_OR_PRIVATE_KEY'
+      }
+    }
+  }
+});
 
 /*
 // Further processing
