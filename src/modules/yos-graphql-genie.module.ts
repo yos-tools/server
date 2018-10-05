@@ -1,7 +1,7 @@
 import { AuthenticationError, ForbiddenError, IResolvers, ITypedef, PubSub } from 'apollo-server';
 import { SchemaDirectiveVisitor } from 'apollo-server-express';
 import * as bcrypt from 'bcrypt';
-import { assertObjectType, GraphQLSchema } from 'graphql';
+import { assertObjectType, GraphQLSchema, parse, print } from 'graphql';
 import { getRecordFromResolverReturn, GraphQLGenie } from 'graphql-genie';
 import authPlugin from 'graphql-genie-authentication';
 import subscriptionPlugin from 'graphql-genie-subscriptions';
@@ -29,14 +29,10 @@ export class YosGraphQLGenieModule extends YosModule {
   /** Authentication service */
   protected _authenticationService: YosAuthenticationService;
 
-  /**
-   * Configuration of YosGraphQLGenieModule
-   */
+  /** Configuration of YosGraphQLGenieModule */
   protected _config: YosGraphQLGenieModuleConfig;
 
-  /**
-   * GraphQLGenie instance
-   */
+  /** GraphQLGenie instance */
   protected _genie: GraphQLGenie;
 
   /** Hook service */
@@ -80,18 +76,17 @@ export class YosGraphQLGenieModule extends YosModule {
 
   /**
    * Integrate GraphQL Genie schema into GraphQL schema
-   * @param schema
-   * @param config
    */
   public async integrateGenieSchema(
-    schema: GraphQLSchema,
     config: {
-      autoTypeDefs: ITypedef,
       typeDefs: ITypedef,
       resolvers: IResolvers,
       schemaDirectives: { [name: string]: typeof SchemaDirectiveVisitor }
     }
   ) {
+
+    // Split type definitions
+    const split = this.splitTypeDefs(config.typeDefs.toString());
 
     // Init genie if not exists
     if (!this._genie) {
@@ -102,11 +97,11 @@ export class YosGraphQLGenieModule extends YosModule {
         throw new Error('Missing fortune configuration in core.fortune. Check the configuration file(s).');
       }
 
-      // Init GraphQL Genie
+      // Init GraphQL Genie with typeDefs from config
       this._genie = new GraphQLGenie({
         fortuneOptions: fortuneOptions,
         generatorOptions: this._config.generatorOptions,
-        typeDefs: config.autoTypeDefs.toString(),
+        typeDefs: split.genie,
         schemaBuilder: this._config.schemaBuilder
       });
 
@@ -122,8 +117,13 @@ export class YosGraphQLGenieModule extends YosModule {
     }
 
     // Return integrated genie schema
+    const authSchema = this.getSchemaWithAuth();
+
+    // Add resolvers and schema directives from config
     return mergeSchemas({
-      schemas: [schema, this.getSchemaWithAuth()]
+      schemas: [split.rest, authSchema],
+      resolvers: config.resolvers ? config.resolvers : [],
+      schemaDirectives: config.schemaDirectives ? config.schemaDirectives : {}
     });
   }
 
@@ -132,6 +132,54 @@ export class YosGraphQLGenieModule extends YosModule {
   // Methods
   // ===================================================================================================================
 
+
+  /**
+   * Split type definitions into genie and rest definitions
+   * @param definitions
+   */
+  protected splitTypeDefs(definitions: string | string[]): { genie: string, rest: string } {
+
+    // Convert array to string
+    if (Array.isArray(definitions)) {
+      definitions = definitions.toString();
+    }
+
+    // Convert definitions string into a GraphQL document node
+    const documentNode = <any> parse(definitions);
+
+    // Init
+    const genie: any = {kind: 'Document', definitions: []};
+    const rest: any = {kind: 'Document', definitions: []};
+    const restTypes: string[] = ['InputObjectTypeDefinition'];
+
+    // Split documentNode into genie and rest schema
+    for (const definition of documentNode.definitions) {
+      if (
+        // Queries, because they will be processed by own resolvers
+        definition.name && definition.name.value === 'Query' ||
+
+        // special rest types
+        restTypes.indexOf(definition.kind) >= 0 ||
+
+        // ObjectTypeDefinitions without "model" or "genie" decorator
+        definition.kind === 'ObjectTypeDefinition' &&
+        !_.find(definition.directives, ['name.value', 'model']) &&
+        !_.find(definition.directives, ['name.value', 'genie'])
+      ) {
+
+        // Push into rest
+        rest.definitions.push(definition);
+
+      } else {
+
+        // Push into genie
+        genie.definitions.push(definition);
+      }
+    }
+
+    // Return genie and rest schema as strings
+    return {genie: print(genie), rest: print(rest)};
+  }
 
   /**
    * Set services

@@ -89,7 +89,8 @@ export class YosServerDefaultConfig implements YosServerConfig {
 
         // Configuration of MongoDB adapter (see https://github.com/fortunejs/fortune-mongodb#options)
         {
-          url: 'mongodb://localhost:27017/yos'
+          url: 'mongodb://localhost:27017/yos',
+          useNewUrlParser: true
         }
       ],
 

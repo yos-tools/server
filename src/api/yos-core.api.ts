@@ -25,73 +25,13 @@ import { YosEmailAddressScalar } from '../scalars/yos-email-address.scalar';
 export const YosCoreApi: YosSchemaDefinition = {
 
   // ===================================================================================================================
-  // Type definitions for automatic process handling
-  // ===================================================================================================================
-
-  autoTypeDefs: `
-    # ==================================================================================================================
-    # Enums
-    # ==================================================================================================================
-  
-    "User roles"
-    enum Role {
-    
-      "User must be an admin"
-      ADMIN
-      
-      "Open to all requests"
-      ANY
-      
-      "User must have created/be the type"
-      OWNER
-      
-      "Must be logged in"
-      USER
-    }
-  
-    "User"
-    type User @model @auth(create: ANY, read: ANY, update: OWNER, delete: ADMIN) {
-      
-      "ID of the user"
-      id: ID! @unique
-      
-      "Unique username"
-      username: String @unique
-    
-      "Email of the user"
-      email: String! @unique @auth(create: ANY, read: OWNER, update: OWNER, delete: ADMIN)
-    
-      "Only admins can read password"
-      password: String! @auth(create: ANY, read: ADMIN, update: OWNER, delete: ADMIN)
-      
-      """
-      Only admins can alter roles, will need additional logic in authenticate function so users can only set themself 
-      to USER role, so the only:USER in the rules can be used in the authenticate function
-      """
-      roles: [Role] @default(value: "USER") @auth(create: ANY, read: ADMIN, update: ADMIN, delete: ADMIN, rules: "only:USER")
-    }
-    
-    """
-    UserIdentifiers aren't part of the model, so queries/mutations won't be created for it.
-    Via @auth the importData resolver could alter it otherwise
-    """
-    type UserIdentifiers @auth {
-      id: ID!
-      userID: ID
-      password: String
-      identifiers: [String]
-      roles: [Role]
-    }
-  `,
-
-  // ===================================================================================================================
-  // Type definitions
+  // Type definitions (https://www.apollographql.com/docs/graphql-tools/generate-schema.html)
   // ===================================================================================================================
 
   typeDefs: `
   
     # ==================================================================================================================
-    # Directives
+    # Directives (https://www.apollographql.com/docs/graphql-tools/schema-directives.html)
     # ==================================================================================================================
     
     "Marks a field or an enum as deprecated (https://www.apollographql.com/docs/graphql-tools/schema-directives.html)"
@@ -99,9 +39,15 @@ export const YosCoreApi: YosSchemaDefinition = {
       "Allows to specify a reason for the tag as deprecated"
       reason: String = "No longer supported"
     ) on FIELD_DEFINITION | ENUM_VALUE
+    
+    """
+    Marks a type (object) to be loaded in addition to the models for GraphQL Genie 
+    (https://github.com/genie-team/graphql-genie). Types with this directive are not treated as models.
+    """
+    directive @genie on OBJECT
   
     # ==================================================================================================================
-    # Enums
+    # Enums (https://www.apollographql.com/docs/graphql-tools/scalars.html)
     # ==================================================================================================================
   
     "[Comparison Query Operators](https://docs.mongodb.com/manual/reference/operator/query-comparison/)"
@@ -138,6 +84,22 @@ export const YosCoreApi: YosSchemaDefinition = {
       REGEX
     }
     
+    "User roles"
+    enum Role {
+    
+      "User must be an admin"
+      ADMIN
+      
+      "Open to all requests"
+      ANY
+      
+      "User must have created/be the type"
+      OWNER
+      
+      "Must be logged in"
+      USER
+    }
+    
     "[Sort order](https://docs.mongodb.com/manual/reference/method/cursor.sort/#ascending-descending-sort)"
     enum SortOrder {
       
@@ -149,7 +111,7 @@ export const YosCoreApi: YosSchemaDefinition = {
     }
     
     # ==================================================================================================================
-    # Inputs
+    # Inputs (https://www.apollographql.com/docs/graphql-tools/generate-schema.html)
     # ==================================================================================================================
     
     "Filter for values"
@@ -206,18 +168,11 @@ export const YosCoreApi: YosSchemaDefinition = {
     }
 
     # ==================================================================================================================
-    # Scalars
-    # Custom scalars see https://www.apollographql.com/docs/graphql-tools/scalars.html
+    # Scalars (https://www.apollographql.com/docs/graphql-tools/scalars.html)
     # ==================================================================================================================
     
     "Scalar for any (JSON) value"
     scalar Any
-    
-    """
-    Scalar for dates.
-    String will be converted into a JavaScript date object 
-    """
-    scalar Date
     
     "Scalar for EmailAddresses"
     scalar EmailAddress
@@ -263,7 +218,7 @@ export const YosCoreApi: YosSchemaDefinition = {
 
     
     # ==================================================================================================================
-    # Types
+    # Types (https://www.apollographql.com/docs/guides/schema-design.html#mutation-input-types)
     # ==================================================================================================================
   
     "Information about the API"
@@ -281,10 +236,44 @@ export const YosCoreApi: YosSchemaDefinition = {
       "Current Position"
       ipLookup: Any @deprecated(reason: "May be to much information")
     }
+    
+    "User"
+    type User @model @auth(create: ANY, read: ANY, update: OWNER, delete: ADMIN) {
+      
+      "ID of the user"
+      id: ID! @unique
+      
+      "Unique username"
+      username: String @unique
+    
+      "Email of the user"
+      email: String! @unique @auth(create: ANY, read: OWNER, update: OWNER, delete: ADMIN)
+    
+      "Only admins can read password"
+      password: String! @auth(create: ANY, read: ADMIN, update: OWNER, delete: ADMIN)
+      
+      """
+      Only admins can alter roles, will need additional logic in authenticate function so users can only set themself 
+      to USER role, so the only:USER in the rules can be used in the authenticate function
+      """
+      roles: [Role] @default(value: "USER") @auth(create: ANY, read: ADMIN, update: ADMIN, delete: ADMIN, rules: "only:USER")
+    }
+    
+    """
+    UserIdentifiers aren't part of the model, so queries/mutations won't be created for it.
+    Via @auth the importData resolver could alter it otherwise
+    """
+    type UserIdentifiers @genie @auth {
+      id: ID!
+      userID: ID
+      password: String
+      identifiers: [String]
+      roles: [Role]
+    }
 
 
     # ==================================================================================================================
-    # Queries
+    # Queries (https://www.apollographql.com/docs/graphql-tools/generate-schema.html)
     # ==================================================================================================================
 
     type Query {
@@ -296,7 +285,7 @@ export const YosCoreApi: YosSchemaDefinition = {
 
 
   // ===================================================================================================================
-  // Resolvers
+  // Resolvers (https://www.apollographql.com/docs/graphql-tools/resolvers.html)
   // ===================================================================================================================
 
   resolvers: {
@@ -350,7 +339,7 @@ export const YosCoreApi: YosSchemaDefinition = {
   },
 
   // ===================================================================================================================
-  // Directives
+  // Directives (https://www.apollographql.com/docs/graphql-tools/schema-directives.html)
   // ===================================================================================================================
 
   schemaDirectives: {

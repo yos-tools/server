@@ -99,6 +99,22 @@ export class YosHooksService extends YosService {
   }
 
   /**
+   * Counter of current actions for a special hook
+   * @param hook
+   */
+  countActions(hook: string): number {
+    return this._actions && this._actions[hook] ? this._actions[hook].length : 0;
+  }
+
+  /**
+   * Counter of current filters for a special hook
+   * @param hook
+   */
+  countFilters(hook: string): number {
+    return this._filters && this._filters[hook] ? this._filters[hook].length : 0;
+  }
+
+  /**
    * Remove action
    * @param {string} hook
    * @param {string} action

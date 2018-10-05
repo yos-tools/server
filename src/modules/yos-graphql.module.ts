@@ -8,7 +8,7 @@ import {
   YosFilterHook,
   YosGraphQLModuleConfig,
   YosGraphQLSchemasConfigType,
-  YosHelper,
+  YosHelper, YosHooksService,
   YosInitializer,
   YosModule,
   YosObject,
@@ -28,9 +28,6 @@ export class YosGraphQLModule extends YosModule {
   // ===================================================================================================================
   // Properties
   // ===================================================================================================================
-
-  /** GraphQL type definitions */
-  protected _autoTypeDefs: ITypedef;
 
   /** Apollo server */
   protected _apolloServer: ApolloServer;
@@ -97,7 +94,6 @@ export class YosGraphQLModule extends YosModule {
    */
   public static async getGraphQLSchemaDefinition(items: YosGraphQLSchemasConfigType):
     Promise<{
-      autoTypeDefs: ITypedef[],
       typeDefs: ITypedef[],
       resolvers: IResolvers[],
       schemaDirectives: { [name: string]: typeof SchemaDirectiveVisitor }[]
@@ -106,11 +102,10 @@ export class YosGraphQLModule extends YosModule {
     // Init
     let schemas: YosSchemaDefinition[] = [];
     const definition: {
-      autoTypeDefs: ITypedef[],
       typeDefs: ITypedef[],
       resolvers: IResolvers[],
       schemaDirectives: { [name: string]: typeof SchemaDirectiveVisitor }[]
-    } = {autoTypeDefs: [], typeDefs: [], resolvers: [], schemaDirectives: []};
+    } = {typeDefs: [], resolvers: [], schemaDirectives: []};
 
     // Convert to array for
     if (!Array.isArray(items)) {
@@ -133,7 +128,6 @@ export class YosGraphQLModule extends YosModule {
 
             // Check object
             if (
-              (typeof object.autoTypeDefs === 'string' && object.autoTypeDefs.length) ||
               (typeof object.typeDefs === 'string' && object.typeDefs.length) ||
               object.resolvers ||
               object.schemaDirectives
@@ -155,13 +149,6 @@ export class YosGraphQLModule extends YosModule {
     // Process schemas
     if (schemas.length) {
       for (const schema of schemas) {
-
-        // Process autoTypeDefs
-        if (Array.isArray(schema.autoTypeDefs)) {
-          definition.autoTypeDefs = definition.autoTypeDefs.concat(schema.autoTypeDefs);
-        } else {
-          definition.autoTypeDefs.push(schema.autoTypeDefs);
-        }
 
         // Process typeDefs
         if (Array.isArray(schema.typeDefs)) {
@@ -307,7 +294,6 @@ export class YosGraphQLModule extends YosModule {
 
     // Concat definitions to one definition
     let definition = {
-      autoTypeDefs: definitions[0].autoTypeDefs.concat(definitions[1].autoTypeDefs),
       typeDefs: definitions[0].typeDefs.concat(definitions[1].typeDefs),
       resolvers: definitions[0].resolvers.concat(definitions[1].resolvers),
       schemaDirectives: definitions[0].schemaDirectives.concat(definitions[1].schemaDirectives)
@@ -324,11 +310,8 @@ export class YosGraphQLModule extends YosModule {
       definition = await hooksService.performFilters(YosFilterHook.GraphQLDefinition, definition);
     }
 
-    // Merge type definitions for automatic process handling
-    this._autoTypeDefs = YosGraphQLModule.mergeGraphQLTypeDefinitions(definition.autoTypeDefs.toString());
-
-    // Merge type definitions inclusive auto type definitions
-    this._typeDefs = YosGraphQLModule.mergeGraphQLTypeDefinitions(definition.autoTypeDefs.concat(definition.typeDefs).toString());
+    // Merge type definitions
+    this._typeDefs = YosGraphQLModule.mergeGraphQLTypeDefinitions(definition.typeDefs.toString());
 
     // Merge resolvers
     this._resolvers = _.merge({}, ...definition.resolvers);
@@ -358,9 +341,6 @@ export class YosGraphQLModule extends YosModule {
       // Schema definitions
       const schemaDefinitions = {
 
-        // Set types for automatic process handling
-        autoTypeDefs: this._autoTypeDefs,
-
         // Set type definitions
         typeDefs: this._typeDefs,
 
@@ -371,14 +351,15 @@ export class YosGraphQLModule extends YosModule {
         schemaDirectives: this._schemaDirectives
       };
 
-      // Generate executable schema
-      const executableSchema = makeExecutableSchema(schemaDefinitions);
+      // Generate schema via hooks
+      const hooksService: YosHooksService = _.get(this._yosServer, 'services.hooksService');
+      if (hooksService && hooksService.countFilters(YosFilterHook.GraphQLSchema)) {
+        this._schema = await this._yosServer.services.hooksService.performFilters(YosFilterHook.GraphQLSchema, schemaDefinitions);
+      } else {
 
-      // Generate schema
-      this._schema = executableSchema;
-
-      // Hook for GraphQL schema
-      this._schema = await this._yosServer.services.hooksService.performFilters(YosFilterHook.GraphQLSchema, this._schema, schemaDefinitions);
+        // Create schema without hooks
+        this._schema = makeExecutableSchema(schemaDefinitions);
+      }
 
       this._apolloServer = new ApolloServer(YosHelper.specialMerge({
 
