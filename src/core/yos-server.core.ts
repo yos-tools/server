@@ -10,7 +10,8 @@ import {
   YosModules,
   YosServerConfig,
   YosServerDefaultConfig,
-  YosServices
+  YosServices,
+  YosStore
 } from '..';
 import getPort = require('get-port');
 
@@ -26,8 +27,14 @@ export class YosServer {
   /** Current configuration */
   protected _config: YosServerConfig;
 
+  /** Context from outside (e.g. env variables integrated via YosContextModule) */
+  protected _context: YosContext = {};
+
   /** Express app (as basis for all modules) */
   protected _expressApp: express.Application;
+
+  /** Fortune store */
+  protected _store: YosStore;
 
   /** Loaded modules */
   protected _modules: YosModules = {};
@@ -37,8 +44,6 @@ export class YosServer {
 
   /** YosServicesConfig */
   protected _services: YosServices = {};
-
-  protected _context: YosContext = {};
 
 
   // ===================================================================================================================
@@ -194,6 +199,40 @@ export class YosServer {
     });
   }
 
+  /**
+   * Update store
+   * @param store
+   */
+  public async updateStore(store: YosStore) {
+
+    // Check store
+    if (!store) {
+      return;
+    }
+
+    // Check whether store already exists
+    if (!this._store) {
+
+      // Set store
+      this._store = store;
+
+    } else {
+
+      // Disconnect store
+      await this._store.disconnect();
+
+      // Merge record types
+      YosHelper.specialMerge(this._store.recordTypes, store.recordTypes);
+
+      // Merge hooks
+      Object.assign(this._store.hooks, store.hooks);
+
+      // Connect store
+      // (Reconnecting isn't really necessary, just advised for some adapters that may need setup like Postgres)
+      await this._store.connect();
+    }
+  }
+
 
   // ===================================================================================================================
   // Getter & Setter
@@ -245,6 +284,22 @@ export class YosServer {
    */
   public set expressApp(expressApp: express.Application) {
     this._expressApp = expressApp;
+  }
+
+  /**
+   * Getter for store
+   * @returns YosStore
+   */
+  public get store(): YosStore {
+    return this._store;
+  }
+
+  /**
+   * Setter for store
+   * @param {YosStore} store
+   */
+  public set store(store: YosStore) {
+    this._store = store;
   }
 
   /**

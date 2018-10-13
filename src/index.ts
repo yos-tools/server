@@ -23,6 +23,7 @@ export { YosCoreController } from './controllers/yos-core.controller';
 export { YosResolver } from './core/yos-resolver.core';
 export { YosServer } from './core/yos-server.core';
 export { YosServerDefaultConfig } from './core/yos-server-default-config.core';
+export { YosStore } from './core/yos-store.core';
 
 // =====================================================================================================================
 // Directives

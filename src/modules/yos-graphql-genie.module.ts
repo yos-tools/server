@@ -105,6 +105,9 @@ export class YosGraphQLGenieModule extends YosModule {
         schemaBuilder: this._config.schemaBuilder
       });
 
+      // Update fortune store
+      this._yosServer.updateStore(this._genie.getDataResolver().getStore());
+
       // Add filter
       this.setFilters();
 

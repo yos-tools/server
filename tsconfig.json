@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "lib": [
@@ -25,7 +26,8 @@
 
   // necessary for scoped packages to use with ts-node
   "files": [
-    "src/definitions/graphql-scalars.d.ts"
+    "src/definitions/graphql-scalars.d.ts",
+    "src/definitions/fortune.d.ts"
   ],
 
   // will not be used by ts-node
