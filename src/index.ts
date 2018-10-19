@@ -20,10 +20,16 @@ export { YosCoreController } from './controllers/yos-core.controller';
 // =====================================================================================================================
 // Core
 // =====================================================================================================================
+export { YosModel } from './core/yos-model.core';
 export { YosResolver } from './core/yos-resolver.core';
 export { YosServer } from './core/yos-server.core';
 export { YosServerDefaultConfig } from './core/yos-server-default-config.core';
 export { YosStore } from './core/yos-store.core';
+
+// =====================================================================================================================
+// Decorators
+// =====================================================================================================================
+export { input, model, output, prop } from './decorators/yos-model.decorator';
 
 // =====================================================================================================================
 // Directives
