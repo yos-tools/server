@@ -1,4 +1,5 @@
 import { FortuneOptions } from 'graphql-genie';
+import * as Fortune from 'fortune';
 
 /**
  * Interface for yos-server core configuration
@@ -46,7 +47,7 @@ export interface YosServerCoreConfig {
    *
    * See http://fortune.js.org/api/#fortune-constructor
    */
-  fortune?: FortuneOptions,
+  fortune?: FortuneOptions & Fortune.Options,
 
   /** Configuration of yos-server */
   yosServer?: {

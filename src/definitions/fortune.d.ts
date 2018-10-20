@@ -86,7 +86,7 @@ declare class Fortune extends EventLite {
   /**
    * Input and output hooks
    */
-  hooks: Fortune.Hook[];
+  hooks: Fortune.Hooks;
 
   /**
    * Messages
@@ -313,12 +313,19 @@ declare class Fortune extends EventLite {
   find(type: string, ids?: Fortune.ID | Fortune.ID[], options?: Fortune.Options, include?: Fortune.Include, meta?: object): Promise<Fortune.Response>
 
   /**
+   * The `create` method creates records by type given records to create. This
+   * is a convenience method that wraps around the `request` method, see the
+   * request `method` for documentation on its arguments.
+   */
+  create(type: string, records: object | object[], include?: Fortune.Include, meta?: object): Promise<Fortune.Response>
+
+  /**
    * The `update` method updates records by type given update objects. See the
    * [Adapter.update](#adapter-update) method for the format of the update
    * objects. This is a convenience method that wraps around the `request`
    * method, see the `request` method for documentation on its arguments.
    */
-  update(type: string, updates: object, include?: Fortune.Include, meta?: object): Promise<Fortune.Response>
+  update(type: string, updates: object | object[], include?: Fortune.Include, meta?: object): Promise<Fortune.Response>
 
   /**
    * The `delete` method deletes records by type given IDs (optional). This is a
@@ -356,6 +363,11 @@ declare namespace Fortune {
    * Hook type
    */
   export type Hook = [HookFunction, HookFunction?]
+
+  /**
+   * Hooks type
+   */
+  export type Hooks = { [recordType: string]: Hook };
 
   /**
    * ID type
@@ -405,6 +417,54 @@ declare namespace Fortune {
 
   /**
    * Input / Output hook function
+   *
+   * I/O hooks isolate business logic, and are part of what makes the interface reusable across different protocols.
+   * An input and output hook function may be defined per record type. Hook functions accept at least two arguments,
+   * the context object, the record, and optionally the update object for an update request. The method of an input
+   * hook may be any method except find, and an output hook may be applied on all methods.
+   *
+   * An input hook function may optionally return or resolve a value to determine what gets persisted, and it is safe
+   * to mutate any of its arguments. The returned or resolved value must be the record if it's a create request, the
+   * update if it's an update request, or anything (or simply null) if it's a delete request. For example, an input
+   * hook function for a record may look like this:
+   *
+   * ```typescript
+   * function input (context, record, update) {
+   *   switch (context.request.method) {
+   *     // If it's a create request, return the record.
+   *     case 'create': return record
+   *
+   *     // If it's an update request, return the update.
+   *     case 'update': return update
+   *
+   *     // If it's a delete request, the return value doesn't matter.
+   *     case 'delete': return null
+   *   }
+   * }
+   * ```
+   *
+   * An output hook function may optionally return or resolve a record, and it is safe to mutate any of its arguments.
+   *
+   * ```typescript
+   * function output (context, record) {
+   *   record.accessedAt = new Date()
+   *   return record
+   * }
+   *
+   * Based on whether or not the resolved record is different from what was passed in, serializers may decide not to
+   * show the resolved record of the output hook for update and delete requests.
+   *
+   * Hooks for a record type may be defined as follows:
+   * ```typescript
+   * const store = fortune({
+   *   user: { ... }
+   * }, {
+   *   hooks: {
+   *     // Hook functions must be defined in order: input first, output last.
+   *     user: [ input, output ]
+   *   }
+   * })
+   * ```
    */
   export interface HookFunction {
     (context: object, record: object, update?: object): any | null | undefined
@@ -555,7 +615,7 @@ declare namespace Fortune {
    **/
   export interface Options {
     adapter?: Fortune.Adapter[],
-    hooks?: { [recordType: string]: Hook },
+    hooks?: Fortune.Hooks,
     documentation?: { [recordOrField: string]: string | { [language: string]: string } }
     settings?: {
       enforceLinks?: boolean,

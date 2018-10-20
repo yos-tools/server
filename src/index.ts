@@ -29,7 +29,7 @@ export { YosStore } from './core/yos-store.core';
 // =====================================================================================================================
 // Decorators
 // =====================================================================================================================
-export { input, model, output, prop } from './decorators/yos-model.decorator';
+export { storeInput, model, storeOutput, prop } from './decorators/yos-model.decorator';
 
 // =====================================================================================================================
 // Directives
@@ -58,6 +58,7 @@ export { YosContextInitFunction } from './interfaces/yos-context-init-function.i
 export { YosContextModuleConfig } from './interfaces/yos-context-module-config';
 export { YosControllerContext } from './interfaces/yos-controller-context.interface';
 export { YosControllerFunction } from './interfaces/yos-controller-function.interface';
+export { YosExtends } from './interfaces/yos-extends.interface';
 export { YosGeoJsonValidatorCallback } from './interfaces/yos-geo-json-validator-callback.interface';
 export { YosGeoJsonValidatorCustomDefinition } from './interfaces/yos-geo-json-validator-custom-definition.interface';
 export { YosGeoJsonValidatorDefinition } from './interfaces/yos-geo-json-validator-definition.interface';
@@ -77,7 +78,7 @@ export { YosServiceConfig } from './interfaces/yos-service-config.interface';
 export { YosServices } from './interfaces/yos-services.interface';
 export { YosServicesConfig } from './interfaces/yos-services-config.interface';
 export { YosSetUserViaTokenConfig } from './interfaces/yos-set-user-via-token-config.interface';
-export { YosExtends } from './interfaces/yos-extends.interface';
+export { YosStoreConfig } from './interfaces/yos-store-config.interface';
 
 // =====================================================================================================================
 // Modules

@@ -13,6 +13,7 @@ import {
   YosServices,
   YosStore
 } from '..';
+import * as Fortune from '../definitions/fortune';
 import getPort = require('get-port');
 
 /**
@@ -82,6 +83,9 @@ export class YosServer {
 
     // Init Modules
     await YosInitializer.initModules(yosServer.config.modules, yosServer);
+
+    // Init Store
+    await yosServer.updateStore({options: yosServer.config.core.fortune});
 
     // Start Server
     await yosServer.serve();
@@ -201,9 +205,10 @@ export class YosServer {
 
   /**
    * Update store
-   * @param store
    */
-  public async updateStore(store: YosStore) {
+  public async updateStore(
+    store: { recordTypes?: Fortune.RecordTypeDefinitions, hooks?: Fortune.Hooks, options?: Fortune.Options }
+  ): Promise<YosStore> {
 
     // Check store
     if (!store) {
@@ -214,23 +219,12 @@ export class YosServer {
     if (!this._store) {
 
       // Set store
-      this._store = store;
-
-    } else {
-
-      // Disconnect store
-      await this._store.disconnect();
-
-      // Merge record types
-      YosHelper.specialMerge(this._store.recordTypes, store.recordTypes);
-
-      // Merge hooks
-      Object.assign(this._store.hooks, store.hooks);
-
-      // Connect store
-      // (Reconnecting isn't really necessary, just advised for some adapters that may need setup like Postgres)
-      await this._store.connect();
+      this._store = await YosStore.getInstance(store);
+      return this._store;
     }
+
+    // Assign store data
+    return await this._store.assignStore(store);
   }
 
 

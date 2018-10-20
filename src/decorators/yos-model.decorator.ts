@@ -1,6 +1,6 @@
 import * as Fortune from 'fortune';
 import * as _ from 'lodash';
-import { YosModel } from '..';
+import { YosStore } from '..';
 
 /**
  * Container for model data
@@ -10,12 +10,12 @@ const modelData: { [model: string]: { definition: object, hook: Fortune.Hook } }
 /**
  * Get (new) model
  */
-function getModel(model: string){
+function getModel(model: string) {
   if (!modelData[model]) {
     modelData[model] = {
       definition: {},
       hook: [null, null]
-    }
+    };
   }
   return modelData[model];
 }
@@ -23,7 +23,7 @@ function getModel(model: string){
 /**
  * Input hook decorator
  */
-export function input(): Function {
+export function storeInput(): Function {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     getModel(target.constructor.name).hook[0] = descriptor.value;
   };
@@ -32,21 +32,25 @@ export function input(): Function {
 /**
  * Model decorator
  */
-export function model(options?: {recordTypeName?: string}): Function {
+export function model(options?: { recordTypeName?: string }): Function {
   return (constructor: Function) => {
     const recordTypeName = options && options.recordTypeName ? options.recordTypeName : _.camelCase(constructor.name);
-    YosModel.initModel(
+    YosStore.setModelData(
+      recordTypeName,
       _.get(modelData[constructor.name], 'definition'),
-      _.get(modelData[constructor.name], 'hook'),
-      recordTypeName
+      _.get(modelData[constructor.name], 'hook')
     );
+    Object.defineProperty(constructor, 'yosRecordTypeName', {
+      writable: false,
+      value: recordTypeName
+    });
   };
 }
 
 /**
  * Output hook decorator
  */
-export function output(): Function {
+export function storeOutput(): Function {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     getModel(target.constructor.name).hook[1] = descriptor.value;
   };
@@ -55,7 +59,7 @@ export function output(): Function {
 /**
  * Property decorator
  */
-export function prop(options: {type: any}): Function {
+export function prop(options: { type: any }): Function {
   return (target: any, key: string) => {
     const entry: any = {};
     entry[key] = options.type;
