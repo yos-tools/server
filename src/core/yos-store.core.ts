@@ -172,7 +172,7 @@ export class YosStore {
    * or both. This is a convenience method that wraps around the `request`
    * method, see the `request` method for documentation on its arguments.
    */
-  public static find(type: string, ids?: Fortune.ID | Fortune.ID[], options?: Fortune.Options, include?: Fortune.Include, meta?: object): Promise<Fortune.Response> {
+  public static find(type: string, ids?: Fortune.ID | Fortune.ID[], options?: object, include?: Fortune.Include, meta?: object): Promise<Fortune.Response> {
     return YosStore.store.find(type, ids, options, include, meta);
   }
 
