@@ -10,10 +10,8 @@ import {
   YosModules,
   YosServerConfig,
   YosServerDefaultConfig,
-  YosServices,
-  YosStore
+  YosServices
 } from '..';
-import * as Fortune from '../definitions/fortune';
 import getPort = require('get-port');
 
 /**
@@ -33,9 +31,6 @@ export class YosServer {
 
   /** Express app (as basis for all modules) */
   protected _expressApp: express.Application;
-
-  /** Fortune store */
-  protected _store: YosStore;
 
   /** Loaded modules */
   protected _modules: YosModules = {};
@@ -83,9 +78,6 @@ export class YosServer {
 
     // Init Modules
     await YosInitializer.initModules(yosServer.config.modules, yosServer);
-
-    // Init Store
-    await yosServer.updateStore({options: yosServer.config.core.fortune});
 
     // Start Server
     await yosServer.serve();
@@ -203,30 +195,6 @@ export class YosServer {
     });
   }
 
-  /**
-   * Update store
-   */
-  public async updateStore(
-    store: { recordTypes?: Fortune.RecordTypeDefinitions, hooks?: Fortune.Hooks, options?: Fortune.Options }
-  ): Promise<YosStore> {
-
-    // Check store
-    if (!store) {
-      return;
-    }
-
-    // Check whether store already exists
-    if (!this._store) {
-
-      // Set store
-      this._store = await YosStore.getInstance(store);
-      return this._store;
-    }
-
-    // Assign store data
-    return await this._store.assignStore(store);
-  }
-
 
   // ===================================================================================================================
   // Getter & Setter
@@ -278,22 +246,6 @@ export class YosServer {
    */
   public set expressApp(expressApp: express.Application) {
     this._expressApp = expressApp;
-  }
-
-  /**
-   * Getter for store
-   * @returns YosStore
-   */
-  public get store(): YosStore {
-    return this._store;
-  }
-
-  /**
-   * Setter for store
-   * @param {YosStore} store
-   */
-  public set store(store: YosStore) {
-    this._store = store;
   }
 
   /**

@@ -3,43 +3,32 @@ import * as _ from 'lodash';
 import { YosStoreConfig } from '..';
 
 /**
- * Store (Singleton)
+ * Static store
  */
 export class YosStore {
 
   // ===================================================================================================================
-  // Static properties
-  // ===================================================================================================================
-
-  /**
-   * Singleton instance of YosStore
-   */
-  protected static instance: YosStore;
-
-
-  // ===================================================================================================================
-  // Instance properties
+  // Properties
   // ===================================================================================================================
 
   /**
    * Fortune store
    */
-  protected store: Fortune;
+  protected static store: Fortune;
+
 
   // ===================================================================================================================
-  // Instance properties
+  // Static class
   // ===================================================================================================================
 
   /**
-   * Private constructor for YosStore Singleton
+   * Private constructor can not be called
    */
-  protected constructor(store: YosStoreConfig | Fortune) {
-    YosStore.optimizeYosStoreConfig(store);
-    this.store =  new Fortune(store.recordTypes, store.options);
-  }
+  private constructor() {}
+
 
   // ===================================================================================================================
-  // Static methods
+  // Management methods
   // ===================================================================================================================
 
   /**
@@ -53,24 +42,23 @@ export class YosStore {
   protected static modelHooks: { [recordType: string]: Fortune.Hook } = {};
 
   /**
-   * Get instance
+   * Init store
    */
-  public static async getInstance(
+  public static async initStore(
     store: YosStoreConfig | Fortune,
     integrateModelDataOnInit: boolean = true
   ): Promise<YosStore> {
-    if (!YosStore.instance) {
-      YosStore.instance = new YosStore(store);
-      await YosStore.instance.store.connect();
+    if (!YosStore.store) {
+      store = YosStore.optimizeYosStoreConfig(store);
       if (integrateModelDataOnInit) {
-        await YosStore.instance.assignStore({
-          recordTypes: YosStore.modelRecordTypeDefinitions,
-          hooks: YosStore.modelHooks
-        });
+        Object.assign(store.recordTypes, YosStore.modelRecordTypeDefinitions);
+        Object.assign(store.options.hooks, YosStore.modelHooks)
       }
-      return YosStore.instance;
+      YosStore.store =  new Fortune(store.recordTypes, store.options);
+      await YosStore.store.connect();
+      return;
     }
-    return YosStore.instance.assignStore(store);
+    await YosStore.assignStore(store);
   }
 
   /**
@@ -109,7 +97,8 @@ export class YosStore {
    * Optimize YosStoreConfig
    * @param store
    */
-  public static optimizeYosStoreConfig(store: YosStoreConfig) {
+  public static optimizeYosStoreConfig(store: YosStoreConfig | Fortune): YosStoreConfig | Fortune {
+    store = _.cloneDeep(store);
     store.recordTypes = store && store.recordTypes ? store.recordTypes : {};
     store.options = store && store.options ? store.options : {hooks: {}};
     if (store && store.hooks) {
@@ -118,57 +107,64 @@ export class YosStore {
     return store;
   }
 
-
-  // ===================================================================================================================
-  // Instance methods
-  // ===================================================================================================================
-
   /**
    * Assign recordTypes, hooks and options to the store
    * @param store
    */
-  public async assignStore(store: YosStoreConfig | Fortune): Promise<YosStore> {
+  public static async assignStore(store: YosStoreConfig | Fortune): Promise<void> {
 
+    // Check parameter
     if (!store) {
-      return this;
+      return;
+    }
+
+    // Check store
+    if (!YosStore.store) {
+      if (store instanceof Fortune || !_.isEmpty(store.recordTypes) && !_.isEmpty(store.options)) {
+        await YosStore.initStore(store);
+      } else {
+        throw new Error('Store is not initialized yet. Please call YosStore.iniStore before.');
+      }
     }
 
     // Optimize store configuration
-    YosStore.optimizeYosStoreConfig(store);
+    store = YosStore.optimizeYosStoreConfig(store);
 
     // Disconnect store
-    await this.store.disconnect();
+    await YosStore.store.disconnect();
 
     // Assign record types
-    Object.assign(this.store.recordTypes, store.recordTypes);
+    Object.assign(YosStore.store.recordTypes, store.recordTypes);
 
     // Assign hooks
-    Object.assign(this.store.hooks, store.options.hooks);
+    Object.assign(YosStore.store.hooks, store.options.hooks);
 
     // Assign options
     if (store.options && store.options.settings) {
-      Object.assign(store.options.settings, this.store.options.settings, store.options.settings ? store.options.settings : {});
+      Object.assign(store.options.settings, YosStore.store.options.settings, store.options.settings ? store.options.settings : {});
     }
-    Object.assign(this.store.options, store.options);
+    Object.assign(YosStore.store.options, store.options);
 
     // Set options hooks (necessary if they have been replaced by the allocation of store.options)
-    this.store.options.hooks = this.store.hooks;
+    YosStore.store.options.hooks = YosStore.store.hooks;
 
     // Connect store
     // (Reconnecting isn't really necessary, just advised for some adapters that may need setup like Postgres)
-    await this.store.connect();
-
-    // Return assigned store
-    return this;
+    await YosStore.store.connect();
   }
+
+
+  // ===================================================================================================================
+  // Store communication methods
+  // ===================================================================================================================
 
   /**
    * This is the primary method for initiating a request.
    * The resolved response object should always be an instance of a response
    * type.
    */
-  request(options: Fortune.RequestOptions): Promise<Fortune.Response> {
-    return this.store.request(options);
+  public static request(options: Fortune.RequestOptions): Promise<Fortune.Response> {
+    return YosStore.store.request(options);
   }
 
   /**
@@ -176,8 +172,8 @@ export class YosStore {
    * or both. This is a convenience method that wraps around the `request`
    * method, see the `request` method for documentation on its arguments.
    */
-  find(type: string, ids?: Fortune.ID | Fortune.ID[], options?: Fortune.Options, include?: Fortune.Include, meta?: object): Promise<Fortune.Response> {
-    return this.store.find(type, ids, options, include, meta);
+  public static find(type: string, ids?: Fortune.ID | Fortune.ID[], options?: Fortune.Options, include?: Fortune.Include, meta?: object): Promise<Fortune.Response> {
+    return YosStore.store.find(type, ids, options, include, meta);
   }
 
   /**
@@ -185,8 +181,8 @@ export class YosStore {
    * is a convenience method that wraps around the `request` method, see the
    * request `method` for documentation on its arguments.
    */
-  create(type: string, records: object | object[], include?: Fortune.Include, meta?: object): Promise<Fortune.Response> {
-    return this.store.create(type, records, include, meta);
+  public static create(type: string, records: object | object[], include?: Fortune.Include, meta?: object): Promise<Fortune.Response> {
+    return YosStore.store.create(type, records, include, meta);
   }
 
   /**
@@ -195,8 +191,8 @@ export class YosStore {
    * objects. This is a convenience method that wraps around the `request`
    * method, see the `request` method for documentation on its arguments.
    */
-  update(type: string, updates: object | object[], include?: Fortune.Include, meta?: object): Promise<Fortune.Response> {
-    return this.store.update(type, updates, include, meta);
+  public static update(type: string, updates: object | object[], include?: Fortune.Include, meta?: object): Promise<Fortune.Response> {
+    return YosStore.store.update(type, updates, include, meta);
   }
 
   /**
@@ -204,7 +200,7 @@ export class YosStore {
    * convenience method that wraps around the `request` method, see the `request`
    * method for documentation on its arguments.
    */
-  delete(type: string, ids?: Fortune.ID | Fortune.ID[], include?: Fortune.Include, meta?: object): Promise<Fortune.Response> {
-    return this.store.delete(type, ids, include, meta);
+  public static delete(type: string, ids?: Fortune.ID | Fortune.ID[], include?: Fortune.Include, meta?: object): Promise<Fortune.Response> {
+    return YosStore.store.delete(type, ids, include, meta);
   }
 }

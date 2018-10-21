@@ -16,7 +16,7 @@ import {
   YosHooksService,
   YosModule,
   YosServer,
-  YosSetUserViaTokenConfig
+  YosSetUserViaTokenConfig, YosStore
 } from '..';
 import mergeSchemas from '../../node_modules/graphql-tools/dist/stitching/mergeSchemas';
 
@@ -106,7 +106,7 @@ export class YosGraphQLGenieModule extends YosModule {
       });
 
       // Update fortune store
-      this._yosServer.updateStore(this._genie.getDataResolver().getStore());
+      await YosStore.assignStore(this._genie.getDataResolver().getStore());
 
       // Add filter
       this.setFilters();
