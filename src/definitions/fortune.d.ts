@@ -310,7 +310,7 @@ declare class Fortune extends EventLite {
    * or both. This is a convenience method that wraps around the `request`
    * method, see the `request` method for documentation on its arguments.
    */
-  find(type: string, ids?: Fortune.ID | Fortune.ID[], options?: Fortune.Options, include?: Fortune.Include, meta?: object): Promise<Fortune.Response>
+  find(type: string, ids?: Fortune.ID | Fortune.ID[], options?: Fortune.FindOptions, include?: Fortune.Include, meta?: object): Promise<Fortune.Response>
 
   /**
    * The `create` method creates records by type given records to create. This
@@ -414,6 +414,131 @@ declare namespace Fortune {
   // ===================================================================================================================
   // Interfaces
   // ===================================================================================================================
+
+  /**
+   * Find records by IDs and options. If IDs is undefined, it usually try to return all records.
+   * However, if IDs is an empty array, it is a no-op.
+   *
+   * For the fields exists, match, and range, the logic operator is usually "and".
+   * The query field may be used on a per adapter basis to provide custom querying functionality.
+   *
+   * The format of the options may be as follows:
+   * ```typescript
+   * {
+   *    sort: { ... },
+   *    fields: { ... },
+   *    exists: { ... },
+   *    match: { ... },
+   *    range: { ... },
+   *
+   *    // Limit results to this number. Zero means no limit.
+   *    limit: 0,
+   *
+   *    // Offset results by this much from the beginning.
+   *    offset: 0,
+   *
+   *    // The logical operator "and", may be nested. Optional feature.
+   *    and: { ... },
+   *
+   *    // The logical operator "or", may be nested. Optional feature.
+   *    or: { ... },
+   *
+   *    // Reserved field for custom querying.
+   *    query: null
+   * }
+   * ```
+   */
+  export interface FindOptions {
+
+    /**
+     * Adapter specific options
+     */
+    [key: string]: any;
+
+    /**
+     * The syntax of the sort object is as follows:
+     * ```typescript
+     * {
+     *    age: false, // descending
+     *    name: true // ascending
+     * }
+     * ```
+     */
+    sort?: {[fieldName: string]: boolean};
+
+    /**
+     * Fields can be specified to be either included or omitted, but not both.
+     * Use the values true to include, or false to omit.
+     *
+     * The syntax of the fields object is as follows:
+     * ```typescript
+     * {
+     *    name: true, // include this field
+     *    age: true // also include this field
+     * }
+     * ``
+     */
+    fields?: {[fieldName: string]: boolean};
+
+    /**
+     * The exists object specifies if a field should exist or not (true or false).
+     * For array fields, it should check for non-zero length.
+     */
+    exists?: {[fieldName: string]: boolean};
+
+    /**
+     * The syntax of the match object is straightforward:
+     *
+     * ```typescript
+     * {
+     *    name: 'value', // exact match or containment if array
+     *    friends: [ 'joe', 'bob' ] // match any one of these values
+     * }
+     * ```
+     */
+    match?: {[fieldName: string]: any};
+
+    /**
+     * The range object is used to filter between lower and upper bounds. It should take precedence over match.
+     * For array fields, it should apply on the length of the array. For singular link fields, it should not apply.
+     *
+     * ```typescript
+     * {
+     *    range: { // Ranges should be inclusive.
+     *      age: [ 18, null ], // From 18 and above.
+     *      name: [ 'a', 'd' ], // Starting with letters A through C.
+     *      createdAt: [ null, new Date(2016, 0) ] // Dates until 2016.
+     *    }
+     * }
+     * ```
+     */
+    range?: {[fieldName: string]: [any, any]};
+
+    /**
+     * Limit results to this number. Zero means no limit.
+     */
+    limit?: number,
+
+    /**
+     * Offset results by this much from the beginning.
+     */
+    offset?: number,
+
+    /**
+     * The logical operator "and", may be nested. Optional feature.
+     */
+    and?: object,
+
+    /**
+     * The logical operator "or", may be nested. Optional feature.
+     */
+    or?: object,
+
+    /**
+     * Reserved field for custom querying.
+     */
+    query?: any
+  }
 
   /**
    * Input / Output hook function
@@ -711,6 +836,11 @@ declare namespace Fortune {
 		// =================================================================================================================
 
     /**
+     * Adapter specific properties
+     */
+    [key: string]: any;
+
+    /**
      * An object which enumerates record types and their definitions
      */
     recordTypes?: RecordTypeDefinitions;
@@ -866,7 +996,7 @@ declare namespace Fortune {
      * have a `count` property that is the total number of records without limit
      * and offset.
      */
-    find: (type: string, ids?: ID[], options?: object, meta?: object) => Promise<any>;
+    find: (type: string, ids?: ID[], options?: Fortune.FindOptions, meta?: object) => Promise<any>;
 
     /**
      * Update records by IDs. Success should resolve to the number of records

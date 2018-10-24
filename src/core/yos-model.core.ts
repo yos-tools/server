@@ -20,7 +20,7 @@ export abstract class YosModel {
    * or both. This is a convenience method that wraps around the `request`
    * method, see the `request` method for documentation on its arguments.
    */
-  find<T extends YosModel>(this: new (...args: any[]) => T, ids?: Fortune.ID | Fortune.ID[], options?: object, include?: Fortune.Include, meta?: object): Promise<Fortune.Response> {
+  find<T extends YosModel>(this: new (...args: any[]) => T, ids?: Fortune.ID | Fortune.ID[], options?: Fortune.FindOptions, include?: Fortune.Include, meta?: object): Promise<Fortune.Response> {
     return YosStore.find((<typeof YosModel> this.constructor).yosRecordTypeName, ids, options, include, meta);
   }
 
