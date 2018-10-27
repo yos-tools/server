@@ -6,6 +6,10 @@ import { YosStore } from '..';
  */
 export abstract class YosModel {
 
+  // ===================================================================================================================
+  // Static properties
+  // ===================================================================================================================
+
   /**
    * Record type name for store
    *
@@ -14,6 +18,43 @@ export abstract class YosModel {
    */
   public static readonly yosRecordTypeName: string;
 
+
+  // ===================================================================================================================
+  // Instance properties
+  // ===================================================================================================================
+
+  /**
+   * ID of the instance
+   */
+  id: string;
+
+
+  // ===================================================================================================================
+  // Instance methods
+  // ===================================================================================================================
+
+  /**
+   * Get data for store
+   */
+  getDataForStore() {
+    return this;
+  }
+
+  /**
+   * Create or update current object
+   *
+   * If the object contains an ID, the object is updated in the store. If there is no ID, it will be created.
+   */
+  save<T extends YosModel>(this: new (...args: any[]) => T): Promise<Fortune.Response> {
+    const func = (<any>this).id ? (<any>this).update : (<any>this).create;
+    const data = typeof (<any>this).getDataForStore === 'function' ? (<any>this).getDataForStore() : this;
+    return func(data);
+  }
+
+
+  // ===================================================================================================================
+  // Store instance methods
+  // ===================================================================================================================
 
   /**
    * The `find` method retrieves record by type given IDs, querying options,
