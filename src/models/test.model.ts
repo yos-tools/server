@@ -1,7 +1,7 @@
-import { model, prop, storeInput, storeOutput, YosModel } from '..';
+import { model, prop, storeInput, storeOutput, YosPersistentModel } from '..';
 
-@model({recordTypeName: 'testModel'})
-export class Test extends YosModel {
+@model({recordTypeName: 'test'})
+export class Test extends YosPersistentModel {
 
   @prop({type: String})
   xxx: String = 'bla';

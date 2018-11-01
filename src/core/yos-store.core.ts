@@ -1,6 +1,6 @@
 import * as Fortune from 'fortune';
 import * as _ from 'lodash';
-import { YosStoreConfig } from '..';
+import { YosHelper, YosStoreConfig } from '..';
 
 /**
  * Static store
@@ -133,8 +133,8 @@ export class YosStore {
     // Disconnect store
     await YosStore.store.disconnect();
 
-    // Assign record types
-    Object.assign(YosStore.store.recordTypes, store.recordTypes);
+    // Merge record types
+    YosHelper.specialMerge(YosStore.store.recordTypes, store.recordTypes);
 
     // Assign hooks
     Object.assign(YosStore.store.hooks, store.options.hooks);

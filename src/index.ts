@@ -21,6 +21,7 @@ export { YosCoreController } from './controllers/yos-core.controller';
 // Core
 // =====================================================================================================================
 export { YosModel } from './core/yos-model.core';
+export { YosPersistentModel } from './core/yos-persistent-model.core';
 export { YosResolver } from './core/yos-resolver.core';
 export { YosServer } from './core/yos-server.core';
 export { YosServerDefaultConfig } from './core/yos-server-default-config.core';
@@ -41,6 +42,7 @@ export { YosDeprecatedDirective } from './directives/yos-deprecated.directive';
 // =====================================================================================================================
 export { YosActionHook } from './enums/yos-action-hook.enum';
 export { YosFilterHook } from './enums/yos-filter-hook.enum';
+export { YosRole } from './enums/yos-role.enum';
 
 // =====================================================================================================================
 // Helper
@@ -79,6 +81,11 @@ export { YosServices } from './interfaces/yos-services.interface';
 export { YosServicesConfig } from './interfaces/yos-services-config.interface';
 export { YosSetUserViaTokenConfig } from './interfaces/yos-set-user-via-token-config.interface';
 export { YosStoreConfig } from './interfaces/yos-store-config.interface';
+
+// =====================================================================================================================
+// Models
+// =====================================================================================================================
+export { User } from './models/user.model';
 
 // =====================================================================================================================
 // Modules

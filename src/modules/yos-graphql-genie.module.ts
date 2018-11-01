@@ -15,8 +15,10 @@ import {
   YosHelper,
   YosHooksService,
   YosModule,
+  YosRole,
   YosServer,
-  YosSetUserViaTokenConfig, YosStore
+  YosSetUserViaTokenConfig,
+  YosStore
 } from '..';
 import mergeSchemas from '../../node_modules/graphql-tools/dist/stitching/mergeSchemas';
 
@@ -262,14 +264,14 @@ export class YosGraphQLGenieModule extends YosModule {
         username: 'Admin',
         email: adminEmail,
         password: password,
-        roles: ['ADMIN', 'USER'],
+        roles: [YosRole.Admin, YosRole.User],
         __typename: 'User'
       },
       {
         id: userIdentifierID,
         userID: adminUserID,
         password: password,
-        roles: ['ADMIN', 'USER'],
+        roles: [YosRole.Admin, YosRole.User],
         identifiers: ['admin', adminEmail],
         __typename: 'UserIdentifiers'
       }
@@ -479,7 +481,7 @@ export class YosGraphQLGenieModule extends YosModule {
       records = records || [];
 
       // Admin is allowed to do everything
-      if (currentRoles.includes('ADMIN')) {
+      if (currentRoles.includes(YosRole.Admin)) {
         return true;
       }
 
@@ -513,13 +515,13 @@ export class YosGraphQLGenieModule extends YosModule {
         });
       });
 
-      if (requiredRolesForMethod.includes('ANY')) {
+      if (requiredRolesForMethod.includes(YosRole.Any)) {
         return true;
       }
 
       // The !isEmpty(record) may result in saying to permission even if it's actually just an empty result
       // but it could be a security flaw that allows people to see what "OWNER" fields don't exist otherwise
-      if (requiredRolesForMethod.includes('OWNER') && !_.isEmpty(currentUser) && !_.isEmpty(records)) {
+      if (requiredRolesForMethod.includes(YosRole.Owner) && !_.isEmpty(currentUser) && !_.isEmpty(records)) {
         const userIds = this.getUserIDsOfRequestedData(records, filterRecords);
         if (userIds.size === 1 && userIds.values().next().value === currentUser.id) {
           return true;
