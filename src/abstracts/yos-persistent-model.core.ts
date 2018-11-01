@@ -1,5 +1,6 @@
-import { User, YosModel } from '..';
+import { YosModel, YosRef, YosUser } from '..';
 import { prop, storeInput, storeOutput } from '../decorators/yos-model.decorator';
+import * as Fortune from '../definitions/fortune';
 
 /**
  * Meta data for persistent objects
@@ -32,7 +33,7 @@ export abstract class YosPersistentModel extends YosModel {
    * Must be set in model or controller
    */
   @prop({type: 'user'})
-  createdBy: User;
+  createdBy: YosRef<YosUser>;
 
   /**
    * Updated date
@@ -48,7 +49,7 @@ export abstract class YosPersistentModel extends YosModel {
    * Must be set in model or controller
    */
   @prop({type: 'user'})
-  updatedBy: User;
+  updatedBy: YosRef<YosUser>;
 
 
   // ===================================================================================================================
@@ -59,7 +60,7 @@ export abstract class YosPersistentModel extends YosModel {
    * Store input hook
    */
   @storeInput()
-  storeInput(context: any, record: any, update?: any): object {
+  public storeInput(context: any, record: any, update?: any): object {
 
     switch (context.request.method) {
 
@@ -86,5 +87,30 @@ export abstract class YosPersistentModel extends YosModel {
   public storeOutput(context: any, record: any) {
     record.accessedAt = record.accessedAt ? record.accessedAt : new Date();
     return record;
+  }
+
+  // ===================================================================================================================
+  // Helper methods
+  // ===================================================================================================================
+
+  /**
+   * Map records into model objects
+   * (overwrites processStoreResponse of YosModel)
+   */
+  public async processStoreResponse<T extends YosModel>(this: new (...args: any[]) => T, response: Fortune.Response): Promise<Fortune.Response<T>> {
+    response.payload.records = await Promise.all(response.payload.records.map(async (record: any) => {
+
+      // Set standard properties
+      (<any>this).id = record.id;
+      (<any>this).accessedAt= record.accessedAt;
+      (<any>this).createdAt = record.createdAt;
+      (<any>this).createdBy = record.createdBy;
+      (<any>this).updatedAt = record.updatedAt;
+      (<any>this).updatedBy = record.updatedBy;
+
+      // Map record data via model map function
+      return await (<any>this).map(record)
+    }));
+    return response;
   }
 }

@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import {
+  YosUser,
   YosAuthenticationService,
   YosControllerContext,
   YosFilterHook,
@@ -130,7 +131,7 @@ export class YosAuthenticationModule extends YosModule {
 
       // Set user
       // @ToDo: Get user from the database to get the latest data
-      context.user = data.user;
+      context.user = (await YosUser.find(data.user.id)).payload.records[0];
     }
 
     // Return context

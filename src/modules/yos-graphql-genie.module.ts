@@ -18,7 +18,7 @@ import {
   YosRole,
   YosServer,
   YosSetUserViaTokenConfig,
-  YosStore
+  YosStore, YosUser
 } from '..';
 import mergeSchemas from '../../node_modules/graphql-tools/dist/stitching/mergeSchemas';
 
@@ -450,7 +450,7 @@ export class YosGraphQLGenieModule extends YosModule {
    * @param context
    * @param config
    */
-  protected extendContext(context: YosControllerContext, config: YosSetUserViaTokenConfig = {overwrite: true}) {
+  protected async extendContext(context: YosControllerContext, config: YosSetUserViaTokenConfig = {overwrite: true}) {
 
     // Init
     const secretOrPrivateKey = _.get(this._config, 'core.authorization.jwt.secretOrPrivateKey');
@@ -458,8 +458,7 @@ export class YosGraphQLGenieModule extends YosModule {
 
     // Get current user
     if (bearer && _.get(config, 'overwrite')) {
-      // @ToDo: Get user from the database to get the latest data
-      context.user = jwt.verify(bearer, secretOrPrivateKey);
+      context.user = (await YosUser.find((<any> jwt.verify(bearer, secretOrPrivateKey)).id)).payload.records[0];
     }
 
     // Add Authenticate function
@@ -529,7 +528,7 @@ export class YosGraphQLGenieModule extends YosModule {
       }
 
       // Check if currentRoles has any of the required Roles
-      const hasNecessaryRole = requiredRolesForMethod.some((role) => {
+      const hasNecessaryRole = requiredRolesForMethod.some((role: YosRole) => {
         return currentRoles.includes(role);
       });
       if (!hasNecessaryRole) {

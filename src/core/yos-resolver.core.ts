@@ -36,7 +36,7 @@ export class YosResolver {
     }
 
     // Return response
-    return response;
+    return await YosResolver.prepareResponseForApi(response);
   }
 
   /**
@@ -92,4 +92,10 @@ export class YosResolver {
     return controllerContext;
   }
 
+  /**
+   * Prepare response for API
+   */
+  public static async prepareResponseForApi(response: any, prepared: any[] = []): Promise<any> {
+    return YosHelper.callDeepObjectFunction(response, 'getDataForApi', [], false)
+  }
 }

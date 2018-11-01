@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import {
+  YosUser,
   YosAuthenticationModule,
   YosAuthenticationService,
   YosContext,
@@ -74,7 +75,7 @@ export interface YosControllerContext extends YosContext {
   };
 
   /** Current user */
-  user?: any // @todo: User should be of type UserModel
+  user?: YosUser
 
   /** Yos-server instance */
   yosServer?: YosServer;

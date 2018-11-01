@@ -153,6 +153,12 @@ export class YosStore {
     await YosStore.store.connect();
   }
 
+  /**
+   * Prepare object for store
+   */
+  public static prepareDataForStore(data: any | any[]): Promise<any> {
+    return YosHelper.callDeepObjectFunction(_.cloneDeep(data), 'getDataForStore')
+  }
 
   // ===================================================================================================================
   // Store communication methods

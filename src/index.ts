@@ -4,7 +4,9 @@
 // =====================================================================================================================
 // Abstracts
 // =====================================================================================================================
+export { YosModel } from './abstracts/yos-model.core';
 export { YosModule } from './abstracts/yos-module.abstract';
+export { YosPersistentModel } from './abstracts/yos-persistent-model.core';
 export { YosService } from './abstracts/yos-service.abstract';
 
 // =====================================================================================================================
@@ -20,8 +22,6 @@ export { YosCoreController } from './controllers/yos-core.controller';
 // =====================================================================================================================
 // Core
 // =====================================================================================================================
-export { YosModel } from './core/yos-model.core';
-export { YosPersistentModel } from './core/yos-persistent-model.core';
 export { YosResolver } from './core/yos-resolver.core';
 export { YosServer } from './core/yos-server.core';
 export { YosServerDefaultConfig } from './core/yos-server-default-config.core';
@@ -85,7 +85,7 @@ export { YosStoreConfig } from './interfaces/yos-store-config.interface';
 // =====================================================================================================================
 // Models
 // =====================================================================================================================
-export { User } from './models/user.model';
+export { YosUser } from './models/yos-user.model';
 
 // =====================================================================================================================
 // Modules
@@ -116,3 +116,4 @@ export { YosSubscriptionService } from './services/yos-subscription.service';
 // Types
 // =====================================================================================================================
 export { YosGraphQLSchemasConfigType } from './types/yos-graphql-schemas-config.type';
+export { YosRef } from './types/yos-ref.type';

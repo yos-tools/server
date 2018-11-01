@@ -70,4 +70,62 @@ export class YosHelper {
     let classNameRegEx = /(?:\S+\s+){1}([a-zA-Z_$][0-9a-zA-Z_$]*)/;
     return classNameRegEx.exec(item.toString())[1];
   }
+
+  /**
+   * Call deep (async) object function
+   */
+  public static async callDeepObjectFunction(objects: any, functionName: string, params: any[] = [], clone: boolean = true,  prepared: any[] = []): Promise<any> {
+
+    // Check for prepared object to avoid infinite regress
+    const preparedObject = prepared.find((item) => {
+      return item === objects;
+    });
+    if (preparedObject) {
+      return preparedObject;
+    }
+
+    // Process array
+    if (Array.isArray(objects)) {
+
+      // Clone the object once to prevent overwriting the original data
+      if (clone) {
+        objects = _.cloneDeep(objects);
+      }
+
+      // Set array as prepared
+      prepared.push(objects);
+
+      // Process array
+      objects = objects.map(async (item: any) => {
+        return await YosHelper.callDeepObjectFunction(item, functionName, params, false, prepared);
+      });
+      await Promise.all(objects);
+
+      // Return array
+      return objects;
+    }
+
+    // Process object
+    if (typeof objects === 'object') {
+
+      // Clone the object once to prevent overwriting the original data
+      if (clone) {
+        objects = _.cloneDeep(objects);
+      }
+
+      // Set object as prepared
+      prepared.push(objects);
+
+      // Process object
+      for (const [ key, value ] of Object.entries(objects)) {
+        objects[key] = await YosHelper.callDeepObjectFunction(value, functionName, params, false, prepared);
+      }
+
+      // Return object (with prepared data)
+      return await typeof objects[functionName] === 'function' ? objects[functionName](...params) : objects;
+    }
+
+    // Return non array / object
+    return objects;
+  }
 }

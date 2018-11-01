@@ -806,12 +806,12 @@ declare namespace Fortune {
    * The resolved response object should always be an instance of a response
    * type.
    */
-  export interface Response {
-    meta?: object;
+  export interface Response<T = any> {
+    meta?: {[key: string]: any};
     payload: {
-      records: object[],
+      records: T[],
       count?: number,
-      include?: { [type: string]: object[] }
+      include?: { [type: string]: {[key: string]: any}[] }
     }
   }
 
