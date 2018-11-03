@@ -1,4 +1,4 @@
-import { model, prop, YosPersistentModel, YosRole } from '..';
+import { model, prop, YosHelper, YosPersistentModel, YosRole } from '..';
 
 /**
  * User model
@@ -42,11 +42,11 @@ export class YosUser extends YosPersistentModel {
   /**
    * Map function
    */
-  public map(data: any): this {
-    this.username = data.username;
-    this.email = data.email;
-    this.password = data.password;
-    this.roles = data.roles;
+  public async map(data: any): Promise<this> {
+    await YosHelper.map(data, this, 'username');
+    await YosHelper.map(data, this, 'email');
+    await YosHelper.map(data, this, 'password');
+    await YosHelper.map(data, this, 'roles');
     return this;
   }
 }

@@ -1,4 +1,4 @@
-import { YosModel, YosRef, YosUser } from '..';
+import { YosHelper, YosModel, YosRef, YosUser } from '..';
 import { prop, storeInput, storeOutput } from '../decorators/yos-model.decorator';
 import * as Fortune from '../definitions/fortune';
 
@@ -94,6 +94,23 @@ export abstract class YosPersistentModel extends YosModel {
   // ===================================================================================================================
 
   /**
+   * Process user data from store response
+   */
+  public async processStoreResponseUserData(userData: number | string | object): Promise<YosRef<YosUser>> {
+    let userRef: any = userData;
+    if (userData && typeof userData === 'object') {
+      userRef = new YosUser ();
+      await YosHelper.map(userData, userRef, 'id');
+      await YosHelper.map(userData, userRef, 'accessedAt');
+      await YosHelper.map(userData, userRef, 'createdAt');
+      await YosHelper.map(userData, userRef, 'createdBy', YosUser);
+      await YosHelper.map(userData, userRef, 'updatedAt');
+      await YosHelper.map(userData, userRef, 'updatedBy', YosUser);
+    }
+    return userRef;
+  }
+
+  /**
    * Map records into model objects
    * (overwrites processStoreResponse of YosModel)
    */
@@ -102,14 +119,14 @@ export abstract class YosPersistentModel extends YosModel {
 
       // Set standard properties
       (<any>this).id = record.id;
-      (<any>this).accessedAt= record.accessedAt;
-      (<any>this).createdAt = record.createdAt;
-      (<any>this).createdBy = record.createdBy;
-      (<any>this).updatedAt = record.updatedAt;
-      (<any>this).updatedBy = record.updatedBy;
+      await YosHelper.map(record, (<any>this), 'accessedAt');
+      await YosHelper.map(record, (<any>this), 'createdAt');
+      (<any>this).createdBy = (<any>this).processStoreResponseUserData(record.createdBy);
+      await YosHelper.map(record, (<any>this), 'updatedAt');
+      (<any>this).createdBy = (<any>this).processStoreResponseUserData(record.updatedBy);
 
       // Map record data via model map function
-      return await (<any>this).map(record)
+      return await (<any>this).map(record);
     }));
     return response;
   }
