@@ -1,4 +1,4 @@
-import * as globby from 'globby';
+import globby from 'globby';
 import * as _ from 'lodash';
 import * as path from 'path';
 import {
@@ -59,7 +59,7 @@ export class YosInitializer {
     } catch (err) {}
 
     // Get paths of all files in directory
-    const filePaths = (await globby(config.patterns, {cwd: fileOrDirPaths})).map((fileName) => {
+    const filePaths = (await globby(config.patterns, {cwd: fileOrDirPaths})).map((fileName: string) => {
       return path.join(<string>fileOrDirPaths, fileName);
     });
 

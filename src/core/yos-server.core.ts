@@ -12,7 +12,7 @@ import {
   YosServerDefaultConfig,
   YosServices
 } from '..';
-import getPort = require('get-port');
+import getPort from 'get-port';
 
 /**
  * The core of yos-server
@@ -101,7 +101,7 @@ export class YosServer {
     const environment = process.env.NODE_ENV || 'development';
 
     // Init loaded configuration
-    let loadedConfiguration: YosServerConfig = <YosServerConfig> configOrPaths;
+    let loadedConfiguration: YosServerConfig = <YosServerConfig>configOrPaths;
 
     // Set configuration via string or string array
     if (_.isString(configOrPaths) || Array.isArray(configOrPaths)) {

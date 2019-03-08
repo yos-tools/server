@@ -46,7 +46,7 @@ export class YosSubscriptionService extends YosService {
    * @param {boolean} setField Whether the encapsulation is to be carried out or not
    * @returns {boolean}
    */
-  public publish(trigger: string, data: any, field?: string, setField: boolean = true): boolean {
+  public publish(trigger: string, data: any, field?: string, setField: boolean = true): Promise<void> {
 
     // Set field name
     const fieldName: string = field || trigger;
