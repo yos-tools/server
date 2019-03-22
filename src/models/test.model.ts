@@ -1,4 +1,4 @@
-import { model, prop, storeInput, storeOutput, YosPersistentModel } from '..';
+import {model, prop, storeInput, storeOutput, YosHelper, YosPersistentModel} from '..';
 
 @model({recordTypeName: 'test'})
 export class Test extends YosPersistentModel {
@@ -27,5 +27,13 @@ export class Test extends YosPersistentModel {
   public storeOutput(context: any, record: any) {
     record.accessedAt = new Date();
     return record;
+  }
+
+  /**
+   * Mapping function
+   */
+  public async map(data: any, item: Test = new Test()) {
+    await YosHelper.map(data, this, 'xxx');
+    return this;
   }
 }
